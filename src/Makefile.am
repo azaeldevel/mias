@@ -1,6 +1,3 @@
-## Process this file with automake to produce Makefile.in
-
-## Created by Anjuta
 
 AM_CPPFLAGS = \
 	-DPACKAGE_LOCALE_DIR=\""$(localedir)"\" \
@@ -11,16 +8,10 @@ AM_CFLAGS =\
 	 -Wall\
 	 -g
 
-bin_PROGRAMS = mias
+bin_PROGRAMS = application.cgi
 
-mias_SOURCES = \
-	main.cc
-
-mias_LDFLAGS = 
-
-mias_LDADD = 
+application_cgi_SOURCES = application-main.cc
+application_cgi_LDADD = $(MUPOSYS_LIBS)
+application_cgi_CXXFLAGS = $(MUPOSYS_FLAGS)
 
 
-if NATIVE_WIN32
-mias_LDFLAGS += -mwindows
-endif
