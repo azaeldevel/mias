@@ -18,7 +18,6 @@ public:
 	virtual void options(std::ostream& out) const;
 
 protected:
-	bool user_mang;	
 };
 class Application : public muposys::Application
 {	
