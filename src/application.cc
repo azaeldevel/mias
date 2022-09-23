@@ -1,15 +1,15 @@
 
 
 
-#include "config.h"
+
 #include "application.hh"
 
 
-namespace muposys
+namespace mias
 {
 
 
-BodyApplication::BodyApplication() : user_mang(true)
+BodyApplication::BodyApplication()
 {
 }
 void BodyApplication::options(std::ostream& out)const
@@ -40,16 +40,14 @@ void BodyApplication::print(std::ostream& out)const
 }
 
 
-Application::~Application()
+Application::Application(BodyApplication& b) : muposys::Application(b)
 {
 }
-Application::Application(BodyApplication& b) : muposys::HTML(b)
+Application::Application(BodyApplication& b,const std::string& t) : muposys::Application(b,t)
 {
-	head.title = "Multi-Porpuse Software System";
-	head.charset("UTF-8");
-	head.responsive("viewport","width=device-width, initial-scale=1");
-	head.css("/css/appearance/muposys.css");
-	head.css("/css/icons/Mkos-Big-Sur.css");
+}
+Application::~Application()
+{
 }
 	
 void Application::print(std::ostream& out) const
@@ -58,7 +56,7 @@ void Application::print(std::ostream& out) const
 }
 int Application::main(std::ostream& out)
 {
-	contenttype(out,"text","html");
+	muposys::contenttype(out,"text","html");
 	
 	if(not session.load(conn))
 	{

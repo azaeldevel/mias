@@ -2,12 +2,12 @@
 #define MIAS_APPLICATION_HH
 
 
-#include <muposys/html.hh>
+#include <muposys/application.hh>
 
-namespace muposys
+namespace mias
 {
 
-class BodyApplication : public muposys::Body
+class BodyApplication : public muposys::BodyApplication
 {
 private:
 	
@@ -20,15 +20,15 @@ public:
 protected:
 	bool user_mang;	
 };
-class Application : public muposys::HTML
+class Application : public muposys::Application
 {	
 public:
 	virtual void print(std::ostream& out) const;
 	virtual int main(std::ostream& out = std::cout);
 	
 	Application(BodyApplication&);
-	Application(const BodyApplication&);
-	~Application();
+	Application(BodyApplication&,const std::string& title);
+	virtual ~Application();
 
 private:	
 	

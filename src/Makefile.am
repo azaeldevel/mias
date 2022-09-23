@@ -10,8 +10,11 @@ AM_CFLAGS =\
 
 bin_PROGRAMS = application.cgi
 
-application_cgi_SOURCES = application-main.cc
-application_cgi_LDADD = $(MUPOSYS_LIBS)
-application_cgi_CXXFLAGS = $(MUPOSYS_FLAGS)
+LIBS_LIST = $(MUPOSYS_LIBS) $(OCTETOS_DB_LIBS)
+LIBS_FLAGS = $(MUPOSYS_CFLAGS) $(OCTETOS_DB_CFLAGS)
+ 
+application_cgi_SOURCES = application-main.cc application.cc
+application_cgi_LDADD = $(LIBS_LIST)
+application_cgi_CXXFLAGS = $(LIBS_FLAGS)
 
 

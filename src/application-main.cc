@@ -1,15 +1,14 @@
 
 
-//#include "application.hh"
+#include "application.hh"
 #include <iostream>
 
 int main()
 {	
-	/*muposys::BodyApplication body;
-	muposys::Application app(body);
-	app.main();*/
-
-	std::cout << "Mia's Pizza & Pasta\n";
+	//std::cout << "Mia's Pizza & Pasta\n";
+	mias::BodyApplication body;
+	mias::Application app(body,"Mia's Pizza & Pasta");
+	app.main();
 	
 	return 0;
 }
