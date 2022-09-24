@@ -27,7 +27,7 @@ dnl AM_GLIB_GNU_GETTEXT
 dnl ***************************************************************************
 dnl Check for Windows
 dnl ***************************************************************************
-AC_CANONICAL_HOST
+dnl AC_CANONICAL_HOST
 
 case $host_os in
   *mingw*)
@@ -52,13 +52,17 @@ LT_INIT
 
 PKG_CHECK_MODULES(MUPOSYS, [muposys-apidb muposys-cgi])
 
+
 AC_ARG_ENABLE([os],[AS_HELP_STRING([--enable-os],[Enable configuration for particular OS])])
 	case $enableval in
 	  	archlinux)
 			AC_DEFINE([LINUX_ARCH], [], [Enable configuration for Arch-Linux])
-			AC_SUBST([DATABASE],[$datarootdir/http])
+			AC_SUBST([DATABASE_DIR],[$datarootdir])
+			AC_SUBST([DATABASE_FN],[http])
 			AC_SUBST([USER_GROUP],[http:http])
-			AC_DEFINE_UNQUOTED([DATABASE], ["$DATABASE"] ,[Full path for database file])
+			AC_DEFINE_UNQUOTED([DATABASE_DIR], ["$DATABASE_DIR"] ,[Full path for database file])
+			AC_DEFINE_UNQUOTED([DATABASE_FN], ["$DATABASE_FN"] ,[Full path for database file])
+			AC_DEFINE_UNQUOTED([DATABASE], ["$DATABASE_DIR/$DATABASE_FN"] ,[Full path for database file])
 		;;
 	  	debian) 
 			AC_DEFINE([LINUX_DEBIAN], [], [Enable configuration for Debian])
@@ -68,11 +72,19 @@ AC_ARG_ENABLE([os],[AS_HELP_STRING([--enable-os],[Enable configuration for parti
 		;;
 	esac
 
+AC_ARG_ENABLE([stick],[AS_HELP_STRING([--enable-stick],[Enable all software to ensure be runnable muposys(for developing/testing normally)])])
+if test "x$enable_stick" = "xyes"; then 
+	AM_CONDITIONAL(ENABLE_STICK, true)
+else
+	AM_CONDITIONAL(ENABLE_STICK, false)
+fi
 
-AM_CONDITIONAL(WITH_TESTS, test x"$with_tests" = "xyes")
-AC_ARG_WITH([tests], AS_HELP_STRING([--with-tests], [Compilando con soporte para Tests]))
-if test "x$with_tests" = "xyes"; then 
-	PKG_CHECK_MODULES(CUNIT,cunit)
+AC_ARG_ENABLE([tdd],[AS_HELP_STRING([--enable-tdd],[Enable Test-Drive Developing mode)])])
+if test "x$enable_tdd" = "xyes"; then 
+	AM_CONDITIONAL(ENABLE_TDD, true)
+	PKG_CHECK_MODULES(CUNIT, [cunit])
+else
+	AM_CONDITIONAL(ENABLE_TDD, false)
 fi
 
 AC_ARG_ENABLE([devel], AS_HELP_STRING([--enable-devel], [Soport de desarrollador activo]))
@@ -114,7 +126,6 @@ case $enableval in
 		AC_MSG_ERROR([unknown option '$enable_database' for --enable-database])
 	;;
 esac
-
 
 
 
