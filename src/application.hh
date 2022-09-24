@@ -14,8 +14,8 @@ private:
 public:
 	BodyApplication();
 
-	virtual void print(std::ostream& out) const;
-	virtual void options(std::ostream& out) const;
+	virtual void programs(std::ostream& out) const;
+	virtual void panel(std::ostream& out) const;
 
 protected:
 };

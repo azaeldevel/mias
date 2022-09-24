@@ -26,3 +26,7 @@ DISTCLEANFILES = intltool-extract \
 # Remove doc directory on uninstall
 uninstall-local:
 	-rm -r $(docdir)
+
+
+css_iconsdir=$(bindir)/css/Mkos-Big-Sur/mias/icons
+css_icons_DATA=html/css/Mkos-Big-Sur/mias/icons/application.css

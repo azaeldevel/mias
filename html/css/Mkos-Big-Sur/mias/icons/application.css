@@ -1,0 +1,42 @@
+
+
+@media screen and (max-width : 299px)
+{
+	body > #menu > #programs > #sales
+	{
+		background-image: url(/theme/Mkos-Big-Sur/22x22/actions/amarok_cart_remove.svg);
+	}
+}
+@media screen and (min-width: 300px) and (max-width : 599px)
+{
+	body > #menu > #programs > #sales
+	{
+		background-image: url(/theme/Mkos-Big-Sur/22x22/actions/amarok_cart_remove.svg);
+	}
+}
+@media screen and (min-width: 600px) and (max-width : 899px)
+{
+	body > #menu > #programs > #sales
+	{
+		background-image: url(/theme/Mkos-Big-Sur/22x22/actions/amarok_cart_remove.svg);
+	}
+}
+@media screen and (min-width: 900px) and (max-width : 1199px)
+{
+	body > #menu > #programs > #sales
+	{
+		background-image: url(/theme/Mkos-Big-Sur/22x22/actions/amarok_cart_remove.svg);
+	}
+}
+@media screen and (min-width: 1200px)
+{
+	body > #menu > #programs > #sales
+	{
+		background-image: url(/theme/Mkos-Big-Sur/22x22/actions/amarok_cart_remove.svg);
+	}
+}
+
+
+
+
+
