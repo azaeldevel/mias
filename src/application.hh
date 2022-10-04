@@ -15,7 +15,6 @@ public:
 	BodyApplication();
 
 	virtual void programs(std::ostream& out) const;
-	virtual void panel(std::ostream& out) const;
 
 protected:
 };
