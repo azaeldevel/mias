@@ -1,6 +1,8 @@
 
 #include <gtkmm.h>
 #include <iostream>
+#include <exception>
+
 
 #include "config.h"
 
@@ -39,19 +41,32 @@ int main (int argc, char *argv[])
 		fileui += "/mias-desk.ui";
 		builder->add_from_file(fileui);
 	}
-	catch (const Glib::FileError & ex)
+	catch (const std::exception& ex)
 	{
 		std::cerr << ex.what() << std::endl;
-		return 1;
+		return EXIT_FAILURE;
+	}
+	catch (const Glib::FileError& ex)
+	{
+		std::cerr << ex.what() << std::endl;
+		return EXIT_FAILURE;
 	}
 	
-	mps::Mias* Main = 0;
+	try
+	{
+		mias::Mias* Main = 0;
 #ifdef ENABLE_DEVEL
 		builder->get_widget_derived("Main", Main,true);
 #else
 		builder->get_widget_derived("Main", Main);
 #endif	
-	if (Main) kit.run(*Main);
+		if (Main) kit.run(*Main);
+	}
+	catch (const std::exception& ex)
+	{
+		std::cerr << ex.what() << std::endl;
+		return EXIT_FAILURE;
+	}
 	
 	return EXIT_SUCCESS;
 }
