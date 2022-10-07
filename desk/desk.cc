@@ -72,6 +72,8 @@ void Saling::init()
 	boxCapture.pack_start(cmbItem);
 	boxCapture.pack_start(inCost);
 	
+	pack_start(table,false,false);
+	
 }
 Saling::~Saling()
 {
@@ -91,11 +93,82 @@ void PendingServices::init()
 {	
 	pack_start(lbTitle,false,false);
 	lbTitle.set_text("Lista de Servicios : ");
+		
+	pack_start(servicies);
 	
 }
 PendingServices::~PendingServices()
 {
 }
+
+
+
+
+
+TableSaling::TableSaling()
+{
+	init();	
+}
+void TableSaling::init()
+{		
+	
+}
+TableSaling::~TableSaling()
+{
+}
+
+
+
+
+
+TableServicies::TableServicies()
+{
+	init();	
+}
+void TableServicies::init()
+{		
+	tree_model = Gtk::ListStore::create(columns);
+	set_model(tree_model);
+	
+	append_column("Servicio", columns.service);
+	append_column("Nombre", columns.name);	
+	auto cell = Gtk::make_managed<Gtk::CellRendererProgress>();
+	int cols_count = append_column("Progreso", *cell);
+	auto pColumn = get_column(cols_count - 1);
+	if(pColumn)
+	{
+		pColumn->add_attribute(cell->property_value(), columns.progress);
+	}
+	  
+	  
+	//loading data
+	Gtk::TreeModel::Row row = *(tree_model->append());
+	row[columns.service] = 1;
+	row[columns.name] = "Julio";
+	row[columns.progress] = 75;
+	
+	row = *(tree_model->append());
+	row[columns.service] = 2;
+	row[columns.name] = "María";
+	row[columns.progress] = 15;
+	
+	row = *(tree_model->append());
+	row[columns.service] = 3;
+	row[columns.name] = "Azael";
+	row[columns.progress] = 5;
+}
+TableServicies::~TableServicies()
+{
+}
+
+TableServicies::ModelColumns::ModelColumns()
+{
+	add(service);
+	add(name);
+	add(progress);	
+}
+
+
 
 }
 

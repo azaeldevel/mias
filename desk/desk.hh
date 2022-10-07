@@ -14,6 +14,48 @@
 namespace mias
 {
 
+class TableServicies : public Gtk::TreeView
+{
+	
+public:
+	TableServicies();	
+	void init();
+	virtual ~TableServicies();
+	
+protected:
+	
+private:
+	class ModelColumns : public Gtk::TreeModel::ColumnRecord
+	{
+	public:
+		ModelColumns();
+		Gtk::TreeModelColumn<unsigned int> service;
+		Gtk::TreeModelColumn<Glib::ustring> name;
+		Gtk::TreeModelColumn<unsigned int> progress;
+		
+	};
+	
+	ModelColumns columns;
+	Gtk::ScrolledWindow scrolled;
+	Glib::RefPtr<Gtk::ListStore> tree_model;
+};
+
+class TableSaling : public Gtk::TreeView
+{
+	
+public:
+	TableSaling();	
+	void init();
+	virtual ~TableSaling();
+	
+protected:
+	
+private:
+	
+	
+};
+
+
 class Saling : public Gtk::Box
 {
 	
@@ -35,6 +77,7 @@ private:
 	Gtk::ComboBox cmbItem;
 	Gtk::Entry inCost;
 	
+	TableSaling table;
 	
 };
 
@@ -48,6 +91,8 @@ public:
 	
 private:
 	Gtk::Label lbTitle;
+	
+	TableServicies servicies;
 };
 
 
