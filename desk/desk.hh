@@ -50,8 +50,24 @@ public:
 	
 protected:
 	
-private:
+private:	
+	struct Item
+	{
+	};
 	
+	class ModelColumns : public Gtk::TreeModel::ColumnRecord
+	{
+	public:
+		ModelColumns();
+		Gtk::TreeModelColumn<unsigned int> amount;
+		Gtk::TreeModelColumn<Glib::ustring> presentation;
+		Gtk::TreeModelColumn<Glib::ustring> item;		
+		Gtk::TreeModelColumn<float> cost;
+	};
+	
+	ModelColumns columns;
+	Gtk::ScrolledWindow scrolled;
+	Glib::RefPtr<Gtk::ListStore> tree_model;
 	
 };
 

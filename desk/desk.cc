@@ -112,11 +112,38 @@ TableSaling::TableSaling()
 void TableSaling::init()
 {		
 	
+	tree_model = Gtk::ListStore::create(columns);
+	set_model(tree_model);
+	
+	append_column("Cant.", columns.amount);
+	append_column("Present.", columns.presentation);
+	append_column("Articulo", columns.item);
+	append_column("Costo", columns.cost);
+	
+	//loading data
+	Gtk::TreeModel::Row row = *(tree_model->append());
+	row[columns.amount] = 1;
+	row[columns.presentation] = "Pz";
+	row[columns.item] = "Chica - Peperoni";
+	row[columns.cost] = 115;
+	
+	row = *(tree_model->append());
+	row[columns.amount] = 1;
+	row[columns.presentation] = "Pz";
+	row[columns.item] = "Grande - Mexiana";
+	row[columns.cost] = 235;
+	
 }
 TableSaling::~TableSaling()
 {
 }
-
+TableSaling::ModelColumns::ModelColumns()
+{
+	add(amount);
+	add(presentation);
+	add(item);	
+	add(cost);
+}
 
 
 
