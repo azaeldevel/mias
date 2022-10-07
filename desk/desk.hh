@@ -14,7 +14,44 @@
 namespace mias
 {
 
-class Sales : public Gtk::Box
+class Saling : public Gtk::Box
+{
+	
+public:
+	Saling();	
+	void init();
+	virtual ~Saling();
+	
+protected:
+	
+private:
+	
+	Gtk::Frame capture;
+	
+	Gtk::Box boxCapture;
+	
+	Gtk::Entry inAmount;
+	Gtk::Entry inPresentation;
+	Gtk::ComboBox cmbItem;
+	Gtk::Entry inCost;
+	
+	
+};
+
+class PendingServices : public Gtk::Box
+{
+	
+public:
+	PendingServices();	
+	void init();
+	virtual ~PendingServices();
+	
+private:
+	Gtk::Label lbTitle;
+};
+
+
+class Sales : public Gtk::Paned
 {
 public:
 	Sales();	
@@ -26,25 +63,8 @@ protected:
 private:
 	Gtk::Label label1;
 	Gtk::Label label2;
-
-};
-
-
-class NewOrder : public Gtk::Dialog
-{
-
-public:
-	NewOrder(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade);
-	
-	int run();
-	void on_bt_ok_clicked();
-	void on_bt_cancel_clicked();
-	
-private:
-	int retcode;
-	Gtk::Button* btOK;
-	Gtk::Button* btCancel;
-	const Glib::RefPtr<Gtk::Builder>& builder;
+	Saling saling;
+	PendingServices pending;
 };
 
 
@@ -62,9 +82,10 @@ public:
 protected:
 	
 private:
-	Gtk::Box* boxClients;
-	NewOrder* neworder;
-	Gtk::Notebook* nbPages;
+	Gtk::Box* boxSlices;
+	Gtk::Box boxWork;
+	//NewOrder* neworder;
+	Gtk::Notebook activities;
 	Sales sales;
 };
 
