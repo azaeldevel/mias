@@ -68,15 +68,39 @@ void Saling::init()
 	capture.set_label("Captura");
 	
 	boxCapture.pack_start(inAmount);
-	boxCapture.pack_start(inPresentation);
-	boxCapture.pack_start(cmbItem);
+	inAmount.set_wrap();;
+	boxCapture.pack_start(item);
 	boxCapture.pack_start(inCost);
 	
 	pack_start(table,false,false);
+		
+	//item completion
+	auto completion = Gtk::EntryCompletion::create();
+	item.set_completion(completion);
 	
+	auto refCompletionModel = Gtk::ListStore::create(columns);
+	completion->set_model(refCompletionModel);
+	
+	Gtk::TreeModel::Row row = *(refCompletionModel->append());
+	row[columns.id] = 1;
+	row[columns.number] = "ppp";
+	row[columns.name] = "Peperoni - Personal";
+	
+	row = *(refCompletionModel->append());
+	row[columns.id] = 2;
+	row[columns.number] = "cpp";
+	row[columns.name] = "Peperoni - Chica";
+	
+	completion->set_text_column(columns.number);
 }
 Saling::~Saling()
 {
+}
+Saling::ModelColumnsItem::ModelColumnsItem()
+{
+	add(id);
+	add(number);
+	add(name);
 }
 
 
@@ -183,6 +207,7 @@ void TableServicies::init()
 	row[columns.service] = 3;
 	row[columns.name] = "Azael";
 	row[columns.progress] = 5;
+	
 }
 TableServicies::~TableServicies()
 {

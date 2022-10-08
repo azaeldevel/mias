@@ -82,15 +82,23 @@ public:
 	
 protected:
 	
-private:
+private:	
+	class ModelColumnsItem : public Gtk::TreeModel::ColumnRecord
+	{
+	public:
+		ModelColumnsItem();
+		Gtk::TreeModelColumn<unsigned int> id;
+		Gtk::TreeModelColumn<Glib::ustring> number;
+		Gtk::TreeModelColumn<Glib::ustring> name;
+	};
 	
 	Gtk::Frame capture;
 	
 	Gtk::Box boxCapture;
 	
-	Gtk::Entry inAmount;
-	Gtk::Entry inPresentation;
-	Gtk::ComboBox cmbItem;
+	Gtk::SpinButton inAmount;
+	Gtk::Entry item;
+	ModelColumnsItem columns;
 	Gtk::Entry inCost;
 	
 	TableSaling table;

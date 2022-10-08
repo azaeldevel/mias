@@ -28,13 +28,18 @@ INSERT INTO Cataloging(id,catalog,number_id,name) VALUES(1010,13,'fhw','Familiar
 
 UPDATE Cataloging SET active = 'Y'  WHERE id = 1001;
 UPDATE Cataloging SET value = 75 WHERE id = 1001;
+UPDATE Cataloging SET presentation = 'Pz' WHERE id = 1001;
 UPDATE Cataloging SET active = 'Y'  WHERE id = 1002;
 UPDATE Cataloging SET value = 95 WHERE id = 1002;
+UPDATE Cataloging SET presentation = 'Pz' WHERE id = 1002;
 UPDATE Cataloging SET active = 'Y'  WHERE id = 1003;
 UPDATE Cataloging SET value = 135 WHERE id = 1003;
+UPDATE Cataloging SET presentation = 'Pz' WHERE id = 1003;
 UPDATE Cataloging SET active = 'Y'  WHERE id = 1004;
 UPDATE Cataloging SET value = 175 WHERE id = 1004;
+UPDATE Cataloging SET presentation = 'Pz' WHERE id = 1004;
 UPDATE Cataloging SET active = 'Y'  WHERE id = 1005;
 UPDATE Cataloging SET value = 195 WHERE id = 1005;
+UPDATE Cataloging SET presentation = 'Pz' WHERE id = 1005;
 
 
