@@ -87,6 +87,7 @@ private:
 	{
 	public:
 		ModelColumnsItem();
+		
 		Gtk::TreeModelColumn<unsigned int> id;
 		Gtk::TreeModelColumn<Glib::ustring> number;
 		Gtk::TreeModelColumn<Glib::ustring> name;
@@ -102,6 +103,8 @@ private:
 	Gtk::Entry inCost;
 	
 	TableSaling table;
+	
+	bool on_completion_match(const Glib::ustring& key, const Gtk::TreeModel::const_iterator& iter);
 	
 };
 

@@ -91,7 +91,8 @@ void Saling::init()
 	row[columns.number] = "cpp";
 	row[columns.name] = "Peperoni - Chica";
 	
-	completion->set_text_column(columns.number);
+	completion->set_text_column(columns.name);
+	//completion->set_match_func( sigc::mem_fun(*this,&Saling::on_completion_match));
 }
 Saling::~Saling()
 {
@@ -102,7 +103,24 @@ Saling::ModelColumnsItem::ModelColumnsItem()
 	add(number);
 	add(name);
 }
+bool Saling::on_completion_match(const Glib::ustring& key, const Gtk::TreeModel::const_iterator& iter)
+{
+	if(iter)
+	{
+		const auto row = *iter;
 
+		const auto key_length = key.size();
+		Glib::ustring filter_string = row[columns.name];
+
+		Glib::ustring filter_string_start = filter_string.substr(0, key_length);
+		//The key is lower-case, even if the user input is not.
+		Glib::ustring subfilter = filter_string_start.lowercase();
+
+		if(key == subfilter) return true;
+	}
+
+	return false; //No match.
+}
 
 
 
