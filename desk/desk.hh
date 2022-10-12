@@ -71,7 +71,7 @@ private:
 	
 };
 
-class SearchItem : public Gtk::Entry
+class SearchItem : public Gtk::ComboBox
 {
 public:
 	SearchItem();	
@@ -79,6 +79,8 @@ public:
 	virtual ~SearchItem();
 	
 protected:
+	void on_cell_data_extra(const Gtk::TreeModel::const_iterator& iter);
+	void on_combo_changed();
 	
 private:	
 	class ModelColumnsItem : public Gtk::TreeModel::ColumnRecord
@@ -89,11 +91,13 @@ private:
 		Gtk::TreeModelColumn<unsigned int> id;
 		Gtk::TreeModelColumn<Glib::ustring> number;
 		Gtk::TreeModelColumn<Glib::ustring> name;
+		Gtk::TreeModelColumn<const muposysdb::Catalog_Items*> db;
 	};
 	
 	ModelColumnsItem columns;
-	
-	bool on_completion_match(const Glib::ustring& key, const Gtk::TreeModel::const_iterator& iter);
+	Glib::RefPtr<Gtk::ListStore> refModel;	
+	Gtk::CellRendererText cell;
+	std::vector<muposysdb::Catalog_Items*>* lstCatItems;
 };
 
 class Saling : public Gtk::Box
@@ -113,6 +117,7 @@ private:
 	Gtk::Box boxCapture;
 	
 	Gtk::SpinButton inAmount;
+	//Gtk::Box itemBox;
 	SearchItem item;
 	Gtk::Entry inCost;
 	

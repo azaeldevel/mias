@@ -66,20 +66,17 @@ void SearchItem::init()
 	octetos::db::maria::Connector connector;
 	if(not connector.connect(muposysdb::datconex)) throw octetos::db::SQLException("Fallo la conexión a la Base de datos",__FILE__,__LINE__);
 	
-	set_icon_from_icon_name("edit-find");
+	//set_icon_from_icon_name("edit-find");
 	
-	auto completion = Gtk::EntryCompletion::create();
-	set_completion(completion);
-	
-	auto refCompletionModel = Gtk::ListStore::create(columns);
-	completion->set_model(refCompletionModel);
+	refModel = Gtk::ListStore::create(columns);
+	set_model(refModel);
 		
 	std::vector<muposysdb::Catalog_Items*>* lstCatItems = muposysdb::Catalog_Items::select(connector,"");
 	std::vector<muposysdb::Catalog_Items*>::const_iterator it = lstCatItems->begin();
 	Gtk::TreeModel::Row row;
 	for(unsigned int  i = 0; i < lstCatItems->size();i++)
 	{
-		row = *(refCompletionModel->append());
+		row = *(refModel->append());
 		
 		it[i]->downNumber(connector);
 		it[i]->downName(connector);
@@ -87,20 +84,24 @@ void SearchItem::init()
 		row[columns.id] = i + 1;
 		row[columns.number] = it[i]->getNumber();
 		row[columns.name] = it[i]->getName();
+		row[columns.db] = it[i];
 		//std::cout << "number : " << it[i]->getNumber() << "\n";
 		//std::cout << "name : " << it[i]->getName() << "\n";
 	}
 	
-	completion->set_text_column(columns.name);
-	//completion->set_match_func( sigc::mem_fun(*this,&SearchItem::on_completion_match));
+	set_cell_data_func(cell,sigc::mem_fun(*this, &SearchItem::on_cell_data_extra));
+	pack_start(cell);
+	signal_changed().connect( sigc::mem_fun(*this, &SearchItem::on_combo_changed) );
+		
+	connector.close();
+}
+SearchItem::~SearchItem()
+{
 	for(auto p : *lstCatItems)
 	{
 		        delete p;
 	}
 	delete lstCatItems;
-}
-SearchItem::~SearchItem()
-{
 }
 
 SearchItem::ModelColumnsItem::ModelColumnsItem()
@@ -108,27 +109,44 @@ SearchItem::ModelColumnsItem::ModelColumnsItem()
 	add(id);
 	add(number);
 	add(name);
+	add(db);
 }
 
-bool SearchItem::on_completion_match(const Glib::ustring& key, const Gtk::TreeModel::const_iterator& iter)
+void SearchItem::on_cell_data_extra(const Gtk::TreeModel::const_iterator& iter)
 {
-	/*if(iter)
-	{
-		const auto row = *iter;
+  auto row = *iter;
+  const Glib::ustring extra = row[columns.name];
 
-		const auto key_length = key.size();
-		Glib::ustring filter_string = row[columns.name];
-
-		Glib::ustring filter_string_start = filter_string.substr(0, key_length);
-		//The key is lower-case, even if the user input is not.
-		Glib::ustring subfilter = filter_string_start.lowercase();
-
-		if(key == subfilter) return true;
-	}*/
-
-	return true; //No match.
+  //Transform the value, deciding how to represent it as text:
+  if(extra.empty())
+    cell.property_text() = "(none)";
+  else
+    cell.property_text() = extra;
+	
+	//cell.property_foreground() = (extra == "yadda" ? "red" : "green");
 }
 
+void SearchItem::on_combo_changed()
+{
+	Gtk::TreeModel::iterator iter = get_active();
+	if(iter)
+	{
+		Gtk::TreeModel::Row row = *iter;
+		if(row)
+		{
+		//Get the data for the selected row, using our knowledge of the tree
+		//model:
+		int id = row[columns.id];
+		Glib::ustring name = row[columns.name];
+		const muposysdb::Catalog_Items* reg = row[columns.db];
+		std::cout << " ID=" << row[columns.id]  << ", db=" << reg->getNumber() << std::endl;
+		}
+	}
+	else
+	{
+		std::cout << "invalid iter" << std::endl;
+	}
+}
 
 
 Saling::Saling() : Gtk::Box(Gtk::ORIENTATION_VERTICAL)
@@ -142,7 +160,7 @@ void Saling::init()
 	capture.set_label("Captura");
 	
 	boxCapture.pack_start(inAmount);
-	inAmount.set_wrap();;
+	inAmount.set_wrap();
 	boxCapture.pack_start(item);
 	boxCapture.pack_start(inCost);
 	
