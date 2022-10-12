@@ -1,5 +1,6 @@
 
 #include <gtkmm/application.h>
+#include <muposys/muposysdb.hpp>
 
 #include "desk.hh"
 
@@ -56,6 +57,79 @@ Sales::~Sales()
 
 
 
+SearchItem::SearchItem()
+{
+	init();
+}
+void SearchItem::init()
+{
+	octetos::db::maria::Connector connector;
+	if(not connector.connect(muposysdb::datconex)) throw octetos::db::SQLException("Fallo la conexión a la Base de datos",__FILE__,__LINE__);
+	
+	set_icon_from_icon_name("edit-find");
+	
+	auto completion = Gtk::EntryCompletion::create();
+	set_completion(completion);
+	
+	auto refCompletionModel = Gtk::ListStore::create(columns);
+	completion->set_model(refCompletionModel);
+		
+	std::vector<muposysdb::Catalog_Items*>* lstCatItems = muposysdb::Catalog_Items::select(connector,"");
+	std::vector<muposysdb::Catalog_Items*>::const_iterator it = lstCatItems->begin();
+	Gtk::TreeModel::Row row;
+	for(unsigned int  i = 0; i < lstCatItems->size();i++)
+	{
+		row = *(refCompletionModel->append());
+		
+		it[i]->downNumber(connector);
+		it[i]->downName(connector);
+		
+		row[columns.id] = i + 1;
+		row[columns.number] = it[i]->getNumber();
+		row[columns.name] = it[i]->getName();
+		//std::cout << "number : " << it[i]->getNumber() << "\n";
+		//std::cout << "name : " << it[i]->getName() << "\n";
+	}
+	
+	completion->set_text_column(columns.name);
+	//completion->set_match_func( sigc::mem_fun(*this,&SearchItem::on_completion_match));
+	for(auto p : *lstCatItems)
+	{
+		        delete p;
+	}
+	delete lstCatItems;
+}
+SearchItem::~SearchItem()
+{
+}
+
+SearchItem::ModelColumnsItem::ModelColumnsItem()
+{
+	add(id);
+	add(number);
+	add(name);
+}
+
+bool SearchItem::on_completion_match(const Glib::ustring& key, const Gtk::TreeModel::const_iterator& iter)
+{
+	/*if(iter)
+	{
+		const auto row = *iter;
+
+		const auto key_length = key.size();
+		Glib::ustring filter_string = row[columns.name];
+
+		Glib::ustring filter_string_start = filter_string.substr(0, key_length);
+		//The key is lower-case, even if the user input is not.
+		Glib::ustring subfilter = filter_string_start.lowercase();
+
+		if(key == subfilter) return true;
+	}*/
+
+	return true; //No match.
+}
+
+
 
 Saling::Saling() : Gtk::Box(Gtk::ORIENTATION_VERTICAL)
 {
@@ -73,53 +147,9 @@ void Saling::init()
 	boxCapture.pack_start(inCost);
 	
 	pack_start(table,false,false);
-		
-	//item completion
-	auto completion = Gtk::EntryCompletion::create();
-	item.set_completion(completion);
-	
-	auto refCompletionModel = Gtk::ListStore::create(columns);
-	completion->set_model(refCompletionModel);
-	
-	Gtk::TreeModel::Row row = *(refCompletionModel->append());
-	row[columns.id] = 1;
-	row[columns.number] = "ppp";
-	row[columns.name] = "Peperoni - Personal";
-	
-	row = *(refCompletionModel->append());
-	row[columns.id] = 2;
-	row[columns.number] = "cpp";
-	row[columns.name] = "Peperoni - Chica";
-	
-	completion->set_text_column(columns.name);
-	//completion->set_match_func( sigc::mem_fun(*this,&Saling::on_completion_match));
 }
 Saling::~Saling()
 {
-}
-Saling::ModelColumnsItem::ModelColumnsItem()
-{
-	add(id);
-	add(number);
-	add(name);
-}
-bool Saling::on_completion_match(const Glib::ustring& key, const Gtk::TreeModel::const_iterator& iter)
-{
-	if(iter)
-	{
-		const auto row = *iter;
-
-		const auto key_length = key.size();
-		Glib::ustring filter_string = row[columns.name];
-
-		Glib::ustring filter_string_start = filter_string.substr(0, key_length);
-		//The key is lower-case, even if the user input is not.
-		Glib::ustring subfilter = filter_string_start.lowercase();
-
-		if(key == subfilter) return true;
-	}
-
-	return false; //No match.
 }
 
 

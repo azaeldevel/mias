@@ -60,6 +60,7 @@ else
 	AM_CONDITIONAL(ENABLE_DEVEL, false)
 fi
 
+AM_CONDITIONAL(OCTETOS_DB_MEDIUMWORD,false)
 AC_ARG_ENABLE([database],[AS_HELP_STRING([--enable-database],[Enabling sopport for Database])])
 case $enableval in
 	maria)
@@ -67,24 +68,27 @@ case $enableval in
 		AM_CONDITIONAL(WITH_MARIADB,true)
 		AM_CONDITIONAL(WITH_MYSQL,false)
 		AM_CONDITIONAL(WITH_POSTGRESQL,false)
-		AC_DEFINE_UNQUOTED([DATABASE_ENGINE_MARIA], [], [Enabling Database Server MariaDB])
-		AC_DEFINE_UNQUOTED([OCTETOS_DB_MEDIUMWORD], [], [Enabling medium word size for database])
+		AM_CONDITIONAL(OCTETOS_DB_MEDIUMWORD,true)
+		dnl AC_DEFINE_UNQUOTED([DATABASE_ENGINE_MARIA], [], [Enabling Database Server MariaDB])
+		dnl AC_DEFINE_UNQUOTED([OCTETOS_DB_MEDIUMWORD], [], [Enabling medium word size for database])
 	;;
 	mysql)
 		PKG_CHECK_MODULES(OCTETOS_DB, [octetos-db-mysql])
 		AM_CONDITIONAL(WITH_MARIADB,false)
 		AM_CONDITIONAL(WITH_MYSQL,true)
 		AM_CONDITIONAL(WITH_POSTGRESQL,false)
-		AC_DEFINE_UNQUOTED([DATABASE_ENGINE_MYSQL], [], [Enabling Database Server MySQL])
-		AC_DEFINE_UNQUOTED([OCTETOS_DB_MEDIUMWORD], [], [Enabling medium word size for database])
+		AM_CONDITIONAL(OCTETOS_DB_MEDIUMWORD,true)
+		dnl AC_DEFINE_UNQUOTED([DATABASE_ENGINE_MYSQL], [], [Enabling Database Server MySQL])
+		dnl AC_DEFINE_UNQUOTED([OCTETOS_DB_MEDIUMWORD], [], [Enabling medium word size for database])
 	;;
 	postgresql)
 		PKG_CHECK_MODULES(OCTETOS_DB, [octetos-db-postgresql])
 		AM_CONDITIONAL(WITH_MARIADB,false)
 		AM_CONDITIONAL(WITH_MYSQL,false)
 		AM_CONDITIONAL(WITH_POSTGRESQL,true)
-		AC_DEFINE_UNQUOTED([DATABASE_ENGINE_POSTGRESQL], [], [Enabling Database Server PostgreSQL])
-		AC_DEFINE_UNQUOTED([OCTETOS_DB_MEDIUMWORD], [], [Enabling medium word size for database])
+		AM_CONDITIONAL(OCTETOS_DB_MEDIUMWORD,true)
+		dnl AC_DEFINE_UNQUOTED([DATABASE_ENGINE_POSTGRESQL], [], [Enabling Database Server PostgreSQL])
+		dnl AC_DEFINE_UNQUOTED([OCTETOS_DB_MEDIUMWORD], [], [Enabling medium word size for database])
 	;;
 	*)
 		AC_MSG_ERROR([unknown option '$enable_database' for --enable-database])

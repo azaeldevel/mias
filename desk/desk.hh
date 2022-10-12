@@ -71,14 +71,12 @@ private:
 	
 };
 
-
-class Saling : public Gtk::Box
+class SearchItem : public Gtk::Entry
 {
-	
 public:
-	Saling();	
+	SearchItem();	
 	void init();
-	virtual ~Saling();
+	virtual ~SearchItem();
 	
 protected:
 	
@@ -93,18 +91,33 @@ private:
 		Gtk::TreeModelColumn<Glib::ustring> name;
 	};
 	
+	ModelColumnsItem columns;
+	
+	bool on_completion_match(const Glib::ustring& key, const Gtk::TreeModel::const_iterator& iter);
+};
+
+class Saling : public Gtk::Box
+{
+	
+public:
+	Saling();	
+	void init();
+	virtual ~Saling();
+	
+protected:
+	
+private:
+	
 	Gtk::Frame capture;
 	
 	Gtk::Box boxCapture;
 	
 	Gtk::SpinButton inAmount;
-	Gtk::Entry item;
-	ModelColumnsItem columns;
+	SearchItem item;
 	Gtk::Entry inCost;
 	
 	TableSaling table;
 	
-	bool on_completion_match(const Glib::ustring& key, const Gtk::TreeModel::const_iterator& iter);
 	
 };
 
