@@ -17,6 +17,8 @@ Mias::Mias(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& b,bool d) 
 }
 void Mias::init()
 {	
+	add_events(Gdk::KEY_PRESS_MASK);		
+	
 	set_title("Mia's Pizza & Pasta");
 	
 	boxSlices = 0;
@@ -45,8 +47,7 @@ Sales::Sales()
 void Sales::init()
 {	
 	add1(pending);
-	add2(saling);
-	
+	add2(saling);	
 	
 }
 Sales::~Sales()
@@ -57,7 +58,7 @@ Sales::~Sales()
 
 
 
-SearchItem::SearchItem()
+SearchItem::SearchItem() : Gtk::ComboBox(true)
 {
 	init();
 }
@@ -67,7 +68,7 @@ void SearchItem::init()
 	if(not connector.connect(muposysdb::datconex)) throw octetos::db::SQLException("Fallo la conexión a la Base de datos",__FILE__,__LINE__);
 	
 	//set_icon_from_icon_name("edit-find");
-	
+
 	refModel = Gtk::ListStore::create(columns);
 	set_model(refModel);
 		
@@ -92,7 +93,23 @@ void SearchItem::init()
 	set_cell_data_func(cell,sigc::mem_fun(*this, &SearchItem::on_cell_data_extra));
 	pack_start(cell);
 	signal_changed().connect( sigc::mem_fun(*this, &SearchItem::on_combo_changed) );
+	signal_key_press_event().connect(sigc::mem_fun(*this,	&SearchItem::on_combo_key_presst) );
 		
+	item = get_entry();
+	if (item)
+	{
+		//item->add_events(Gdk::KEY_PRESS_MASK);
+		// The Entry shall receive focus-out events.
+		item->add_events(Gdk::FOCUS_CHANGE_MASK);
+
+		// Alternatively you can connect to m_Combo.signal_changed().
+		item->signal_changed().connect(sigc::mem_fun(*this,	&SearchItem::on_entry_changed) );
+		item->signal_activate().connect(sigc::mem_fun(*this,&SearchItem::on_entry_activate) );
+		item->signal_focus_out_event().connect(sigc::mem_fun(*this,	&SearchItem::on_entry_focus_out_event) );
+		//item->signal_key_press_event().connect(sigc::mem_fun(*this,	&SearchItem::on_entry_key_presst) );
+		focusOut = item->signal_focus_out_event(). connect(sigc::mem_fun(*this, &SearchItem::on_entry_focus_out_event) );
+	}
+	
 	connector.close();
 }
 SearchItem::~SearchItem()
@@ -102,6 +119,7 @@ SearchItem::~SearchItem()
 		        delete p;
 	}
 	delete lstCatItems;
+	focusOut.disconnect();
 }
 
 SearchItem::ModelColumnsItem::ModelColumnsItem()
@@ -122,7 +140,7 @@ void SearchItem::on_cell_data_extra(const Gtk::TreeModel::const_iterator& iter)
     cell.property_text() = "(none)";
   else
     cell.property_text() = extra;
-	
+	//item->set_text(extra);
 	//cell.property_foreground() = (extra == "yadda" ? "red" : "green");
 }
 
@@ -134,12 +152,15 @@ void SearchItem::on_combo_changed()
 		Gtk::TreeModel::Row row = *iter;
 		if(row)
 		{
-		//Get the data for the selected row, using our knowledge of the tree
-		//model:
-		int id = row[columns.id];
-		Glib::ustring name = row[columns.name];
-		const muposysdb::Catalog_Items* reg = row[columns.db];
-		std::cout << " ID=" << row[columns.id]  << ", db=" << reg->getNumber() << std::endl;
+			//Get the data for the selected row, using our knowledge of the tree
+			//model:
+			//int id = row[columns.id];
+			//Glib::ustring name = row[columns.name];
+			//set_active((int)row[columns.id]);
+			const muposysdb::Catalog_Items* reg = row[columns.db];
+			item->set_text(reg->getName()) ;
+			
+			//std::cout << " ID=" << get_active_row_number() << ", db=" << reg->getNumber() << std::endl;
 		}
 	}
 	else
@@ -147,7 +168,57 @@ void SearchItem::on_combo_changed()
 		std::cout << "invalid iter" << std::endl;
 	}
 }
+void SearchItem::on_entry_changed()
+{
+	if (item)
+	{
+		//std::cout << "on_entry_changed(): Row=" << get_active_row_number() << ", ID=" << item->get_text() << std::endl;
+		//popdown();
+		//set_focus_child(*item);
+		//item->set_text(item->get_text());
+		//item->grab_focus();
+		popup ();
+		//item->grab_focus_without_selecting();
+	}
+}
 
+void SearchItem::on_entry_activate()
+{
+	if (item)
+	{
+		//std::cout << "on_entry_activate(): Row=" << get_active_row_number()  << ", ID=" << item->get_text() << std::endl;
+	}
+}
+
+bool SearchItem::on_entry_focus_out_event(GdkEventFocus* /* event */)
+{
+	if (item)
+	{
+		//std::cout << "on_entry_focus_out_event(): Row=" << get_active_row_number() << ", ID=" << item->get_text() << std::endl;
+		return true;
+	}
+	
+	return false;
+}
+bool SearchItem::on_entry_key_presst(GdkEventKey* event)
+{
+	//if (event->type == GDK_KEY_PRESS and event->keyval >= GDK_KEY_A and event->keyval <= GDK_KEY_Z)
+	{
+		std::cout << "Char :" << (wchar_t) event->keyval << "\n";
+		return true;
+	}
+  return false;
+}
+bool SearchItem::on_combo_key_presst(GdkEventKey* event)
+{
+	//if (event->type == GDK_KEY_PRESS and event->keyval >= GDK_KEY_A and event->keyval <= GDK_KEY_Z)
+	{
+		std::cout << "Char :" << (wchar_t) event->keyval << "\n";
+		return true;
+	}
+  
+	return false;
+}
 
 Saling::Saling() : Gtk::Box(Gtk::ORIENTATION_VERTICAL)
 {

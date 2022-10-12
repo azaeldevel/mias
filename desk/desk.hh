@@ -81,6 +81,12 @@ public:
 protected:
 	void on_cell_data_extra(const Gtk::TreeModel::const_iterator& iter);
 	void on_combo_changed();
+	bool on_combo_key_presst(GdkEventKey* event);
+	
+	void on_entry_changed();
+	void on_entry_activate();
+	bool on_entry_focus_out_event(GdkEventFocus* event);
+	bool on_entry_key_presst(GdkEventKey* event);
 	
 private:	
 	class ModelColumnsItem : public Gtk::TreeModel::ColumnRecord
@@ -98,6 +104,8 @@ private:
 	Glib::RefPtr<Gtk::ListStore> refModel;	
 	Gtk::CellRendererText cell;
 	std::vector<muposysdb::Catalog_Items*>* lstCatItems;
+	Gtk::Entry* item;
+	sigc::connection focusOut;
 };
 
 class Saling : public Gtk::Box
