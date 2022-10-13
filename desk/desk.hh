@@ -49,26 +49,42 @@ public:
 	virtual ~TableSaling();
 	
 protected:
+	void treeviewcolumn_validated_on_cell_data(Gtk::CellRenderer* renderer, const Gtk::TreeModel::iterator& iter);
+	void cellrenderer_validated_on_editing_started(Gtk::CellEditable* cell_editable, const Glib::ustring& path);
+	void cellrenderer_validated_on_edited(const Glib::ustring& path_string, const Glib::ustring& new_text);
 	
-private:	
-	struct Item
-	{
-	};
+	void treeviewcolumn_validated_on_cell_data_number(Gtk::CellRenderer* renderer, const Gtk::TreeModel::iterator& iter);
+	void cellrenderer_validated_on_editing_started_number(Gtk::CellEditable* cell_editable, const Glib::ustring& path);
+	void cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& new_text);
+	
+private:
 	
 	class ModelColumns : public Gtk::TreeModel::ColumnRecord
 	{
 	public:
 		ModelColumns();
+		Gtk::TreeModelColumn<unsigned int> id;		
+		Gtk::TreeModelColumn<unsigned int> item;
 		Gtk::TreeModelColumn<unsigned int> amount;
 		Gtk::TreeModelColumn<Glib::ustring> presentation;
-		Gtk::TreeModelColumn<Glib::ustring> item;		
+		Gtk::TreeModelColumn<Glib::ustring> number;
+		Gtk::TreeModelColumn<Glib::ustring> number_validated;
+		Gtk::TreeModelColumn<Glib::ustring> name;
 		Gtk::TreeModelColumn<float> cost;
+		//Gtk::TreeModelColumn<const muposysdb::Catalog_Items*> db;
 	};
 	
 	ModelColumns columns;
-	Gtk::ScrolledWindow scrolled;
 	Glib::RefPtr<Gtk::ListStore> tree_model;
 	
+	Gtk::CellRendererText cell_render;
+	Gtk::TreeView::Column column_validated;
+	bool validate_retry,valid_number;
+	Glib::ustring invalid_text_for_retry;
+	
+	
+	Gtk::CellRendererText* cell_number;
+	Gtk::TreeViewColumn* col_number;
 };
 
 class SearchItem : public Gtk::ComboBox
@@ -101,7 +117,7 @@ private:
 	};
 	
 	ModelColumnsItem columns;
-	Glib::RefPtr<Gtk::ListStore> refModel;	
+	Glib::RefPtr<Gtk::ListStore> refModel;
 	Gtk::CellRendererText cell;
 	std::vector<muposysdb::Catalog_Items*>* lstCatItems;
 	Gtk::Entry* item;

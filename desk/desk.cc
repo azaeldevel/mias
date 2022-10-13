@@ -271,40 +271,228 @@ TableSaling::TableSaling()
 	init();	
 }
 void TableSaling::init()
-{		
-	
+{
 	tree_model = Gtk::ListStore::create(columns);
 	set_model(tree_model);
 	
-	append_column("Cant.", columns.amount);
+	append_column_editable("Cant.", columns.amount);
 	append_column("Present.", columns.presentation);
-	append_column("Articulo", columns.item);
-	append_column("Costo", columns.cost);
+	append_column_editable("Number", columns.number);
+	cell_number = static_cast<Gtk::CellRendererText*>(get_column_cell_renderer(get_n_columns() - 1));
+	col_number = get_column(get_n_columns() - 1);
+	//col_number->set_cell_data_func(*cell_number,sigc::mem_fun(*this,&TableSaling::treeviewcolumn_validated_on_cell_data_number));
+	cell_number->property_editable() = true;
+	cell_number->signal_editing_started().connect(sigc::mem_fun(*this,&TableSaling::cellrenderer_validated_on_editing_started_number));
+	cell_number->signal_edited().connect( sigc::mem_fun(*this, &TableSaling::cellrenderer_validated_on_edited_number));
+	append_column("Artículo", columns.name);
+	append_column_numeric_editable("Costo", columns.cost,"%.2f");
+	
+	/*column_validated.set_title("editando..)");
+	column_validated.pack_start(cell_render);
+	append_column(column_validated);
+	column_validated.set_cell_data_func(cell_render, sigc::mem_fun(*this,&TableSaling::treeviewcolumn_validated_on_cell_data));
+	cell_render.property_editable() = true;
+	cell_render.signal_editing_started().connect(sigc::mem_fun(*this,&TableSaling::cellrenderer_validated_on_editing_started) );
+	cell_render.signal_edited().connect( sigc::mem_fun(*this, &TableSaling::cellrenderer_validated_on_edited) );*/
+		
 	
 	//loading data
 	Gtk::TreeModel::Row row = *(tree_model->append());
+	row[columns.id] = 1;
+	row[columns.item] = 1;
 	row[columns.amount] = 1;
 	row[columns.presentation] = "Pz";
-	row[columns.item] = "Chica - Peperoni";
+	row[columns.number] = "ppp";
+	row[columns.name] = "Chica - Peperoni";
 	row[columns.cost] = 115;
 	
 	row = *(tree_model->append());
+	row[columns.id] = 2;
+	row[columns.item] = 1;
 	row[columns.amount] = 1;
 	row[columns.presentation] = "Pz";
-	row[columns.item] = "Grande - Mexiana";
+	row[columns.number] = "gmx";
+	row[columns.name] = "Grande - Mexiana";
 	row[columns.cost] = 235;
-	
 }
 TableSaling::~TableSaling()
 {
 }
 TableSaling::ModelColumns::ModelColumns()
 {
+	add(id);
+	add(item);
 	add(amount);
 	add(presentation);
-	add(item);	
+	add(number);
+	add(name);
 	add(cost);
 }
+
+
+void TableSaling::treeviewcolumn_validated_on_cell_data( Gtk::CellRenderer* renderer , const Gtk::TreeModel::iterator& iter)
+{
+	//Get the value from the model and show it appropriately in the view:
+	if(iter)
+	{
+		Gtk::TreeModel::Row row = *iter;
+		Glib::ustring model_value = row[columns.number_validated];
+
+		//This is just an example.
+		//In this case, it would be easier to use append_column_editable() or
+		//append_column_numeric_editable()
+		char buffer[32];
+		sprintf(buffer, "%d", model_value);
+
+		Glib::ustring view_text = buffer;
+		cell_render.property_text() = "---" + view_text + "---";
+	}
+}
+void TableSaling::cellrenderer_validated_on_editing_started( Gtk::CellEditable* cell_editable, const Glib::ustring& /* path */)
+{
+	
+	octetos::db::maria::Connector connector;
+	if(not connector.connect(muposysdb::datconex)) throw octetos::db::SQLException("Fallo la conexión a la Base de datos",__FILE__,__LINE__);
+	
+	if(validate_retry)
+	{
+		auto celleditable_validated = cell_editable;
+		
+		//It's usually an Entry, at least for a CellRendererText:
+		auto pEntry = dynamic_cast<Gtk::Entry*>(celleditable_validated);
+		if(pEntry)
+		{
+			pEntry->set_text(invalid_text_for_retry);
+			validate_retry = false;
+			invalid_text_for_retry.clear();
+			//std::cout << "Data : " << pEntry->get_text() << "\n";
+		}
+	}
+}
+void TableSaling::cellrenderer_validated_on_edited(const Glib::ustring& path_string, const Glib::ustring& new_text)
+{
+	Gtk::TreePath path(path_string);
+	
+	if(new_text.size() > 3)
+	{
+		//Tell the user:
+		/*Gtk::MessageDialog dialog(*this,"The number must be less than 10. Please try again.", Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, false);
+		dialog.run();*/
+		std::cout << "Error : " << new_text << "\n";
+		
+		//Start editing again, with the bad text, so that the user can correct it.
+		//A real application should probably allow the user to revert to the
+		//previous text.
+		
+		//Set the text to be used in the start_editing signal handler:
+		invalid_text_for_retry = new_text;
+		validate_retry = true;
+		
+		//Start editing again:
+		set_cursor(path, column_validated,cell_render, true);
+	}
+	else
+	{
+		//Get the row from the path:
+		Gtk::TreeModel::iterator iter = tree_model->get_iter(path);
+		if(iter)
+		{
+			Gtk::TreeModel::Row row = *iter;
+			//Put the new value in the model:
+			row[columns.number_validated] = new_text;
+		}
+	}
+}
+
+
+void TableSaling::treeviewcolumn_validated_on_cell_data_number( Gtk::CellRenderer* renderer , const Gtk::TreeModel::iterator& iter)
+{
+	//Get the value from the model and show it appropriately in the view:
+	if(iter)
+	{
+		Gtk::TreeModel::Row row = *iter;
+		Glib::ustring model_value = row[columns.number];
+		
+		static_cast<Gtk::CellRendererText*>(renderer)->property_text() = model_value;
+	}
+}
+void TableSaling::cellrenderer_validated_on_editing_started_number( Gtk::CellEditable* cell_editable, const Glib::ustring& path)
+{
+	octetos::db::maria::Connector connector;
+	if(not connector.connect(muposysdb::datconex)) throw octetos::db::SQLException("Falló la conexión a la Base de datos",__FILE__,__LINE__);
+	
+	std::vector<muposysdb::Catalog_Items*>* lstCatItems = NULL;
+	
+	auto pEntry = dynamic_cast<Gtk::Entry*>(cell_editable);
+	if(pEntry)
+	{
+		std::string where = "number = '" + pEntry->get_text() + "'";
+		lstCatItems = muposysdb::Catalog_Items::select(connector,where);
+		//std::cout << "where : " << where << "\n";
+	}
+	
+	valid_number = false;
+	if(not lstCatItems) return;
+	
+	if(lstCatItems->size() == 1)
+	{			
+		if(lstCatItems->front()->downName(connector))
+		{
+			Gtk::TreeModel::iterator iter = tree_model->get_iter(path);
+			if(iter)
+			{
+				Gtk::TreeModel::Row row = *iter;
+				//Put the new value in the model:
+				row[columns.name] = lstCatItems->front()->getName();
+				//row[columns.number] = pEntry->get_text();
+			}
+			
+			valid_number = true;
+		}
+	}
+	for(muposysdb::Catalog_Items* p : *lstCatItems)
+	{
+		delete p;
+	}
+	delete lstCatItems;
+}
+void TableSaling::cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& new_text)
+{
+	Gtk::TreePath path(path_string);
+	
+	octetos::db::maria::Connector connector;
+	if(not connector.connect(muposysdb::datconex)) throw octetos::db::SQLException("Falló la conexión a la Base de datos",__FILE__,__LINE__);
+		
+	std::string where = "number = '" + new_text + "'";
+	std::vector<muposysdb::Catalog_Items*>* lstCatItems = muposysdb::Catalog_Items::select(connector,where);
+	//std::cout << "where : " << where << "\n";
+	
+	if(not lstCatItems) return;
+	
+	if(lstCatItems->size() == 1)
+	{
+		lstCatItems->front()->downName(connector);
+		lstCatItems->front()->downValue(connector);
+		lstCatItems->front()->downPresentation(connector);
+		
+			Gtk::TreeModel::iterator iter = tree_model->get_iter(path);
+			if(iter)
+			{
+				Gtk::TreeModel::Row row = *iter;
+				//Put the new value in the model:
+				row[columns.number] = new_text;
+				row[columns.name] = lstCatItems->front()->getName();
+				row[columns.presentation] = lstCatItems->front()->getPresentation();
+				row[columns.cost] = row[columns.amount] * lstCatItems->front()->getValue();
+			}			
+	}
+	for(muposysdb::Catalog_Items* p : *lstCatItems)
+	{
+		delete p;
+	}
+	delete lstCatItems;
+}
+
 
 
 
