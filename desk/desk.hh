@@ -212,9 +212,9 @@ protected:
 	
 private:
 	Gtk::Box* boxSlices;
-	Gtk::Box boxWork;
+	//Gtk::Box boxWork;
 	//NewOrder* neworder;
-	Gtk::Notebook activities;
+	Gtk::Notebook* activities;
 	Sales sales;
 };
 

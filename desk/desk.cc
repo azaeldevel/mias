@@ -22,12 +22,15 @@ void Mias::init()
 	set_title("Mia's Pizza & Pasta");
 	
 	boxSlices = 0;
-	builder->get_widget("boxSlices", boxSlices);
+	builder->get_widget("boxSlices", boxSlices);	
 	
-	boxSlices->pack_start(boxWork);	
+	activities = 0;
+	builder->get_widget("nbMain", activities);
 	
-	boxWork.pack_start(activities);
-	activities.append_page(sales);
+	//boxSlices->pack_start(boxWork);	
+	
+	//boxWork.pack_start(activities);
+	activities->append_page(sales);
 	
 	
 	show_all_children();
@@ -344,7 +347,7 @@ TableSaling::ModelColumns::ModelColumns()
 
 void TableSaling::row_changed(const Gtk::TreeModel::Path& path, const Gtk::TreeModel::iterator& iter)
 {
-	std::cout << "Size : " << tree_model->children().size() << "\n";		
+	//std::cout << "Size : " << tree_model->children().size() << "\n";		
 	const Gtk::TreeModel::iterator last = --(tree_model->children().end());
 	if(last == iter) newrow();
 }
