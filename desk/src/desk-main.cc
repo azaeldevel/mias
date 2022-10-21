@@ -33,7 +33,7 @@ int main (int argc, char *argv[])
 		fileui = DATA_DIR;
 		fileui += "/muposys/desk/muposys-desk.ui";
 		builder->add_from_file(fileui);
-#ifdef ENABLE_DEVEL
+#ifdef MIAS_DESK_ENABLE_TDD
 		fileui = PACKAGE_SRC_DIR;
 #else
 		fileui = PACKAGE_DATA_DIR;
@@ -55,7 +55,7 @@ int main (int argc, char *argv[])
 	try
 	{
 		mias::Mias* Main = 0;
-#ifdef ENABLE_DEVEL
+#ifdef MIAS_DESK_ENABLE_TDD
 		builder->get_widget_derived("Main", Main,true);
 #else
 		builder->get_widget_derived("Main", Main);

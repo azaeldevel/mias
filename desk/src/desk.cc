@@ -64,19 +64,19 @@ void SearchItem::init()
 	refModel = Gtk::ListStore::create(columns);
 	set_model(refModel);
 		
-	std::vector<muposysdb::Catalog_Items*>* lstCatItems = muposysdb::Catalog_Items::select(connector,"");
-	std::vector<muposysdb::Catalog_Items*>::const_iterator it = lstCatItems->begin();
+	std::vector<muposysdb::CatalogItem*>* lstCatItems = muposysdb::CatalogItem::select(connector,"");
+	std::vector<muposysdb::CatalogItem*>::const_iterator it = lstCatItems->begin();
 	Gtk::TreeModel::Row row;
 	for(unsigned int  i = 0; i < lstCatItems->size();i++)
 	{
 		row = *(refModel->append());
 		
 		it[i]->downNumber(connector);
-		it[i]->downName(connector);
+		it[i]->downBrief(connector);
 		
 		row[columns.id] = i + 1;
 		row[columns.number] = it[i]->getNumber();
-		row[columns.name] = it[i]->getName();
+		row[columns.name] = it[i]->getBrief();
 		row[columns.db] = it[i];
 		//std::cout << "number : " << it[i]->getNumber() << "\n";
 		//std::cout << "name : " << it[i]->getName() << "\n";
@@ -149,8 +149,8 @@ void SearchItem::on_combo_changed()
 			//int id = row[columns.id];
 			//Glib::ustring name = row[columns.name];
 			//set_active((int)row[columns.id]);
-			const muposysdb::Catalog_Items* reg = row[columns.db];
-			item->set_text(reg->getName()) ;
+			const muposysdb::CatalogItem* reg = row[columns.db];
+			item->set_text(reg->getBrief()) ;
 			
 			//std::cout << " ID=" << get_active_row_number() << ", db=" << reg->getNumber() << std::endl;
 		}

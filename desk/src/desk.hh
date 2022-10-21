@@ -5,9 +5,7 @@
 #include <gtkmm.h>
 #include <glibmm/i18n.h>
 
-#include "config.h"
-
-#include <muposys/desk/desk.hh>
+#include <muposys/desk.hh>
 
 
 
@@ -66,13 +64,13 @@ private:
 		Gtk::TreeModelColumn<unsigned int> id;
 		Gtk::TreeModelColumn<Glib::ustring> number;
 		Gtk::TreeModelColumn<Glib::ustring> name;
-		Gtk::TreeModelColumn<const muposysdb::Catalog_Items*> db;
+		Gtk::TreeModelColumn<const muposysdb::CatalogItem*> db;
 	};
 	
 	ModelColumnsItem columns;
 	Glib::RefPtr<Gtk::ListStore> refModel;
 	Gtk::CellRendererText cell;
-	std::vector<muposysdb::Catalog_Items*>* lstCatItems;
+	std::vector<muposysdb::CatalogItem*>* lstCatItems;
 	Gtk::Entry* item;
 	sigc::connection focusOut;
 };

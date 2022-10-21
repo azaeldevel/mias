@@ -36,71 +36,43 @@ AC_ARG_ENABLE([os],[AS_HELP_STRING([--enable-os],[Enable configuration for parti
 		;;
 	esac
 
-AC_ARG_ENABLE([stick],[AS_HELP_STRING([--enable-stick],[Enable all software to ensure be runnable muposys(for developing/testing normally)])])
-if test "x$enable_stick" = "xyes"; then 
-	AM_CONDITIONAL(ENABLE_STICK, true)
-else
-	AM_CONDITIONAL(ENABLE_STICK, false)
-fi
+
 
 AC_ARG_ENABLE([tdd],[AS_HELP_STRING([--enable-tdd],[Enable Test-Drive Developing mode)])])
 if test "x$enable_tdd" = "xyes"; then 
-	AM_CONDITIONAL(ENABLE_TDD, true)
+	AM_CONDITIONAL(MIAS_DESK_ENABLE_TDD, true)
 	PKG_CHECK_MODULES(CUNIT, [cunit])
 else
-	AM_CONDITIONAL(ENABLE_TDD, false)
-fi
-
-AC_ARG_ENABLE([devel], AS_HELP_STRING([--enable-devel], [Soport de desarrollador activo]))
-if test "x$enable_devel" = "xyes"; then 
-	AC_DEFINE_UNQUOTED([ENABLE_DEVEL], [], [Soporte de desarrollador activo])
-	AM_CONDITIONAL(ENABLE_DEVEL, true)
-else 
-	AM_CONDITIONAL(ENABLE_DEVEL, false)
+	AM_CONDITIONAL(MIAS_DESK_ENABLE_TDD, false)
 fi
 
 AM_CONDITIONAL(OCTETOS_DB_MEDIUMWORD,false)
+AM_CONDITIONAL(DATABASE_ENGINE_MARIA,false)
+AM_CONDITIONAL(DATABASE_ENGINE_MYSQL,false)
+AM_CONDITIONAL(DATABASE_ENGINE_POSTGRESQL,false)
 AC_ARG_ENABLE([database],[AS_HELP_STRING([--enable-database],[Enabling sopport for Database])])
 case $enableval in
 	maria)
 		PKG_CHECK_MODULES(OCTETOS_DB, [octetos-db-maria])
-		AM_CONDITIONAL(WITH_MARIADB,true)
-		AM_CONDITIONAL(WITH_MYSQL,false)
-		AM_CONDITIONAL(WITH_POSTGRESQL,false)
 		AM_CONDITIONAL(OCTETOS_DB_MEDIUMWORD,true)
-		dnl AC_DEFINE_UNQUOTED([DATABASE_ENGINE_MARIA], [], [Enabling Database Server MariaDB])
-		dnl AC_DEFINE_UNQUOTED([OCTETOS_DB_MEDIUMWORD], [], [Enabling medium word size for database])
+		AM_CONDITIONAL(DATABASE_ENGINE_MARIA,true)
 	;;
 	mysql)
 		PKG_CHECK_MODULES(OCTETOS_DB, [octetos-db-mysql])
-		AM_CONDITIONAL(WITH_MARIADB,false)
-		AM_CONDITIONAL(WITH_MYSQL,true)
-		AM_CONDITIONAL(WITH_POSTGRESQL,false)
 		AM_CONDITIONAL(OCTETOS_DB_MEDIUMWORD,true)
-		dnl AC_DEFINE_UNQUOTED([DATABASE_ENGINE_MYSQL], [], [Enabling Database Server MySQL])
-		dnl AC_DEFINE_UNQUOTED([OCTETOS_DB_MEDIUMWORD], [], [Enabling medium word size for database])
+		AM_CONDITIONAL(DATABASE_ENGINE_MYSQL,true)
 	;;
 	postgresql)
 		PKG_CHECK_MODULES(OCTETOS_DB, [octetos-db-postgresql])
-		AM_CONDITIONAL(WITH_MARIADB,false)
-		AM_CONDITIONAL(WITH_MYSQL,false)
-		AM_CONDITIONAL(WITH_POSTGRESQL,true)
 		AM_CONDITIONAL(OCTETOS_DB_MEDIUMWORD,true)
-		dnl AC_DEFINE_UNQUOTED([DATABASE_ENGINE_POSTGRESQL], [], [Enabling Database Server PostgreSQL])
-		dnl AC_DEFINE_UNQUOTED([OCTETOS_DB_MEDIUMWORD], [], [Enabling medium word size for database])
+		AM_CONDITIONAL(DATABASE_ENGINE_POSTGRESQL,true)
 	;;
 	*)
 		AC_MSG_ERROR([unknown option '$enable_database' for --enable-database])
 	;;
 esac
 
-
-
-
-
-
-
 AC_OUTPUT([
 Makefile
-
+src/Makefile
 ])
