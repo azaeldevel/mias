@@ -1,12 +1,13 @@
 
-muposysdir = $(datadir)/muposys/mias/desk
-muposys_DATA = mias-desk.ui
+muposysdir = $(datadir)/mias
+muposys_DATA = mias.ui
 
 AM_CPPFLAGS = \
 	-DPACKAGE_LOCALE_DIR=\""$(localedir)"\" \
 	-DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
-	-DDATA_DIR=\""$(datadir)"\" \
-	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)/muposys/mias/desk"\" \
+	-DMUPOSYS_DATA_DIR=\""$(datadir)/muposys"\" \
+	-DDATA_DIR=\""$(datadir)/mias"\" \
+	-DPACKAGE_DATA_DIR=\""$(datadir)/mias"\" \
 	-DPROGRAMNAME_LOCALEDIR=\"${PROGRAMNAME_LOCALEDIR}\" \
 	$(GTK_CFLAGS)
 

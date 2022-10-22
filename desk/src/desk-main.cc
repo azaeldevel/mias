@@ -30,15 +30,15 @@ int main (int argc, char *argv[])
 		builder = Gtk::Builder::create();
 		std::string fileui;
 		
-		fileui = DATA_DIR;
-		fileui += "/muposys/desk/muposys-desk.ui";
+		fileui = MUPOSYS_DATA_DIR;
+		fileui += "/muposys.ui";
 		builder->add_from_file(fileui);
 #ifdef MIAS_DESK_ENABLE_TDD
 		fileui = PACKAGE_SRC_DIR;
 #else
 		fileui = PACKAGE_DATA_DIR;
 #endif
-		fileui += "/mias-desk.ui";
+		fileui += "/mias.ui";
 		builder->add_from_file(fileui);
 	}
 	catch (const std::exception& ex)
