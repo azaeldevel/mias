@@ -12,6 +12,31 @@
 namespace mias
 {
 
+enum class ServiceProgress
+{
+	unknow,
+	created,
+	working,
+	delayed,
+	finalized	
+};
+	
+class TableSaling : public mps::TableSaling
+{	
+public:
+	TableSaling();
+	void init();
+	virtual ~TableSaling();
+
+protected:
+	virtual void save();
+	void on_save_clicked();
+	
+	Gtk::Label lbName;
+	Gtk::Entry inName;
+	Gtk::HBox boxName;
+};
+
 class TableServicies : public Gtk::TreeView
 {
 	
@@ -19,6 +44,8 @@ public:
 	TableServicies();	
 	void init();
 	virtual ~TableServicies();
+	
+	void load();
 	
 protected:
 	
@@ -36,6 +63,8 @@ private:
 	ModelColumns columns;
 	Gtk::ScrolledWindow scrolled;
 	Glib::RefPtr<Gtk::ListStore> tree_model;
+	mps::Connector connDB;
+	bool connDB_flag;
 };
 
 class SearchItem : public Gtk::ComboBox
@@ -87,16 +116,8 @@ protected:
 	
 private:
 	
-	Gtk::Frame capture;
-	
-	Gtk::Box boxCapture;
-	
-	Gtk::SpinButton inAmount;
-	//Gtk::Box itemBox;
-	SearchItem item;
-	Gtk::Entry inCost;
-	
-	mps::TableSaling table;
+		
+	TableSaling table;
 	
 };
 
@@ -135,18 +156,20 @@ private:
 class Mias : public mps::Restaurant
 {
 public:
+	Mias();
+	Mias(bool devel);
 	/**
 	*
 	**/
-	Mias(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade);
-	Mias(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade,bool);
+	//Mias(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade);
+	//Mias(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade,bool);
 	void init();
 	virtual ~Mias();
 	
 protected:
 	
 private:
-	Sales sales;
+	Sales sale;
 };
 
 

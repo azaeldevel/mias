@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+includedir=@includedir@
+
+Name: muposys-core
+Description: Multi-Porpuse Software System for Core
+Version: @VERSION@
+Requires: octetos-core
+Libs: -L${libdir} -lmuposys-core
+Cflags: -I${includedir}

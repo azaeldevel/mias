@@ -57,4 +57,4 @@ UPDATE CatalogItem SET presentation = 'Pz' WHERE item = 1008;
 UPDATE CatalogItem SET presentation = 'Pz' WHERE item = 1009;
 UPDATE CatalogItem SET presentation = 'Pz' WHERE item = 1010;
 
-
+UPDATE CatalogItem SET type = 'service'  WHERE item >= 1001 and item <= 1010;
