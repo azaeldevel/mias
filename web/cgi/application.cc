@@ -124,18 +124,29 @@ std::ostream& BodyApplication::operator >> (std::ostream& out)
 		out << "\t\t</div>\n";
 
 	out << "\t</div>\n";
-	
-	out << "\t<div id=\"working\">\n";		
+	if(params.station != Station::none)
 	{
+		out << "\t<div id=\"working\">\n";		
+		{
+			
+		}
+		out << "\t</div>\n";
 		
+		out << "\t<div id=\"commands\">\n";	
+		{
+			out << "\t<div id=\"left\">\n";		
+			{
+					
+			}
+			out << "\t</div>\n";
+			out << "\t<div id=\"right\">\n";		
+			{
+				out << "\t<a id=\"cmd\" onclick=\"cmdhref()\">Aceptar</a>";
+			}
+			out << "\t</div>\n";
+		}
+		out << "\t</div>\n";
 	}
-	out << "\t</div>\n";
-	
-	out << "\t<div id=\"commands\">\n";	
-	{
-		out << "<a id=\"cmd\" onclick=\"cmdhref()\"  href=\"application.cgi\">Aceptar</a>";
-	}
-	out << "\t</div>\n";
 	return out;
 }
 void BodyApplication::set(mps::Connector& c)
@@ -151,12 +162,9 @@ Application::~Application()
 }
 void Application::init()
 {
-	head.charset("UTF-8");
-	head.responsive("viewport","width=device-width, initial-scale=1");
-	head.css("/css/Mkos-Big-Sur/appearance/muposys.css");
-	head.css("/css/Mkos-Big-Sur/icons/application.css");
-	((BodyApplication&)*body).set(connDB);	
+	head.css("/css/mias.css");	
 	head.addscript("/js/mias.js");
+	((BodyApplication&)*body).set(connDB);
 }
 Application::Application(BodyApplication& b) : mps::Application(b)
 {

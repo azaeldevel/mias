@@ -31,11 +31,8 @@ cgi_DATA=
 htmldir=$(bindir)
 html_DATA=
 
-html_user_mang_permissionsdir=$(bindir)/user-mang/permissions
-html_user_mang_permissions_DATA=
-
-cssdir=$(bindir)/css/Mkos-Big-Sur
-css_DATA=
+cssdir=$(bindir)/css/
+css_DATA=html/css/mias.css
 
 css_appearancedir=$(bindir)/css/Mkos-Big-Sur/appearance
 css_appearance_DATA=
