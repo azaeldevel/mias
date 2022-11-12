@@ -18,23 +18,23 @@
  
 #include "Exception.hh"
 
-namespace mps
+namespace mias
 {
 	
 Exception::Exception()
 {
 
 }
-Exception::Exception(unsigned int c) : oct::core::v3::Exception(c)
+Exception::Exception(unsigned int c) : mps::Exception(c)
 {
 }
-Exception::Exception(unsigned int c,const char* s) : oct::core::v3::Exception(c,s)
+Exception::Exception(unsigned int c,const char* s) : mps::Exception(c,s)
 {
 }
-Exception::Exception(unsigned int c,const char* f, unsigned int l) : oct::core::v3::Exception(c,f,l)
+Exception::Exception(unsigned int c,const char* f, unsigned int l) : mps::Exception(c,f,l)
 {
 }
-Exception::Exception(unsigned int c,const char* s,const char* f, unsigned int l) : oct::core::v3::Exception(c,s,f,l)
+Exception::Exception(unsigned int c,const char* s,const char* f, unsigned int l) : mps::Exception(c,s,f,l)
 {
 }
 

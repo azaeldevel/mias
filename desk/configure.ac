@@ -13,7 +13,7 @@ LT_INIT
 
 PKG_CHECK_MODULES(GTK, [gtkmm-3.0])
 
-PKG_CHECK_MODULES(MUPOSYS, [muposys-apidb muposys-desk])
+PKG_CHECK_MODULES(MUPOSYS, [muposys-desk])
 
 dnl AC_DEFINE_UNQUOTED([MUPOSYS], [true] ,[Signal for local compilation])
 

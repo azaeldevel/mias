@@ -1,10 +1,19 @@
 
-#ifndef MUPOSYS_CORE_CORE_HH
-#define MUPOSYS_CORE_CORE_HH
+#ifndef MIAS_CORE_CORE_HH
+#define MIAS_CORE_CORE_HH
 
-namespace mps
+namespace mias
 {
-	
+	enum class ServiceStep
+	{
+		none,
+		created,
+		working,
+		retarded,
+		cooked,
+		waiting,
+		delivered
+	};
 }
 
 #endif

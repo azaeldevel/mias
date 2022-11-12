@@ -1,11 +1,13 @@
 
-AC_INIT(muposys-core, 0.1.0, azael.devel@gmail.com)
+AC_INIT(mias-core, 0.1.0, azael.devel@gmail.com)
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([1.11])
 AM_SILENT_RULES([yes])
 AC_PROG_CXX
 
 LT_INIT
+
+PKG_CHECK_MODULES(MUPOSYS, [cgicc muposys-core])
 
 AM_CONDITIONAL(LINUX_ARCH, false)
 AM_CONDITIONAL(LINUX_DEBIAN, false)
@@ -24,10 +26,10 @@ esac
 
 AC_ARG_ENABLE([tdd],[AS_HELP_STRING([--enable-tdd],[Enable Test-Drive Developing mode)])])
 if test "x$enable_tdd" = "xyes"; then 
-	AM_CONDITIONAL(MUPOSYS_DESK_ENABLE_TDD, true)
+	AM_CONDITIONAL(MIAS_DESK_ENABLE_TDD, true)
 	PKG_CHECK_MODULES(CUNIT, [cunit])
 else
-	AM_CONDITIONAL(MUPOSYS_DESK_ENABLE_TDD, false)
+	AM_CONDITIONAL(MIAS_DESK_ENABLE_TDD, false)
 fi
 
 AM_CONDITIONAL(OCTETOS_DB_MEDIUMWORD,false)
@@ -57,13 +59,8 @@ case $enableval in
 esac
 
 
-
-
-
-
-
 AC_OUTPUT([
 Makefile
 src/Makefile
-src/muposys-core.pc
+src/mias-core.pc
 ])

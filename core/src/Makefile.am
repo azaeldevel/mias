@@ -9,14 +9,27 @@ AM_CFLAGS =\
 	 -g
 
 
-lib_LTLIBRARIES = libmuposys-core.la
+lib_LTLIBRARIES = libmias-core.la
 
-libmuposys_core_la_CXXFLAGS = $(FLAGS) 
-libmuposys_core_la_LDFLAGS = 
-libmuposys_core_la_SOURCES = Exception.cc
-libmuposys_core_la_LIBADD =  $(LIBS)
+LIBS = $(OCTETOS_DB_LIBS) $(MUPOSYS_LIBS)
+FLAGS = $(OCTETOS_DB_CFLAGS) $(MUPOSYS_CFLAGS)
+if MIAS_DESK_ENABLE_TDD
+FLAGS += -DMIAS_DESK_ENABLE_TDD
+endif
+if OCTETOS_DB_MEDIUMWORD
+FLAGS += -DOCTETOS_DB_MEDIUMWORD
+endif
+if DATABASE_ENGINE_MARIA
+FLAGS += -DDATABASE_ENGINE_MARIA
+endif
+
+
+libmias_core_la_CXXFLAGS = $(FLAGS) 
+libmias_core_la_LDFLAGS = 
+libmias_core_la_SOURCES = Exception.cc
+libmias_core_la_LIBADD =  $(LIBS)
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = muposys-core.pc
-muposys_includedir = $(includedir)/muposys
-muposys_include_HEADERS = core.hh Exception.hh
+pkgconfig_DATA = mias-core.pc
+mias_includedir = $(includedir)/mias/core
+mias_include_HEADERS = core.hh Exception.hh

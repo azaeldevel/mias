@@ -50,7 +50,7 @@ AM_CONDITIONAL(NATIVE_WIN32, test x"$native_win32" = "xyes")
 LT_INIT
 
 
-PKG_CHECK_MODULES(MUPOSYS, [muposys-apidb muposys-cgi])
+PKG_CHECK_MODULES(MUPOSYS, [muposys-core muposys-cgi])
 
 
 AC_ARG_ENABLE([os],[AS_HELP_STRING([--enable-os],[Enable configuration for particular OS])])

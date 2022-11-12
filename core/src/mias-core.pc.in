@@ -6,8 +6,8 @@ datadir=@datadir@
 includedir=@includedir@
 
 Name: muposys-core
-Description: Multi-Porpuse Software System for Core
+Description: Multi-Porpuse Software System for Mias core
 Version: @VERSION@
-Requires: octetos-core
-Libs: -L${libdir} -lmuposys-core
+Requires: muposys-core
+Libs: -L${libdir} -lmias-core
 Cflags: -I${includedir}

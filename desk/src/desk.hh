@@ -5,7 +5,7 @@
 #include <gtkmm.h>
 #include <glibmm/i18n.h>
 
-#include <muposys/desk.hh>
+#include <muposys/desk/desk.hh>
 
 
 

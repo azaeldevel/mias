@@ -28,5 +28,6 @@ bin/
 *.depend
 *.layout
 .objs
+Optimized/
 
 DATOSSR.bk

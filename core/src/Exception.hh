@@ -1,6 +1,6 @@
 
-#ifndef MUPOSYS_EXCEPTION_HH
-#define MUPOSYS_EXCEPTION_HH
+#ifndef MIAS_EXCEPTION_HH
+#define MIAS_EXCEPTION_HH
 
 /*
  * Copyright (C) 2022 Azael R. <azael.devel@gmail.com>
@@ -36,17 +36,17 @@
 #endif
 
 #if defined(__linux__)
-    #include <octetos/core/Exception-v3.hh>
+    #include <muposys/core/Exception.hh>
 #elif defined(_WIN32) || defined(_WIN64)
     #include <Exception-v3.hh>
 #else
 	#error "Plataforma desconocida"
 #endif
 
-namespace mps
+namespace mias
 {
 
-class Exception : public oct::core::v3::Exception
+class Exception : public mps::Exception
 {
 public:
 	enum Errors
@@ -60,14 +60,26 @@ public:
 
 public:
 	Exception();
+	Exception(const Exception&);
+	Exception(Exception&&);
+	
 	Exception(unsigned int code);
-	Exception(unsigned int code,const char* subject);
 	Exception(unsigned int code,const char* filename, unsigned int line);
-	Exception(unsigned int code,const char* subject,const char* filename, unsigned int line);
+	
+	Exception(unsigned int code,const char* message);
+	Exception(unsigned int code,const char* message,const char* filename, unsigned int line);
 
-	virtual const char* what () const throw ();
-
+	Exception(const std::string& message);
+	Exception(const std::string& message,const char* filename, unsigned int line);
+	
+	Exception(unsigned int code,const std::string& message);
+	Exception(unsigned int code,const std::string& message,const char* filename, unsigned int line);
+	~Exception();
+	
+	const char* what () const throw ();
+	
 private:
+	
 };
 
 }
