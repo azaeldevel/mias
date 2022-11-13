@@ -1,12 +1,12 @@
 
-function cmdhref() 
+function stephref() 
 {  
   const urlParams = new URLSearchParams(window.location.search);
   var station = urlParams.get("station");
   
   var orderSelected = document.getElementById("orderList").value;
-  var ref = "?station=" + station + "&order=" + orderSelected;
+  var ref = "?station=" + station + "&order=" + orderSelected + "&step=accept";
   
-  var cmd = document.getElementById("cmd");
-  cmd.href = ref;
+  var stepcmd = document.getElementById("stepcmd");
+  stepcmd.href = ref;
 }

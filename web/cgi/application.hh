@@ -5,6 +5,8 @@
 #include <muposys/web/application.hh>
 #include <map>
 
+#include <mias/core/core.hh>
+
 namespace mps
 {
 	
@@ -24,32 +26,27 @@ private:
 namespace mias
 {
 
-void params_get(std::map<std::string, std::string>&);
-	
-enum class Station
-{
-	none,
-	pizza,
-	stove,
-	oven,
-};
+//void params_get(std::map<std::string, std::string>&);
+const char* step(steping::Pizza);
 
 struct GetParams : public mps::GetParams
 {
 	Station station;
 	long order;
+	std::string step;
 	
 	GetParams();
 };
 
+
 class BodyApplication : public mps::BodyApplication
 {
 private:
-	GetParams params;
+	const GetParams& params;
 	mps::Connector* connDB;
 	
 public:
-	BodyApplication();
+	BodyApplication(const GetParams& params);
 	virtual std::ostream& operator >> (std::ostream& out);
 	virtual void programs(std::ostream& out);
 	void programs_pizza(std::ostream& out);
@@ -64,16 +61,16 @@ protected:
 class Application : public mps::Application
 {
 public:
-	virtual std::ostream& operator >> (std::ostream& out);
+	//virtual std::ostream& operator >> (std::ostream& out);
 	virtual int main(std::ostream& out = std::cout);
 	
 	void init();
-	Application(BodyApplication&);
-	Application(BodyApplication&,const std::string& title);
+	Application(BodyApplication&,const GetParams& params);
+	Application(BodyApplication&,const std::string& title,const GetParams& params);
 	virtual ~Application();
 	
 private:	
-	GetParams params;
+	const GetParams& params;
 protected:
 	
 };

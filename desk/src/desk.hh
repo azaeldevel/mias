@@ -6,20 +6,20 @@
 #include <glibmm/i18n.h>
 
 #include <muposys/desk/desk.hh>
-
+#include <mias/core/core.hh>
 
 
 namespace mias
 {
 
-enum class ServiceProgress
+/*enum class ServiceProgress
 {
 	unknow,
 	created,
 	working,
 	delayed,
 	finalized	
-};
+};*/
 	
 class TableSaling : public mps::TableSaling
 {	

@@ -523,7 +523,13 @@ void TableSaling::save()
 		dlg.run();
 		return;
 	}
-	
+	if(not service.upStep(connDB,(short)ServiceStep::created))
+	{
+		Gtk::MessageDialog dlg("Error detectado en acces a BD",true,Gtk::MESSAGE_ERROR);
+		dlg.set_secondary_text("Durante la escritura de Stoking.");
+		dlg.run();
+		return;
+	}
 	delete operation;
 	
 	connDB.commit();	

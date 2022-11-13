@@ -14,6 +14,31 @@ namespace mias
 		waiting,
 		delivered
 	};
+	
+	enum class Station
+	{
+		none,
+		pizza,
+		stove,
+		oven,
+	};
+	
+	namespace steping
+	{
+		enum class Pizza
+		{
+			none,
+			accept,
+			accepted,
+			preparing,
+			prepared,
+			baking,//en el horno
+			baked,
+			finalized,
+		};
+		
+		
+	}
 }
 
 #endif
