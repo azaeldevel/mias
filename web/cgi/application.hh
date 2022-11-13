@@ -5,6 +5,22 @@
 #include <muposys/web/application.hh>
 #include <map>
 
+namespace mps
+{
+	
+class GetParams : public std::map<std::string, std::string>
+{
+	
+public:
+	GetParams();
+	
+	const char* find(const char*)const;
+private:
+	void build();
+	
+};
+	
+}
 namespace mias
 {
 
@@ -18,13 +34,14 @@ enum class Station
 	oven,
 };
 
-struct GetParams
+struct GetParams : public mps::GetParams
 {
 	Station station;
 	long order;
 	
 	GetParams();
 };
+
 class BodyApplication : public mps::BodyApplication
 {
 private:

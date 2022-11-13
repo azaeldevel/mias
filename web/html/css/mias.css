@@ -1,0 +1,36 @@
+
+body > #working
+{
+	display: block;
+}
+body > #commands
+{
+	position: absolute;
+	bottom: 0;
+}
+	
+	
+@media screen and (max-width : 299px)
+{
+	
+}
+@media screen and (min-width: 300px) and (max-width : 599px)
+{
+	
+}
+@media screen and (min-width: 600px) and (max-width : 899px)
+{
+	
+}
+@media screen and (min-width: 900px) and (max-width : 1199px)
+{
+	
+}
+@media screen and (min-width: 1200px)
+{
+}
+
+
+
+
+

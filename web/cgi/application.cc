@@ -8,16 +8,56 @@
 #include "application.hh"
 
 
+namespace mps
+{
+	GetParams::GetParams()
+	{
+		build();
+	}
+	
+	
+	const char* GetParams::find(const char* k) const
+	{
+		const_iterator it = std::map<std::string, std::string>::find(k);
+		
+		if(it != end()) return it->second.c_str();
+		
+		return NULL;
+	}
+	void GetParams::build()
+	{
+		std::string qs, str,param_pair,param,name,value,param_element;
+		qs = getenv("QUERY_STRING");
+		std::stringstream sqs(qs);
+		
+		//std::cout << qs << "\n";
+		std::getline(sqs,str,'?');
+		//std::cout << str << "\n";
+		std::stringstream sparam_list(str),sparam_pair;
+		while(std::getline(sparam_list,param_pair,'&'))
+		{
+			sparam_pair << param_pair;
+			std::getline(sparam_pair,name,'=');
+			//std::cout << " name : " << name << "\n";
+			std::getline(sparam_pair,value,'=');
+			//std::cout << " value : " << value << "\n";		
+			insert(make_pair(name,value));
+		}
+	}
+	
+	
+	
+}
 namespace mias
 {
 
 	GetParams::GetParams()
 	{
-		std::map<std::string, std::string> params;
-		params_get(params);
-		
-		std::map<std::string, std::string>::iterator it = params.find("station");		
-		if(it->second.compare("pizza") == 0)
+		//std::map<std::string, std::string> params;
+		//params_get(params);
+		const char* param = find("station");
+		//std::map<std::string, std::string>::iterator it = params.find("station");
+		if(param)
 		{
 			station = mias::Station::pizza;
 		}
@@ -25,7 +65,6 @@ namespace mias
 		{
 			station = mias::Station::none;
 		}
-		
 		
 	}
 	
