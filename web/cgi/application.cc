@@ -156,6 +156,12 @@ namespace mias
 			step(param,(steping::Pizza&)actual_step);
 		}
 		
+		param = find("item");
+		if(param)
+		{
+			item = std::stol(param);
+		}
+		
 	}
 	
 	
@@ -185,18 +191,21 @@ void BodyApplication::programs_pizza(std::ostream& out)
 	{
 		std::cout << "param : " << p.first << " -> " << p.second << "\n";
 	}*/
-	if(params.actual_step == (short)steping::Pizza::none)
+	if(params.actual_step == (short)steping::Pizza::none and params.order == -1)
 	{
 		out << "\t\t\t<div id=\"order\">\n";
 		{
-			out << "\t\t\t\t<select name=\"order\" id=\"orderList\">\n";
+			out << "\t\t\t\t<select name=\"order\" id=\"orderList\" onchange=\"accepthref()\">\n";
 			{
-				out << "\t\t\t\t\t<option value=\"next\">next</option>\n";
 				std::string where = "step = ";
 				where += std::to_string((int)ServiceStep::created);
 				std::vector<muposysdb::MiasService*>* lstService = muposysdb::MiasService::select(*connDB,where,0,'A');
 				if(lstService)
 				{
+					if(lstService->size() > 0)
+					{
+						out << "\t\t\t\t\t<option value=\"next\">next</option>\n";						
+					}
 					for(auto p : *lstService)
 					{
 						p->downName(*connDB);
@@ -213,7 +222,7 @@ void BodyApplication::programs_pizza(std::ostream& out)
 		}
 		out << "\t\t\t</div>\n";
 	}
-	else if(params.actual_step == (short)steping::Pizza::accepted)
+	else if(params.actual_step == (short)steping::Pizza::none and params.order > 0)
 	{
 		out << "\t\t\t<div id=\"order\">\n";
 		{
@@ -223,14 +232,17 @@ void BodyApplication::programs_pizza(std::ostream& out)
 		
 		out << "\t\t\t<div id=\"item\">\n";
 		{
-			out << "\t\t\t\t<select name=\"order\" id=\"orderList\">\n";
+			out << "\t\t\t\t<select name=\"item\" id=\"itemList\" onchange=\"acceptinghref()\">\n";
 			{
-				out << "\t\t\t\t\t<option value=\"next\">next</option>\n";
 				std::string where = "operation = ";
 				where += std::to_string(params.order);
 				std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
 				if(lstProgress)
 				{
+					if(lstProgress->size() > 0)
+					{
+						out << "\t\t\t\t\t<option value=\"next\">next</option>\n";						
+					}
 					for(auto p : *lstProgress)
 					{
 						p->getStocking().downItem(*connDB);
@@ -238,16 +250,30 @@ void BodyApplication::programs_pizza(std::ostream& out)
 						p->getStocking().getItem().downBrief(*connDB);
 						out << "\t\t\t\t\t<option value=\"" << p->getStocking().getStocking() << "\">" << p->getStocking().getItem().getBrief() << "</option>\n";
 					}
-					/*for(auto p : *lstProgress)
+					for(auto p : *lstProgress)
 					{
 							delete p;
 					}
-					delete lstProgress;*/
+					delete lstProgress;
 				}
 			}
 			out << "\t\t\t\t</select>\n";
 		}
 		out << "\t\t\t</div>\n";
+	}	
+	else if(params.actual_step == (short)steping::Pizza::accepted)
+	{
+		out << "\t\t\t<div id=\"order\">\n";
+		{
+			out << "\t\t\t\tOrden : " << params.order << " \n";
+		}
+		out << "\t\t\t</div>\n";
+		out << "\t\t\t<div id=\"item\">\n";
+		{
+			out << "\t\t\t\tItem : " << params.item << " \n";
+		}
+		out << "\t\t\t</div>\n";
+		
 	}
 	
 }
@@ -294,9 +320,9 @@ std::ostream& BodyApplication::operator >> (std::ostream& out)
 					
 			}
 			out << "\t</div>\n";
-			out << "\t<div id=\"right\" class=\"button\">\n";		
+			out << "\t<div id=\"right\">\n";		
 			{
-				out << "\t<a id=\"stepcmd\" onclick=\"stephref()\">Aceptar</a>";
+				//out << "\t<a id=\"stepcmd\" onclick=\"stephref()\">Aceptar</a>";
 			}
 			out << "\t</div>\n";
 		}
@@ -372,6 +398,8 @@ int Application::main(std::ostream& out)
 				strgets += std::to_string(params.order);
 			}
 			strgets += "&step=accepted";
+			strgets += "&item=";
+			strgets += std::to_string(params.item);
 			std::string url = "/application.cgi?";
 			url += strgets;
 			head.redirect(0,url.c_str());

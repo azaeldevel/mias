@@ -19,7 +19,7 @@ body > #commands > #right
 	float : right;
 	width: 50%;
 	border-style: solid;
-	background-color: orange;
+	background-color: brown;
 	margin : 5px;
 	padding : 5px;
 }
@@ -37,7 +37,10 @@ body > #commands > #right > #stepcmd
   border: none;
   cursor: pointer;
 }
-
+body > #menu > #programs > div
+{
+	color : inherit;
+}
 
 @media screen and (max-width : 299px)
 {
@@ -57,6 +60,10 @@ body > #commands > #right > #stepcmd
 }
 @media screen and (min-width: 1200px)
 {
+	body > #menu > #programs > div
+	{
+		min-width : 20%;
+	}
 }
 
 

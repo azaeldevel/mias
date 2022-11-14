@@ -36,6 +36,7 @@ struct GetParams : public mps::GetParams
 	Station station;
 	long order;
 	short actual_step;
+	long item;
 	
 	GetParams();
 };
