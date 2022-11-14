@@ -1,6 +1,6 @@
 
-#ifndef MIAS_EXCEPTION_HH
-#define MIAS_EXCEPTION_HH
+#ifndef MIAS_CORE_EXCEPTION_HH
+#define MIAS_CORE_EXCEPTION_HH
 
 /*
  * Copyright (C) 2022 Azael R. <azael.devel@gmail.com>
@@ -38,7 +38,7 @@
 #if defined(__linux__)
     #include <muposys/core/Exception.hh>
 #elif defined(_WIN32) || defined(_WIN64)
-    #include <Exception-v3.hh>
+    #include <Exception.hh>
 #else
 	#error "Plataforma desconocida"
 #endif

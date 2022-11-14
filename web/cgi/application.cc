@@ -3,7 +3,8 @@
 #include <cstring> 
 #include <sstream>
 #include <vector>
-
+#include <cgicc/CgiEnvironment.h>
+#include <cgicc/Cgicc.h>
 
 #include "application.hh"
 
@@ -75,7 +76,50 @@ namespace mias
 		
 		return "unknow";
 	}
+	void step(const char* str, steping::Pizza& step)
+	{
+		if(strcmp(str,"none") == 0)
+		{
+			step = steping::Pizza::none;
+		}
+		else if(strcmp(str,"accept") == 0)
+		{
+			step = steping::Pizza::accept;
+		}
+		else if(strcmp(str,"accepted") == 0)
+		{
+			step = steping::Pizza::accepted;
+		}
+		else if(strcmp(str,"preparing") == 0)
+		{
+			step = steping::Pizza::preparing;
+		}
+		else if(strcmp(str,"baking") == 0)
+		{
+			step = steping::Pizza::baking;
+		}
+		else if(strcmp(str,"baked") == 0)
+		{
+			step = steping::Pizza::baked;
+		}
+		else if(strcmp(str,"finalized") == 0)
+		{
+			step = steping::Pizza::finalized;
+		}
+	}
 	
+	const char* station(Station s)
+	{
+		switch(s)
+		{
+			case Station::none: return "none";	
+			case Station::pizza: return "pizza";	
+			case Station::stove: return "stove";	
+			case Station::oven: return "oven";
+		}
+		
+		return "unknow";
+	}
 	
 	GetParams::GetParams()
 	{
@@ -109,7 +153,7 @@ namespace mias
 		param = find("step");
 		if(param)
 		{
-			step = param;
+			step(param,(steping::Pizza&)actual_step);
 		}
 		
 	}
@@ -141,7 +185,7 @@ void BodyApplication::programs_pizza(std::ostream& out)
 	{
 		std::cout << "param : " << p.first << " -> " << p.second << "\n";
 	}*/
-	if(params.step.compare(step(steping::Pizza::none)) == 0)
+	if(params.actual_step == (short)steping::Pizza::none)
 	{
 		out << "\t\t\t<div id=\"order\">\n";
 		{
@@ -169,7 +213,7 @@ void BodyApplication::programs_pizza(std::ostream& out)
 		}
 		out << "\t\t\t</div>\n";
 	}
-	else if(params.step.compare(step(steping::Pizza::accept)) == 0)
+	else if(params.actual_step == (short)steping::Pizza::accept)
 	{
 		
 	}
@@ -294,6 +338,59 @@ int Application::main(std::ostream& out)
 		return EXIT_SUCCESS;
 	}
 	
+	switch((steping::Pizza)params.actual_step)
+	{
+		case steping::Pizza::none:
+			
+			break;
+		case steping::Pizza::accept:
+		{
+			//out << "Procesando solicitud de acceptacion...\n";
+			long order = pizza_accepting();
+			cgicc::Cgicc cgi;
+			//cgicc::CgiInput:
+			const cgicc::CgiEnvironment& cgienv = cgi.getEnvironment();
+			
+			std::string strgets = "station=";
+			strgets += station(params.station);
+			strgets += "&order=";
+			if(params.order == 0)
+			{
+				strgets += std::to_string(order);
+			}
+			else
+			{
+				strgets += std::to_string(params.order);
+			}
+			strgets += "&step=accepted";
+			std::string url = "/application.cgi?";
+			url += strgets;
+			head.redirect(0,url.c_str());
+			//out << "url : " << url << "<br>\n";
+			//out << "done<br>\n";
+			head >> out;
+			return EXIT_SUCCESS;
+		}
+		case steping::Pizza::accepted:
+			
+			break;
+		case steping::Pizza::preparing:
+			
+			break;
+		case steping::Pizza::prepared:
+			
+			break;
+		case steping::Pizza::baking:
+			
+			break;
+		case steping::Pizza::baked:
+			
+			break;
+		case steping::Pizza::finalized:
+			
+			break;		
+	}
+		
 	(*this) >> out;
 
 	return EXIT_SUCCESS;
@@ -323,7 +420,45 @@ void params_get(std::map<std::string, std::string>& lst)
 }*/
 
 
-
+long Application::pizza_accepting()
+{
+	long order = params.order;
+	std::string where = "step = ";
+	where += std::to_string((int)ServiceStep::created);
+	if(params.order > 0)
+	{
+		where += " and operation = ";
+		where += std::to_string(params.order);
+	}
+	std::vector<muposysdb::MiasService*>* lstService = muposysdb::MiasService::select(connDB,where,1,'A');
+	if(lstService)
+	{
+		for(auto s : *lstService)
+		{
+			s->downStep(connDB);
+		}
+		
+		if(lstService->size() == 1)
+		{
+			order = lstService->front()->getOperation().getOperation().getID();
+			lstService->front()->upStep(connDB,(short)ServiceStep::working);
+		}
+		else
+		{
+			//throw Exception((unsigned int)Exception::DB_READ_FAIL,__FILE__,__LINE__);
+		}
+		
+		for(auto s : *lstService)
+		{
+			delete s;
+		}
+		delete lstService;
+		
+		connDB.commit();
+	}
+	
+	return order;
+}
 
 
 

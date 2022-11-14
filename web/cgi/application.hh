@@ -28,12 +28,14 @@ namespace mias
 
 //void params_get(std::map<std::string, std::string>&);
 const char* step(steping::Pizza);
+void step(const char* str, steping::Pizza& step);
+const char* station(Station s);
 
 struct GetParams : public mps::GetParams
 {
 	Station station;
 	long order;
-	std::string step;
+	short actual_step;
 	
 	GetParams();
 };
@@ -71,6 +73,9 @@ public:
 	
 private:	
 	const GetParams& params;
+	
+	long pizza_accepting();
+	
 protected:
 	
 };
