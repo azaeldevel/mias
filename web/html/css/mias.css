@@ -7,9 +7,38 @@ body > #commands
 {
 	position: absolute;
 	bottom: 0;
+	width: 100%;
+}
+body > #commands > #left
+{
+	float : left;
+	width: 50%;
+}
+body > #commands > #right
+{
+	float : right;
+	width: 50%;
+	border-style: solid;
+	background-color: orange;
+	margin : 5px;
+	padding : 5px;
+}
+body > #commands > #right > *
+{
+	float : right;
 }
 	
-	
+body > #commands > #right > #stepcmd 
+{
+  background-color: green;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+}
+
+
 @media screen and (max-width : 299px)
 {
 	

@@ -213,34 +213,43 @@ void BodyApplication::programs_pizza(std::ostream& out)
 		}
 		out << "\t\t\t</div>\n";
 	}
-	else if(params.actual_step == (short)steping::Pizza::accept)
+	else if(params.actual_step == (short)steping::Pizza::accepted)
 	{
-		
-	}
-	/*out << "\t\t\t<div id=\"item\">";
-	{
-		out << "<select name=\"order\" id=\"orderList\">\n";
+		out << "\t\t\t<div id=\"order\">\n";
 		{
-			out << "<option value=\"next\">next</option>";
-			
-			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,"",0,'A');
-			if(lstProgress)
-			{
-				for(auto p : *lstProgress)
-				{
-					p->getStocking().getItem().downNumber(*connDB);
-					out << "<option value=\"" << p->getStocking().getStocking() << "\">" << p->getStocking().getItem().getNumber() << "</option>\n";
-				}
-				for(auto p : *lstProgress)
-				{
-						delete p;
-				}
-				delete lstProgress;
-			}
+			out << "\t\t\t\tOrden : " << params.order << " \n";
 		}
-		out << "</select>\n";
+		out << "\t\t\t</div>\n";
+		
+		out << "\t\t\t<div id=\"item\">\n";
+		{
+			out << "\t\t\t\t<select name=\"order\" id=\"orderList\">\n";
+			{
+				out << "\t\t\t\t\t<option value=\"next\">next</option>\n";
+				std::string where = "operation = ";
+				where += std::to_string(params.order);
+				std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
+				if(lstProgress)
+				{
+					for(auto p : *lstProgress)
+					{
+						p->getStocking().downItem(*connDB);
+						p->getStocking().getItem().downNumber(*connDB);
+						p->getStocking().getItem().downBrief(*connDB);
+						out << "\t\t\t\t\t<option value=\"" << p->getStocking().getStocking() << "\">" << p->getStocking().getItem().getBrief() << "</option>\n";
+					}
+					/*for(auto p : *lstProgress)
+					{
+							delete p;
+					}
+					delete lstProgress;*/
+				}
+			}
+			out << "\t\t\t\t</select>\n";
+		}
+		out << "\t\t\t</div>\n";
 	}
-	out << "</div>\n";*/
+	
 }
 void BodyApplication::panel(std::ostream& out) 
 {
@@ -285,7 +294,7 @@ std::ostream& BodyApplication::operator >> (std::ostream& out)
 					
 			}
 			out << "\t</div>\n";
-			out << "\t<div id=\"right\">\n";		
+			out << "\t<div id=\"right\" class=\"button\">\n";		
 			{
 				out << "\t<a id=\"stepcmd\" onclick=\"stephref()\">Aceptar</a>";
 			}
