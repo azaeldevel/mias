@@ -69,6 +69,7 @@ namespace mias
 			case steping::Pizza::prepare: return "prepare";
 			case steping::Pizza::preparing: return "preparing";
 			case steping::Pizza::prepared: return "prepared";
+			case steping::Pizza::bake: return "bake";
 			case steping::Pizza::baking: return "baking";
 			case steping::Pizza::baked: return "baked";
 			case steping::Pizza::finalized: return "finalized";		
@@ -87,6 +88,7 @@ namespace mias
 			case steping::Pizza::prepare: return "Preparar";
 			case steping::Pizza::preparing: return "Preparando";
 			case steping::Pizza::prepared: return "Preparado";
+			case steping::Pizza::bake: return "Hornear";
 			case steping::Pizza::baking: return "Horneando";
 			case steping::Pizza::baked: return "Horneado";
 			case steping::Pizza::finalized: return "Finalizado";		
@@ -144,6 +146,14 @@ namespace mias
 		else if(strcmp(str,"preparing") == 0)
 		{
 			step = steping::Pizza::preparing;
+		}
+		else if(strcmp(str,"prepared") == 0)
+		{
+			step = steping::Pizza::prepared;
+		}
+		else if(strcmp(str,"bake") == 0)
+		{
+			step = steping::Pizza::bake;
 		}
 		else if(strcmp(str,"baking") == 0)
 		{
@@ -251,14 +261,16 @@ void BodyApplication::programs_pizza(std::ostream& out)
 		{
 			out << "\t\t\t\t<select name=\"order\" id=\"orderList\" onchange=\"accepthref()\">\n";
 			{
-				std::string where = "step = ";
+				std::string where = "step >= " ;
 				where += std::to_string((int)ServiceStep::created);
+				where += " and step < ";
+				where += std::to_string((int)ServiceStep::delivered);
 				std::vector<muposysdb::MiasService*>* lstService = muposysdb::MiasService::select(*connDB,where,0,'A');
 				if(lstService)
 				{
 					if(lstService->size() > 0)
 					{
-						out << "\t\t\t\t\t<option value=\"next\">next</option>\n";						
+						out << "\t\t\t\t\t<option value=\"next\">next</option>\n";
 					}
 					for(auto p : *lstService)
 					{
@@ -290,12 +302,14 @@ void BodyApplication::programs_pizza(std::ostream& out)
 			{
 				std::string where = "operation = ";
 				where += std::to_string(params.order);
+				where += " and step =";
+				where += std::to_string((short)steping::Pizza::none);
 				std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
 				if(lstProgress)
 				{
 					if(lstProgress->size() > 0)
 					{
-						out << "\t\t\t\t\t<option value=\"next\">next</option>\n";						
+						out << "\t\t\t\t\t<option value=\"next\">next</option>\n";
 					}
 					for(auto p : *lstProgress)
 					{
@@ -520,6 +534,7 @@ std::ostream& BodyApplication::operator >> (std::ostream& out)
 						break;
 					case steping::Pizza::accepted:
 						out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPrepare()\">Preparar</a>";
+						out << "\t<a id=\"cmdBaking\" class=\"cmd\" onclick=\"toBaking()\">Hornear</a>";
 						break;
 					case steping::Pizza::preparing: 
 						out << "\t<a id=\"cmdPrepared\" class=\"cmd\" onclick=\"toPrepared()\">Preparada</a>";
@@ -527,6 +542,7 @@ std::ostream& BodyApplication::operator >> (std::ostream& out)
 						break;
 					case steping::Pizza::prepared: 
 						out << "\t<a id=\"cmdBaking\" class=\"cmd\" onclick=\"toBaking()\">Hornear</a>";
+						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";	
 						break;
 					case steping::Pizza::baking: 
 						out << "\t<a id=\"cmdBaked\" class=\"cmd\" onclick=\"toBaked()\">Horneada</a>";
@@ -536,7 +552,7 @@ std::ostream& BodyApplication::operator >> (std::ostream& out)
 						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";	
 						break;
 					case steping::Pizza::finalized:
-						
+						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
 						break;	
 					case steping::Pizza::cancel:
 						
@@ -626,15 +642,16 @@ int Application::main(std::ostream& out)
 			//out << "url : " << url << "<br>\n";
 			//out << "done<br>\n";
 			head >> out;
+			connDB.commit();
 			return EXIT_SUCCESS;
 		}
 		case steping::Pizza::accepted:
-			
+			pizza_steping(steping::Pizza::accepted);
 			break;
 		case steping::Pizza::prepare:
 		{
 			//out << "Procesando solicitud de acceptacion...\n";
-			pizza_preparing();
+			pizza_steping(steping::Pizza::prepare);
 			cgicc::Cgicc cgi;
 			//cgicc::CgiInput:
 			const cgicc::CgiEnvironment& cgienv = cgi.getEnvironment();
@@ -652,31 +669,39 @@ int Application::main(std::ostream& out)
 			//out << "url : " << url << "<br>\n";
 			//out << "done<br>\n";
 			head >> out;
+			connDB.commit();
 			return EXIT_SUCCESS;
 		}
 		case steping::Pizza::preparing:
-			
+			pizza_steping(steping::Pizza::prepared);
+			connDB.commit();
 			break;
 		case steping::Pizza::prepared:
-			
+			pizza_steping(steping::Pizza::prepared);
+			connDB.commit();
 			break;
 		case steping::Pizza::bake:
-			
+			pizza_steping(steping::Pizza::bake);
+			connDB.commit();
 			break;
 		case steping::Pizza::baking:
-			
+			pizza_steping(steping::Pizza::baking);
+			connDB.commit();
 			break;
 		case steping::Pizza::baked:
-			
+			pizza_steping(steping::Pizza::baked);
+			connDB.commit();
 			break;
 		case steping::Pizza::finalized:
-			
-			break;		
+			pizza_steping(steping::Pizza::finalized);
+			connDB.commit();
+			break;
 		case steping::Pizza::cancel:
-			
+			pizza_steping(steping::Pizza::cancel);
+			connDB.commit();
 			break;
 	}
-		
+	
 	(*this) >> out;
 
 	return EXIT_SUCCESS;
@@ -741,38 +766,11 @@ long Application::pizza_accepting()
 		delete lstService;
 	}
 	
-	long item = params.item;
-	std::string whereItem = "operation = ";
-	whereItem += std::to_string(params.order);
-	if(params.item > 0)
-	{
-		whereItem += " and stocking = ";
-		whereItem += std::to_string(params.item);
-	}
-	std::vector<muposysdb::Progress*>* lstItem = muposysdb::Progress::select(connDB,whereItem,0,'A');
-	if(lstItem)
-	{
-		if(lstItem->size() == 1)
-		{
-			lstItem->front()->upStep(connDB,(short)steping::Pizza::accepted);
-		}
-		else
-		{
-			//throw Exception((unsigned int)Exception::DB_READ_FAIL,__FILE__,__LINE__);
-		}
+	pizza_steping(steping::Pizza::accept);
 		
-		for(auto s : *lstItem)
-		{
-			delete s;
-		}
-		delete lstItem;		
-	}
-	
-	connDB.commit();
-	
 	return order;
 }
-void Application::pizza_preparing()
+/*void Application::pizza_preparing()
 {
 	std::string whereItem = "operation = ";
 	whereItem += std::to_string(params.order);	
@@ -797,7 +795,7 @@ void Application::pizza_preparing()
 		delete lstItem;		
 	}
 	connDB.commit();
-}
+}*/
 void Application::pizza_steping(steping::Pizza to_step)
 {
 	std::string whereItem = "operation = ";
@@ -822,7 +820,6 @@ void Application::pizza_steping(steping::Pizza to_step)
 		}
 		delete lstItem;		
 	}
-	connDB.commit();
 }
 
 }
