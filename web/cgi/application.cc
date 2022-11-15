@@ -66,6 +66,7 @@ namespace mias
 			case steping::Pizza::none: return "none";
 			case steping::Pizza::accept: return "accept";
 			case steping::Pizza::accepted: return "accepted";
+			case steping::Pizza::prepare: return "prepare";
 			case steping::Pizza::preparing: return "preparing";
 			case steping::Pizza::prepared: return "prepared";
 			case steping::Pizza::baking: return "baking";
@@ -83,7 +84,8 @@ namespace mias
 			case steping::Pizza::none: return "Ninguno";
 			case steping::Pizza::accept: return "Aceptar";
 			case steping::Pizza::accepted: return "Aceptado";
-			case steping::Pizza::preparing: return "Perparando";
+			case steping::Pizza::prepare: return "Preparar";
+			case steping::Pizza::preparing: return "Preparando";
 			case steping::Pizza::prepared: return "Preparado";
 			case steping::Pizza::baking: return "Horneando";
 			case steping::Pizza::baked: return "Horneado";
@@ -134,6 +136,10 @@ namespace mias
 		else if(strcmp(str,"accepted") == 0)
 		{
 			step = steping::Pizza::accepted;
+		}
+		else if(strcmp(str,"prepare") == 0)
+		{
+			step = steping::Pizza::prepare;
 		}
 		else if(strcmp(str,"preparing") == 0)
 		{
@@ -470,12 +476,73 @@ std::ostream& BodyApplication::operator >> (std::ostream& out)
 		{
 			out << "\t<div id=\"left\">\n";		
 			{
-					
+				switch((steping::Pizza)params.step)
+				{
+					case steping::Pizza::none: 
+						
+						break;
+					case steping::Pizza::accept:
+						
+						break;
+					case steping::Pizza::accepted:
+						
+						break;
+					case steping::Pizza::preparing: 
+						
+						break;
+					case steping::Pizza::prepared: 
+						
+						break;
+					case steping::Pizza::baking: 
+						
+						break;
+					case steping::Pizza::baked: 
+						
+						break;
+					case steping::Pizza::finalized:
+						
+						break;	
+					case steping::Pizza::cancel:
+						
+						break;
+				}
 			}
 			out << "\t</div>\n";
 			out << "\t<div id=\"right\">\n";		
 			{
-				//out << "\t<a id=\"stepcmd\" onclick=\"stephref()\">Aceptar</a>";
+				switch((steping::Pizza)params.step)
+				{
+					case steping::Pizza::none: 
+						
+						break;
+					case steping::Pizza::accept:
+						
+						break;
+					case steping::Pizza::accepted:
+						out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPrepare()\">Preparar</a>";
+						break;
+					case steping::Pizza::preparing: 
+						out << "\t<a id=\"cmdPrepared\" class=\"cmd\" onclick=\"toPrepared()\">Preparada</a>";
+						out << "\t<a id=\"cmdBaking\" class=\"cmd\" onclick=\"toBaking()\">Hornear</a>";
+						break;
+					case steping::Pizza::prepared: 
+						out << "\t<a id=\"cmdBaking\" class=\"cmd\" onclick=\"toBaking()\">Hornear</a>";
+						break;
+					case steping::Pizza::baking: 
+						out << "\t<a id=\"cmdBaked\" class=\"cmd\" onclick=\"toBaked()\">Horneada</a>";
+						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";	
+						break;
+					case steping::Pizza::baked: 
+						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";	
+						break;
+					case steping::Pizza::finalized:
+						
+						break;	
+					case steping::Pizza::cancel:
+						
+						break;
+				}
+				
 			}
 			out << "\t</div>\n";
 		}
@@ -564,10 +631,36 @@ int Application::main(std::ostream& out)
 		case steping::Pizza::accepted:
 			
 			break;
+		case steping::Pizza::prepare:
+		{
+			//out << "Procesando solicitud de acceptacion...\n";
+			pizza_preparing();
+			cgicc::Cgicc cgi;
+			//cgicc::CgiInput:
+			const cgicc::CgiEnvironment& cgienv = cgi.getEnvironment();
+			
+			std::string strgets = "station=";
+			strgets += to_string(params.station);
+			strgets += "&order=";
+			strgets += std::to_string(params.order);
+			strgets += "&step=preparing";
+			strgets += "&item=";
+			strgets += std::to_string(params.item);
+			std::string url = "/application.cgi?";
+			url += strgets;
+			head.redirect(0,url.c_str());
+			//out << "url : " << url << "<br>\n";
+			//out << "done<br>\n";
+			head >> out;
+			return EXIT_SUCCESS;
+		}
 		case steping::Pizza::preparing:
 			
 			break;
 		case steping::Pizza::prepared:
+			
+			break;
+		case steping::Pizza::bake:
 			
 			break;
 		case steping::Pizza::baking:
@@ -672,17 +765,64 @@ long Application::pizza_accepting()
 		{
 			delete s;
 		}
-		delete lstItem;
-		
+		delete lstItem;		
 	}
+	
 	connDB.commit();
 	
 	return order;
 }
-void pizza_restoring()
+void Application::pizza_preparing()
 {
-	
+	std::string whereItem = "operation = ";
+	whereItem += std::to_string(params.order);	
+	whereItem += " and stocking = ";
+	whereItem += std::to_string(params.item);
+	std::vector<muposysdb::Progress*>* lstItem = muposysdb::Progress::select(connDB,whereItem,0,'A');
+	if(lstItem)
+	{
+		if(lstItem->size() == 1)
+		{
+			lstItem->front()->upStep(connDB,(short)steping::Pizza::preparing);
+		}
+		else
+		{
+			//throw Exception((unsigned int)Exception::DB_READ_FAIL,__FILE__,__LINE__);
+		}
+		
+		for(auto s : *lstItem)
+		{
+			delete s;
+		}
+		delete lstItem;		
+	}
+	connDB.commit();
 }
-
+void Application::pizza_steping(steping::Pizza to_step)
+{
+	std::string whereItem = "operation = ";
+	whereItem += std::to_string(params.order);	
+	whereItem += " and stocking = ";
+	whereItem += std::to_string(params.item);
+	std::vector<muposysdb::Progress*>* lstItem = muposysdb::Progress::select(connDB,whereItem,0,'A');
+	if(lstItem)
+	{
+		if(lstItem->size() == 1)
+		{
+			lstItem->front()->upStep(connDB,(short)to_step);
+		}
+		else
+		{
+			//throw Exception((unsigned int)Exception::DB_READ_FAIL,__FILE__,__LINE__);
+		}
+		
+		for(auto s : *lstItem)
+		{
+			delete s;
+		}
+		delete lstItem;		
+	}
+	connDB.commit();
+}
 
 }

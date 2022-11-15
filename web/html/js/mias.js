@@ -42,3 +42,63 @@ function restoreStephref()
   
   window.location.href = ref;
 }
+function toPrepare() 
+{  
+  const urlParams = new URLSearchParams(window.location.search);
+  var station = urlParams.get("station");
+  var orderSelected = urlParams.get("order");  
+  var item = urlParams.get("item");  
+    
+  var cmdPreparing = document.getElementById("cmdPreparing");
+  var ref = "/application.cgi?station=" + station + "&order=" + orderSelected + "&step=prepare" + "&item="+ item; 
+  
+  cmdPreparing.href = ref;
+}
+function toPrepared() 
+{  
+  const urlParams = new URLSearchParams(window.location.search);
+  var station = urlParams.get("station");
+  var orderSelected = urlParams.get("order");  
+  var item = urlParams.get("item");  
+    
+  var cmdPrepared = document.getElementById("cmdPrepared");
+  var ref = "/application.cgi?station=" + station + "&order=" + orderSelected + "&step=prepared" + "&item="+ item; 
+  
+  cmdPrepared.href = ref;
+}
+function toBaking() 
+{  
+  const urlParams = new URLSearchParams(window.location.search);
+  var station = urlParams.get("station");
+  var orderSelected = urlParams.get("order");  
+  var item = urlParams.get("item");  
+    
+  var cmdBaking = document.getElementById("cmdBaking");
+  var ref = "/application.cgi?station=" + station + "&order=" + orderSelected + "&step=baking" + "&item="+ item; 
+  
+  cmdBaking.href = ref;
+}
+function toBaked() 
+{  
+  const urlParams = new URLSearchParams(window.location.search);
+  var station = urlParams.get("station");
+  var orderSelected = urlParams.get("order");  
+  var item = urlParams.get("item");  
+    
+  var cmdBaked = document.getElementById("cmdBaked");
+  var ref = "/application.cgi?station=" + station + "&order=" + orderSelected + "&step=baking" + "&item="+ item; 
+  
+  cmdBaked.href = ref;
+}
+function toFinalized() 
+{  
+  const urlParams = new URLSearchParams(window.location.search);
+  var station = urlParams.get("station");
+  var orderSelected = urlParams.get("order");  
+  var item = urlParams.get("item");  
+    
+  var cmdFinalized = document.getElementById("cmdFinalized");
+  var ref = "/application.cgi?station=" + station + "&order=" + orderSelected + "&step=baking" + "&item="+ item; 
+  
+  cmdFinalized.href = ref;
+}

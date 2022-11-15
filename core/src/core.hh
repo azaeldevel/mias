@@ -31,8 +31,10 @@ namespace mias
 			none,
 			accept,
 			accepted,
+			prepare,
 			preparing,
 			prepared,
+			bake,
 			baking,//en el horno
 			baked,
 			finalized,

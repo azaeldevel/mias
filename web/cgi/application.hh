@@ -80,7 +80,8 @@ private:
 	const GetParams& params;
 	
 	long pizza_accepting();
-	void pizza_restoring();
+	void pizza_preparing();
+	void pizza_steping(steping::Pizza);
 	
 protected:
 	

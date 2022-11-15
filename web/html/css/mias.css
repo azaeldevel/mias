@@ -28,12 +28,11 @@ body > #commands > #right > *
 	float : right;
 }
 	
-body > #commands > #right > #stepcmd 
+body > #commands > #right > .cmd 
 {
   background-color: green;
   color: white;
-  padding: 14px 20px;
-  margin: 8px 0;
+  margin-left: 8px;
   border: none;
   cursor: pointer;
 }
