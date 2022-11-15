@@ -27,16 +27,19 @@ namespace mias
 {
 
 //void params_get(std::map<std::string, std::string>&);
-const char* step(steping::Pizza);
-void step(const char* str, steping::Pizza& step);
-const char* station(Station s);
+const char* to_string(steping::Pizza);
+const char* to_text(steping::Pizza);
+const char* to_string(Station s);
+const char* to_string(ServiceStep s);
+void to_step(const char* str, steping::Pizza& step);
 
 struct GetParams : public mps::GetParams
 {
 	Station station;
 	long order;
-	short actual_step;
+	short step;
 	long item;
+	bool restoring;
 	
 	GetParams();
 };
@@ -54,6 +57,7 @@ public:
 	virtual void programs(std::ostream& out);
 	void programs_pizza(std::ostream& out);
 	virtual void panel(std::ostream& out);
+	virtual void panel_pizza(std::ostream& out);
 	
 	void set(mps::Connector& connDB);
 	
@@ -76,6 +80,7 @@ private:
 	const GetParams& params;
 	
 	long pizza_accepting();
+	void pizza_restoring();
 	
 protected:
 	

@@ -12,7 +12,8 @@ namespace mias
 		retarded,
 		cooked,
 		waiting,
-		delivered
+		delivered,
+		cancel,
 	};
 	
 	enum class Station
@@ -35,6 +36,7 @@ namespace mias
 			baking,//en el horno
 			baked,
 			finalized,
+			cancel,
 		};
 		
 		

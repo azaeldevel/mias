@@ -38,13 +38,12 @@ namespace mps
 		while(std::getline(sparam_list,param_pair,'&'))
 		{
 			sparam_pair.clear();
+			name="";
+			value="";
 			sparam_pair << param_pair;
 			//std::cout << "GetParams::build param_pair "<< param_pair << "\n<br>";
-			
-			std::getline(sparam_pair,name,'=');
-			std::getline(sparam_pair,value,'=');
+			if(std::getline(sparam_pair,name,'=')) std::getline(sparam_pair,value,'=');
 			//std::cout << " name : " << name << "\n";
-			//std::getline(sparam_pair,value,'=');
 			//std::cout << " value : " << value << "\n";		
 			insert(make_pair(name,value));
 		}
@@ -60,7 +59,7 @@ namespace mps
 
 namespace mias
 {
-	const char* step(steping::Pizza s)
+	const char* to_string(steping::Pizza s)
 	{
 		switch(s)
 		{
@@ -71,12 +70,58 @@ namespace mias
 			case steping::Pizza::prepared: return "prepared";
 			case steping::Pizza::baking: return "baking";
 			case steping::Pizza::baked: return "baked";
-			case steping::Pizza::finalized: return "finalized";			
+			case steping::Pizza::finalized: return "finalized";		
+			case steping::Pizza::cancel: return "cancel";	
 		}
 		
 		return "unknow";
 	}
-	void step(const char* str, steping::Pizza& step)
+	const char* to_text(steping::Pizza s)
+	{
+		switch(s)
+		{
+			case steping::Pizza::none: return "Ninguno";
+			case steping::Pizza::accept: return "Aceptar";
+			case steping::Pizza::accepted: return "Aceptado";
+			case steping::Pizza::preparing: return "Perparando";
+			case steping::Pizza::prepared: return "Preparado";
+			case steping::Pizza::baking: return "Horneando";
+			case steping::Pizza::baked: return "Horneado";
+			case steping::Pizza::finalized: return "Finalizado";		
+			case steping::Pizza::cancel: return "Cancel";
+		}
+		
+		return "Unknow";
+	}
+	const char* to_string(ServiceStep s)
+	{
+		switch(s)
+		{
+			case ServiceStep::none: return "none";
+			case ServiceStep::created: return "created";
+			case ServiceStep::working: return "working";
+			case ServiceStep::retarded: return "retarded";
+			case ServiceStep::cooked: return "cooked";
+			case ServiceStep::waiting: return "waiting";
+			case ServiceStep::delivered: return "delivered";
+			case ServiceStep::cancel: return "cancel";
+		}
+		
+		return "unknow";
+	}
+	const char* to_string(Station s)
+	{
+		switch(s)
+		{
+			case Station::none: return "none";	
+			case Station::pizza: return "pizza";	
+			case Station::stove: return "stove";	
+			case Station::oven: return "oven";
+		}
+		
+		return "unknow";
+	}
+	void to_step(const char* str, steping::Pizza& step)
 	{
 		if(strcmp(str,"none") == 0)
 		{
@@ -106,19 +151,10 @@ namespace mias
 		{
 			step = steping::Pizza::finalized;
 		}
-	}
-	
-	const char* station(Station s)
-	{
-		switch(s)
+		else if(strcmp(str,"cancel") == 0)
 		{
-			case Station::none: return "none";	
-			case Station::pizza: return "pizza";	
-			case Station::stove: return "stove";	
-			case Station::oven: return "oven";
+			step = steping::Pizza::cancel;
 		}
-		
-		return "unknow";
 	}
 	
 	GetParams::GetParams()
@@ -153,13 +189,23 @@ namespace mias
 		param = find("step");
 		if(param)
 		{
-			step(param,(steping::Pizza&)actual_step);
+			to_step(param,(steping::Pizza&)step);
 		}
 		
 		param = find("item");
 		if(param)
 		{
 			item = std::stol(param);
+		}
+		
+		param = find("restoring");
+		if(param)
+		{
+			restoring = true;
+		}
+		else
+		{
+			restoring = false;
 		}
 		
 	}
@@ -187,11 +233,13 @@ void BodyApplication::programs(std::ostream& out)
 void BodyApplication::programs_pizza(std::ostream& out)
 {
 	//std::cout << "step : " << params.step << "\n";
-	/*for(auto const & p : params)
+	/*
+	for(auto const & p : params)
 	{
 		std::cout << "param : " << p.first << " -> " << p.second << "\n";
-	}*/
-	if(params.actual_step == (short)steping::Pizza::none and params.order == -1)
+	}
+	*/
+	if(params.step == (short)steping::Pizza::none and params.order == -1)
 	{
 		out << "\t\t\t<div id=\"order\">\n";
 		{
@@ -222,7 +270,7 @@ void BodyApplication::programs_pizza(std::ostream& out)
 		}
 		out << "\t\t\t</div>\n";
 	}
-	else if(params.actual_step == (short)steping::Pizza::none and params.order > 0)
+	else if(params.step == (short)steping::Pizza::none and params.order > 0 and not params.restoring)
 	{
 		out << "\t\t\t<div id=\"order\">\n";
 		{
@@ -261,7 +309,7 @@ void BodyApplication::programs_pizza(std::ostream& out)
 		}
 		out << "\t\t\t</div>\n";
 	}	
-	else if(params.actual_step == (short)steping::Pizza::accepted)
+	else if(params.step == (short)steping::Pizza::accepted and not params.restoring)
 	{
 		out << "\t\t\t<div id=\"order\">\n";
 		{
@@ -275,15 +323,120 @@ void BodyApplication::programs_pizza(std::ostream& out)
 		out << "\t\t\t</div>\n";
 		
 	}
+	else if(params.restoring)
+	{
+		out << "\t\t\t<div id=\"order\">\n";
+		{
+			out << "\t\t\t\tOrden : " << params.order << " \n";
+		}
+		out << "\t\t\t</div>\n";
+	}
 	
 }
 void BodyApplication::panel(std::ostream& out) 
-{
+{	
+	switch(params.station)
+	{
+		case Station::pizza:
+			panel_pizza(out);
+			break;
+		default:
+			out << "\t\t\t<div id=\"logout\"><a href=\"/logout.cgi\"></a></div>\n";
+			out << "\t\t\t<div class=\"space\"></div>\n";	
+			out << "\t\t\t<div id=\"system\"><a href=\"/system.html\"></a></div>\n";	
+	}
+}
+void BodyApplication::panel_pizza(std::ostream& out) 
+{	
 	out << "\t\t\t<div id=\"logout\"><a href=\"/logout.cgi\"></a></div>\n";
-
-	out << "\t\t\t<div class=\"space\"></div>\n";
-	
+	out << "\t\t\t<div class=\"space\"></div>\n";	
 	out << "\t\t\t<div id=\"system\"><a href=\"/system.html\"></a></div>\n";	
+	//out << "Step : " << params.order  << "\n";	
+	if(params.step == (short)steping::Pizza::none and params.order == -1)
+	{
+		out << "\t\t\t<div id=\"restoreOrder\">\n";
+		{
+			out << "\t\t\t\t<select name=\"restoreOrder\" id=\"restoreOrderList\" onchange=\"restoreOrderhref()\">\n";
+			{
+				std::string where = "step > ";
+				where += std::to_string((int)ServiceStep::created);
+				where += " and step < ";
+				where += std::to_string((int)ServiceStep::delivered);
+				std::vector<muposysdb::MiasService*>* lstService = muposysdb::MiasService::select(*connDB,where,0,'A');
+				if(lstService)
+				{
+					if(lstService->size() > 0)
+					{
+						out << "\t\t\t\t\t<option value=\"next\">next</option>\n";
+					}
+					for(auto p : *lstService)
+					{
+						p->downName(*connDB);
+						out << "\t\t\t\t\t<option value=\"" << p->getOperation().getOperation().getID() << "\">" << p->getOperation().getOperation().getID() << "</option>\n";
+					}
+					for(auto p : *lstService)
+					{
+							delete p;
+					}
+					delete lstService;
+				}
+			}
+			out << "\t\t\t\t</select>\n";
+		}
+		out << "\t\t\t</div>\n";
+	}
+	else if(params.restoring and params.step == (short)steping::Pizza::none and params.order > 0)
+	{
+		out << "\t\t\t<div id=\"restoreStep\">\n";
+		{
+			out << "\t\t\t\t<select name=\"restoreStep\" id=\"restoreStepList\" onchange=\"restoreStephref()\">\n";
+			{
+				out << "\t\t\t\t\t<option value=\"next\">next</option>\n";	
+				for(short i = (short) steping::Pizza::accept; i < (short) steping::Pizza::finalized; i++ )
+				{
+					out << "\t\t\t\t\t<option value=\"" << to_string((steping::Pizza)i) <<  "\">" << to_text((steping::Pizza)i) << "</option>\n";					
+				}
+			}
+			out << "\t\t\t\t</select>\n";
+		}
+		out << "\t\t\t</div>\n";
+	}
+	else if(params.restoring and params.step > (short)steping::Pizza::none and params.step < (short)steping::Pizza::finalized and params.order > 0)
+	{
+		out << "\t\t\t<div id=\"item\">\n";
+		{
+			out << "\t\t\t\t<select name=\"item\" id=\"itemList\" onchange=\"acceptinghref()\">\n";
+			{
+				std::string where = "operation = ";
+				where += std::to_string(params.order);
+				where += " and step = ";
+				where += std::to_string(params.step);
+				out << " where : " << where << "\n";
+				std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
+				if(lstProgress)
+				{
+					if(lstProgress->size() > 0)
+					{
+						out << "\t\t\t\t\t<option value=\"next\">next</option>\n";
+					}
+					for(auto p : *lstProgress)
+					{
+						p->getStocking().downItem(*connDB);
+						p->getStocking().getItem().downNumber(*connDB);
+						p->getStocking().getItem().downBrief(*connDB);
+						out << "\t\t\t\t\t<option value=\"" << p->getStocking().getStocking() << "\">" << p->getStocking().getItem().getBrief() << "</option>\n";
+					}
+					for(auto p : *lstProgress)
+					{
+							delete p;
+					}
+					delete lstProgress;
+				}
+			}
+			out << "\t\t\t\t</select>\n";
+		}
+		out << "\t\t\t</div>\n";
+	}	
 }
 std::ostream& BodyApplication::operator >> (std::ostream& out)
 {
@@ -373,7 +526,7 @@ int Application::main(std::ostream& out)
 		return EXIT_SUCCESS;
 	}
 	
-	switch((steping::Pizza)params.actual_step)
+	switch((steping::Pizza)params.step)
 	{
 		case steping::Pizza::none:
 			
@@ -387,7 +540,7 @@ int Application::main(std::ostream& out)
 			const cgicc::CgiEnvironment& cgienv = cgi.getEnvironment();
 			
 			std::string strgets = "station=";
-			strgets += station(params.station);
+			strgets += to_string(params.station);
 			strgets += "&order=";
 			if(params.order == 0)
 			{
@@ -426,6 +579,9 @@ int Application::main(std::ostream& out)
 		case steping::Pizza::finalized:
 			
 			break;		
+		case steping::Pizza::cancel:
+			
+			break;
 	}
 		
 	(*this) >> out;
@@ -490,13 +646,43 @@ long Application::pizza_accepting()
 			delete s;
 		}
 		delete lstService;
-		
-		connDB.commit();
 	}
+	
+	long item = params.item;
+	std::string whereItem = "operation = ";
+	whereItem += std::to_string(params.order);
+	if(params.item > 0)
+	{
+		whereItem += " and stocking = ";
+		whereItem += std::to_string(params.item);
+	}
+	std::vector<muposysdb::Progress*>* lstItem = muposysdb::Progress::select(connDB,whereItem,0,'A');
+	if(lstItem)
+	{
+		if(lstItem->size() == 1)
+		{
+			lstItem->front()->upStep(connDB,(short)steping::Pizza::accepted);
+		}
+		else
+		{
+			//throw Exception((unsigned int)Exception::DB_READ_FAIL,__FILE__,__LINE__);
+		}
+		
+		for(auto s : *lstItem)
+		{
+			delete s;
+		}
+		delete lstItem;
+		
+	}
+	connDB.commit();
 	
 	return order;
 }
-
+void pizza_restoring()
+{
+	
+}
 
 
 }
