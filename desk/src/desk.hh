@@ -54,9 +54,9 @@ private:
 	{
 	public:
 		ModelColumns();
-		Gtk::TreeModelColumn<unsigned int> service;
+		Gtk::TreeModelColumn<long> service;
 		Gtk::TreeModelColumn<Glib::ustring> name;
-		Gtk::TreeModelColumn<unsigned int> progress;
+		Gtk::TreeModelColumn<int> progress;
 		
 	};
 	

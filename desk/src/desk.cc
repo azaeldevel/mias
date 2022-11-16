@@ -325,13 +325,19 @@ TableServicies::ModelColumns::ModelColumns()
 
 void TableServicies::load()
 {
-	Gtk::TreeModel::Row row;
-	std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,"",0,'A');
+	Gtk::TreeModel::Row row;	
+	std::string whereOrder = "step >= ";
+	whereOrder += std::to_string((int)ServiceStep::created);
+	whereOrder += " and step < ";
+	whereOrder += std::to_string((int)ServiceStep::delivered);
+	std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
+	bool toWorkingService = false;
     if(lstOprs)
 	{
+		float progress_service;
 		for(auto p : *lstOprs)
 		{
-			//std::cout << p->getOperation().getID() << std::endl;
+			progress_service = 0;
 			p->downName(connDB);
 			
 			//>>>			
@@ -339,14 +345,71 @@ void TableServicies::load()
 			row[columns.service] = p->getOperation().getOperation().getID();
 			if(not p->getName().empty()) 	row[columns.name] = p->getName();
 			else row[columns.name] = "Desconocido";
-			row[columns.progress] = 0;
+			
+			
+			std::string whereItem;
+			whereItem = "operation = ";
+			whereItem += std::to_string(p->getOperation().getOperation().getID());
+			//std::cout << "where : " << whereItem << "\n";
+			//std::cout << "Orden : " << p->getOperation().getOperation().getID() << "\n";
+			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(connDB,whereItem,0,'A');
+			if(lstProgress)
+			{
+				for(auto progress_item : *lstProgress)
+				{
+					progress_item->getStocking().downItem(connDB);
+					
+					if(progress_item->downStep(connDB))
+					{
+						//std::cout << "\tStep download\n";
+					}
+					progress_item->getStocking().getItem().downStation(connDB);
+					//s->getStocking().getItem();
+					//s->getStocking().getItem().downNumber(connDB);
+					//s->getStocking().getItem().downBrief(connDB);
+					//std::cout << "\titem : " << progress_item->getStocking().getItem().getItem().getID();
+					short step;
+					if(progress_item->getStocking().getItem().getStation().compare("pizza") == 0)
+					{
+						//std::cout << " : pizza";
+						float progress_percentage;
+						step = progress_item->getStep();
+						//std::cout << " : Step " << step;
+						if((short)steping::Pizza::none < step and step <= (short)steping::Pizza::finalized )
+						{
+							 progress_percentage = ((short)steping::Pizza::finalized) - step;
+							 //std::cout << " : progress = " << progress_percentage << "\n";
+							 progress_percentage /= float(steping::Pizza::finalized);
+							 //std::cout << " : progress = " << progress_percentage << "\n";
+							 progress_service += progress_percentage;
+						}
+						else
+						{
+							//TODO : si no esta en el rango deve genrar error
+						}
+					}
+					//std::cout << "\n";
+				}
+				
+				for(auto s : *lstProgress)
+				{
+					delete s;
+				}
+				delete lstProgress;		
+			}
+			
+			//progress_service /= float(lstProgress->size());
+			progress_service *= float(100);
+			//std::cout << " : progress_service = " << progress_service << "\n";
+			row[columns.progress] = progress_service;
 		}
+		
 		for(auto p : *lstOprs)
 		{
 				delete p;
 		}
 		delete lstOprs;
-	}	
+	}
 }
 
 

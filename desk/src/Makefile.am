@@ -32,14 +32,16 @@ endif
 mias-glade.c : $(top_srcdir)/resources.xml $(top_srcdir)/desk.ui
 	glib-compile-resources --generate-source --c-name rc_glade_mias --target=mias-glade.c $(top_srcdir)/resources.xml --sourcedir $(top_srcdir)/
 	
-mias_desk_LDADD = $(LIBS)
-mias_desk_CXXFLAGS = $(FLAGS)
-mias_desk_SOURCES = desk.cc desk.hh desk-main.cc
 
 libmias_desk_la_CXXFLAGS = $(FLAGS) 
 libmias_desk_la_LDFLAGS = 
 libmias_desk_la_SOURCES = desk.cc desk.hh 
 libmias_desk_la_LIBADD =  $(LIBS)
+
+mias_desk_LDADD = $(LIBS) libmias-desk.la
+mias_desk_CXXFLAGS = $(FLAGS)
+mias_desk_SOURCES = desk-main.cc
+
 
 EXTRA_DIST = $(muposys_DATA)
 
