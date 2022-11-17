@@ -259,12 +259,12 @@ PendingServices::~PendingServices()
 
 
 
-TableServicies::TableServicies() : connDB_flag(false)
+TableServicies::TableServicies() : connDB_flag(false),updaterThread(NULL)
 {
 	init();	
 }
 void TableServicies::init()
-{	
+{
 	try
 	{
 		connDB_flag = connDB.connect(muposysdb::datconex);
@@ -309,10 +309,14 @@ void TableServicies::init()
 	row[columns.progress] = 5;*/
 	
 	
-	load();
+	//load();
+	dispatcher.connect(sigc::mem_fun(*this, &TableServicies::on_notification_from_worker_thread));
+	//update_start_stop_buttons();
+	on_start_button_clicked();
 }
 TableServicies::~TableServicies()
 {
+	on_stop_button_clicked();
 }
 
 TableServicies::ModelColumns::ModelColumns()
@@ -325,10 +329,11 @@ TableServicies::ModelColumns::ModelColumns()
 
 void TableServicies::load()
 {
+	tree_model->clear();
 	Gtk::TreeModel::Row row;	
 	std::string whereOrder = "step >= ";
 	whereOrder += std::to_string((int)ServiceStep::created);
-	whereOrder += " and step < ";
+	whereOrder += " and step <= ";
 	whereOrder += std::to_string((int)ServiceStep::delivered);
 	std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
 	bool toWorkingService = false;
@@ -345,7 +350,6 @@ void TableServicies::load()
 			row[columns.service] = p->getOperation().getOperation().getID();
 			if(not p->getName().empty()) 	row[columns.name] = p->getName();
 			else row[columns.name] = "Desconocido";
-			
 			
 			std::string whereItem;
 			whereItem = "operation = ";
@@ -413,6 +417,184 @@ void TableServicies::load()
 }
 
 
+void TableServicies::on_start_button_clicked()
+{
+  if (updaterThread)
+  {
+    std::cout << "Can't start a worker thread while another one is running." << std::endl;
+  }
+  else
+  {
+    // Start a new worker thread.
+	std::cout << "Starting..\n" << std::endl;
+	updaterThread = new std::thread
+		(
+			[this]
+			{
+				updater.do_work(this);
+			}
+		);
+  }
+  update_start_stop_buttons();
+}
+
+void TableServicies::on_stop_button_clicked()
+{
+	if (!updaterThread)
+	{
+		std::cout << "Can't stop a worker thread. None is running." << std::endl;
+	}
+	else
+	{
+	// Order the worker thread to stop.
+		updater.stop_work();
+		is_stop = true;
+	}
+}
+
+void TableServicies::update_start_stop_buttons()
+{
+	const bool thread_is_running = updaterThread != nullptr;
+
+	is_runnig = !thread_is_running;
+	std::cout << "is_runnig is " << (is_runnig? "true" : "false")<< "\n";
+	is_stop = thread_is_running;
+	std::cout << "is_stop is " << (is_stop? "true" : "false")<< "\n";
+}
+
+/*void TableServicies::update_widgets()
+{
+  double fraction_done;
+  Glib::ustring message_from_worker_thread;
+  m_Worker.get_data(&fraction_done, &message_from_worker_thread);
+
+  m_ProgressBar.set_fraction(fraction_done);
+
+  if (message_from_worker_thread != m_TextView.get_buffer()->get_text())
+  {
+    auto buffer = m_TextView.get_buffer();
+    buffer->set_text(message_from_worker_thread);
+
+    // Scroll the last inserted line into view. That's somewhat complicated.
+    Gtk::TextIter iter = buffer->end();
+    iter.set_line_offset(0); // Beginning of last line
+    auto mark = buffer->get_mark("last_line");
+    buffer->move_mark(mark, iter);
+    m_TextView.scroll_to(mark);
+    // TextView::scroll_to(iter) is not perfect.
+    // We do need a TextMark to always get the last line into view.
+  }
+}*/
+
+void TableServicies::on_quit_button_clicked()
+{
+	if (updaterThread)
+	{
+		// Order the worker thread to stop and wait for it to stop.
+		updater.stop_work();
+		if (updaterThread->joinable())
+		updaterThread->join();
+	}
+	//hide();
+}
+
+// notify() is called from ExampleWorker::do_work(). It is executed in the worker
+// thread. It triggers a call to on_notification_from_worker_thread(), which is
+// executed in the GUI thread.
+void TableServicies::notify()
+{
+	dispatcher.emit();
+}
+
+void TableServicies::on_notification_from_worker_thread()
+{
+	std::cout << "on_notification_from_worker_thread in\n";
+	if (updaterThread && updater.has_stopped())
+	{
+		// Work is done.
+		if (updaterThread->joinable())
+		updaterThread->join();
+		delete updaterThread;
+		updaterThread = nullptr;
+		update_start_stop_buttons();
+	}
+	std::cout << "on_notification_from_worker_thread out\n";
+	//update_widgets();
+}
+
+
+
+TableServicies::Updater::Updater() : m_shall_stop(false), m_has_stopped(false)
+{	
+	try
+	{
+		connDB_flag = connDB.connect(muposysdb::datconex);
+	}
+	catch(const std::exception& e)
+	{
+		/*Gtk::MessageDialog dlg("Error detectado durante conexion a BD",true,Gtk::MESSAGE_ERROR);
+		dlg.set_secondary_text(e.what());
+		dlg.run();*/
+		std::cerr << e.what() << "\n";
+		return;
+	}
+}
+
+// Accesses to these data are synchronized by a mutex.
+// Some microseconds can be saved by getting all data at once, instead of having
+// separate get_fraction_done() and get_message() methods.
+/*void TableServicies::Updater::get_data(double* fraction_done, Glib::ustring* message) const
+{
+  std::lock_guard<std::mutex> lock(m_Mutex);
+
+  if (fraction_done)
+    *fraction_done = m_fraction_done;
+
+  if (message)
+    *message = m_message;
+}*/
+
+void TableServicies::Updater::stop_work()
+{
+	std::lock_guard<std::mutex> lock(mutex);
+	m_shall_stop = true;
+}
+
+bool TableServicies::Updater::has_stopped() const
+{
+	std::lock_guard<std::mutex> lock(mutex);
+	return m_has_stopped;
+}
+
+void TableServicies::Updater::do_work(TableServicies* caller)
+{
+	{
+		std::lock_guard<std::mutex> lock(mutex);
+		m_has_stopped = false;
+	} // The mutex is unlocked here by lock's destructor.
+
+	while(not m_shall_stop)
+	{
+		//std::lock_guard<std::mutex> lock(mutex);
+		std::cout << "Updating view\n";
+		caller->load();  
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		caller->notify();
+	}
+
+	
+	{
+		std::lock_guard<std::mutex> lock(mutex);
+		m_shall_stop = false;
+		m_has_stopped = true;
+	}
+	
+	/*std::cout << "Updating ending\n";
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	std::cout << "notify\n";
+	caller->notify();
+	std::cout << "Updating endded\n";*/
+}
 
 
 

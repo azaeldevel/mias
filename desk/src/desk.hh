@@ -7,7 +7,8 @@
 
 #include <muposys/desk/desk.hh>
 #include <mias/core/core.hh>
-
+#include <thread>
+#include <mutex>
 
 namespace mias
 {
@@ -46,7 +47,18 @@ public:
 	virtual ~TableServicies();
 	
 	void load();
+	void notify();
 	
+	// Dispatcher handler.
+	void on_notification_from_worker_thread();
+	// Signal handlers.
+	void on_start_button_clicked();
+	void on_stop_button_clicked();
+	void on_quit_button_clicked();
+
+  void update_start_stop_buttons();
+  //void update_widgets();
+  
 protected:
 	
 private:
@@ -59,12 +71,47 @@ private:
 		Gtk::TreeModelColumn<int> progress;
 		
 	};
+	class Updater
+	{
+	public:
+		Updater();
+		// Thread function.
+		void do_work(TableServicies* caller);
+
+		//void get_data(double* fraction_done, Glib::ustring* message) const;
+		void stop_work();
+		bool has_stopped() const;		
+	private:
+		mutable std::mutex mutex;
+		// Data used by both GUI thread and worker thread.
+		bool m_shall_stop;
+		bool m_has_stopped;
+		
+		mps::Connector connDB;
+		bool connDB_flag;
+	};
+	/*struct Row
+	{
+		
+	};
+	struct Data
+	{
+		std::vector<muposysdb::MiasService*>* lstOprs;
+		std::vector<muposysdb::Progress*>* lstProgress; 
+		bool reload;
+		
+	};*/
 	
 	ModelColumns columns;
 	Gtk::ScrolledWindow scrolled;
 	Glib::RefPtr<Gtk::ListStore> tree_model;
 	mps::Connector connDB;
 	bool connDB_flag;
+	bool is_runnig;
+	bool is_stop;
+	Glib::Dispatcher dispatcher;
+	Updater updater;
+	std::thread* updaterThread;
 };
 
 class SearchItem : public Gtk::ComboBox
