@@ -40,7 +40,6 @@ protected:
 
 class TableServicies : public Gtk::TreeView
 {
-	
 public:
 	TableServicies();	
 	void init();
@@ -59,6 +58,8 @@ public:
   void update_start_stop_buttons();
   //void update_widgets();
   
+  void step_data(Gtk::CellRenderer* renderer, const Gtk::TreeModel::iterator& iter);
+  
 protected:
 	
 private:
@@ -69,7 +70,8 @@ private:
 		Gtk::TreeModelColumn<long> service;
 		Gtk::TreeModelColumn<Glib::ustring> name;
 		Gtk::TreeModelColumn<int> progress;
-		
+		Gtk::TreeModelColumn<Glib::ustring> step;
+		Gtk::TreeModelColumn<ServiceStep> step_number;
 	};
 	class Updater
 	{

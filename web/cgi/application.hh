@@ -27,11 +27,6 @@ namespace mias
 {
 
 //void params_get(std::map<std::string, std::string>&);
-const char* to_string(steping::Pizza);
-const char* to_text(steping::Pizza);
-const char* to_string(Station s);
-const char* to_string(ServiceStep s);
-void to_step(const char* str, steping::Pizza& step);
 
 struct GetParams : public mps::GetParams
 {

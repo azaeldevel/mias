@@ -290,24 +290,10 @@ void TableServicies::init()
 	{
 		pColumn->add_attribute(cell->property_value(), columns.progress);
 	}
-	  
-	  
-	//loading data
-	/*Gtk::TreeModel::Row row = *(tree_model->append());
-	row[columns.service] = 1;
-	row[columns.name] = "Julio";
-	row[columns.progress] = 75;
-	
-	row = *(tree_model->append());
-	row[columns.service] = 2;
-	row[columns.name] = "María";
-	row[columns.progress] = 15;
-	
-	row = *(tree_model->append());
-	row[columns.service] = 3;
-	row[columns.name] = "Azael";
-	row[columns.progress] = 5;*/
-	
+	append_column("Estado", columns.step);
+	//Gtk::CellRenderer* step_reder = static_cast<Gtk::CellRenderer*>(get_column_cell_renderer(get_n_columns() - 1));
+	//Gtk::TreeViewColumn* step_column = get_column(get_n_columns() - 1);
+	//step_column->set_cell_data_func(*step_reder,sigc::mem_fun(*this,&TableServicies::step_data));
 	
 	//load();
 	dispatcher.connect(sigc::mem_fun(*this, &TableServicies::on_notification_from_worker_thread));
@@ -324,9 +310,112 @@ TableServicies::ModelColumns::ModelColumns()
 	add(service);
 	add(name);
 	add(progress);	
+	add(step);	
+	add(step_number);	
 }
 
 
+void TableServicies::load()
+{
+	//std::cout << "TableServicies::load\n";
+	tree_model->clear();
+	//std::cout << "TableServicies::load : cleaned model\n";
+	std::string whereOrder;
+	whereOrder = "step >= ";
+	whereOrder += std::to_string((int)ServiceStep::created);
+	whereOrder += " and step < ";
+	whereOrder += std::to_string((int)ServiceStep::delivered);
+	//std::cout << "TableServicies::load : " << whereOrder << "\n";
+	std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
+	//std::cout << "TableServicies::load : query done.\n";
+    if(lstOprs)
+	{
+		int pendings,totals;
+		float percen;
+		for(auto p : *lstOprs)
+		{
+			p->downStep(connDB);
+			//std::cout << "TableServicies::load : order " << p->getOperation().getOperation().getID() << "\n";
+			pendings = 0;
+			totals = 0;
+			std::string whereItem;
+			whereItem = "operation = ";
+			whereItem += std::to_string(p->getOperation().getOperation().getID());
+			whereItem += " and step >= ";
+			whereItem += std::to_string((int)steping::Pizza::accept);
+			whereItem += " and step <=  ";
+			whereItem += std::to_string((int)steping::Pizza::finalized);
+			//std::cout << "\tTableServicies::load : " << whereItem << "\n";
+			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(connDB,whereItem,0,'A');
+			//std::cout << "\tTableServicies::load : query done.\n";
+			if(lstProgress)
+			{
+				totals = lstProgress->size();
+				for(auto progress_item : *lstProgress)
+				{
+					progress_item->getStocking().downItem(connDB);
+					
+					//std::cout << "\titem : " << progress_item->getStocking().getItem().getItem().getID();
+					progress_item->downStep(connDB);
+					
+					if((steping::Pizza)progress_item->getStep() == steping::Pizza::finalized) pendings++;
+				}
+			}
+			for(auto p : *lstProgress)
+			{
+					delete p;
+			}
+			delete lstProgress;
+			
+			//std::cout << "order : " << p->getOperation().getOperation().getID() << "\n";
+			//std::cout << "pendings : " << pendings << "\n";
+			//std::cout << "totals : " << totals << "\n";
+			if(totals > 0)
+			{
+				percen = pendings * 100;
+				percen /= totals;
+				//std::cout << "percen : " << percen <<  "\n";
+			}
+			else
+			{
+				percen = 100;
+			}
+			
+			if(pendings > 0)
+			{
+				p->upStep(connDB,(unsigned char)ServiceStep::working);
+			}
+			if(pendings == totals)
+			{
+				p->upStep(connDB,(unsigned char)ServiceStep::waiting);
+			}
+			
+			p->downName(connDB);
+			Gtk::TreeModel::Row row;	
+			row = *(tree_model->append());
+			row[columns.service] = p->getOperation().getOperation().getID();
+			//std::cout << "columns.service : " << p->getOperation().getOperation().getID() << "\n";
+			if(not p->getName().empty()) 	row[columns.name] = p->getName();
+			else row[columns.name] = "Desconocido";
+			row[columns.progress] = percen;
+			row[columns.step_number] = (ServiceStep)p->getStep();
+		}
+		for(auto p : *lstOprs)
+		{
+			delete p;
+		}
+		delete lstOprs;
+	}
+	connDB.commit();
+	
+	Gtk::TreeModel::Row row;	
+	for(const Gtk::TreeModel::iterator& it : tree_model->children())
+	{
+		row = *it;
+		row[columns.step] = to_text(row[columns.step_number]);
+	}
+}
+/*
 void TableServicies::load()
 {
 	tree_model->clear();
@@ -357,8 +446,10 @@ void TableServicies::load()
 			//std::cout << "where : " << whereItem << "\n";
 			//std::cout << "Orden : " << p->getOperation().getOperation().getID() << "\n";
 			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(connDB,whereItem,0,'A');
+			short finalizeds;
 			if(lstProgress)
 			{
+				finalizeds = 0;
 				for(auto progress_item : *lstProgress)
 				{
 					progress_item->getStocking().downItem(connDB);
@@ -387,6 +478,10 @@ void TableServicies::load()
 							 //std::cout << " : progress = " << progress_percentage << "\n";
 							 progress_service += progress_percentage;
 						}
+						else if(step == (short)steping::Pizza::finalized )
+						{
+							finalizeds++;
+						}
 						else
 						{
 							//TODO : si no esta en el rango deve genrar error
@@ -399,7 +494,7 @@ void TableServicies::load()
 				{
 					delete s;
 				}
-				delete lstProgress;		
+				delete lstProgress;	
 			}
 			
 			//progress_service /= float(lstProgress->size());
@@ -414,8 +509,9 @@ void TableServicies::load()
 		}
 		delete lstOprs;
 	}
+	connDB.commit();
 }
-
+*/
 
 void TableServicies::on_start_button_clicked()
 {
@@ -579,7 +675,7 @@ void TableServicies::Updater::do_work(TableServicies* caller)
 		std::cout << "Updating view\n";
 		caller->load();  
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-		caller->notify();
+		//caller->notify();
 	}
 
 	

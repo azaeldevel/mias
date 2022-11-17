@@ -43,6 +43,15 @@ namespace mias
 		
 		
 	}
+
+
+const char* to_string(steping::Pizza);
+const char* to_text(steping::Pizza);
+const char* to_string(Station s);
+const char* to_string(ServiceStep s);
+const char* to_text(ServiceStep s);
+void to_step(const char* str, steping::Pizza& step);
+
 }
 
 #endif

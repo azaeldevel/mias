@@ -26,7 +26,7 @@ endif
 
 libmias_core_la_CXXFLAGS = $(FLAGS) 
 libmias_core_la_LDFLAGS = 
-libmias_core_la_SOURCES = Exception.cc
+libmias_core_la_SOURCES = Exception.cc core.cc
 libmias_core_la_LIBADD =  $(LIBS)
 
 pkgconfigdir = $(libdir)/pkgconfig
