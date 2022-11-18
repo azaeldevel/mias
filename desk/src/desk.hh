@@ -13,14 +13,9 @@
 namespace mias
 {
 
-/*enum class ServiceProgress
-{
-	unknow,
-	created,
-	working,
-	delayed,
-	finalized	
-};*/
+
+
+
 	
 class TableSaling : public mps::TableSaling
 {	
@@ -41,28 +36,52 @@ protected:
 class TableServicies : public Gtk::TreeView
 {
 public:
+	
+public:
 	TableServicies();	
 	void init();
 	virtual ~TableServicies();
 	
 	void load();
+	void update_table();
 	void notify();
+	
+	void on_show()override;
 	
 	// Dispatcher handler.
 	void on_notification_from_worker_thread();
 	// Signal handlers.
-	void on_start_button_clicked();
-	void on_stop_button_clicked();
-	void on_quit_button_clicked();
+	void on_start_services();
+	void on_stop_services();
+	void on_quit_services();
 
   void update_start_stop_buttons();
   //void update_widgets();
   
   void step_data(Gtk::CellRenderer* renderer, const Gtk::TreeModel::iterator& iter);
   
+  bool on_button_press_event(GdkEventButton* button_event) override;
+  bool on_enter_notify_event (GdkEventCrossing* crossing_event)override;
+  bool on_leave_notify_event (GdkEventCrossing* crossing_event)override;
+  void on_menu_cooked_popup();
+  void on_menu_deliver_popup();
+  
 protected:
 	
 private:
+	class Menu : public Gtk::Menu
+	{
+	public:
+		Menu();
+		Menu(TableServicies& parent);
+		bool on_enter_notify_event (GdkEventCrossing* crossing_event)override;
+		//void on_show()override;
+		//void on_hide() override;
+		void set(TableServicies& parent);
+		
+	private:
+		TableServicies* parent;
+	};
 	class ModelColumns : public Gtk::TreeModel::ColumnRecord
 	{
 	public:
@@ -114,6 +133,8 @@ private:
 	Glib::Dispatcher dispatcher;
 	Updater updater;
 	std::thread* updaterThread;
+	Menu menu;
+	long serviceSelected;
 };
 
 class SearchItem : public Gtk::ComboBox

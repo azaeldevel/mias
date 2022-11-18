@@ -297,12 +297,24 @@ void TableServicies::init()
 	
 	//load();
 	dispatcher.connect(sigc::mem_fun(*this, &TableServicies::on_notification_from_worker_thread));
-	//update_start_stop_buttons();
-	on_start_button_clicked();
+	update_start_stop_buttons();
+	on_start_services();
+	
+	auto item = Gtk::make_managed<Gtk::MenuItem>("Hornear", true);
+	item->signal_activate().connect(sigc::mem_fun(*this, &TableServicies::on_menu_cooked_popup));
+	menu.append(*item);
+	
+	item = Gtk::make_managed<Gtk::MenuItem>("Entregar", true);
+	item->signal_activate().connect(sigc::mem_fun(*this, &TableServicies::on_menu_deliver_popup));
+	menu.append(*item);
+	
+	menu.accelerate(*this);
+	menu.show_all();
+	menu.set(*this);
 }
 TableServicies::~TableServicies()
 {
-	on_stop_button_clicked();
+	on_stop_services();
 }
 
 TableServicies::ModelColumns::ModelColumns()
@@ -314,7 +326,12 @@ TableServicies::ModelColumns::ModelColumns()
 	add(step_number);	
 }
 
-
+void TableServicies::on_show()
+{
+	Gtk::TreeView::on_show();
+	
+	menu.set(*this);
+}
 void TableServicies::load()
 {
 	//std::cout << "TableServicies::load\n";
@@ -513,28 +530,69 @@ void TableServicies::load()
 }
 */
 
-void TableServicies::on_start_button_clicked()
+void TableServicies::update_table()
 {
-  if (updaterThread)
-  {
-    std::cout << "Can't start a worker thread while another one is running." << std::endl;
-  }
-  else
-  {
-    // Start a new worker thread.
-	std::cout << "Starting..\n" << std::endl;
-	updaterThread = new std::thread
-		(
-			[this]
-			{
-				updater.do_work(this);
-			}
-		);
-  }
+	
+}
+
+
+
+
+TableServicies::Menu::Menu() : parent(NULL)
+{
+}
+TableServicies::Menu::Menu(TableServicies& p) : parent(&p)
+{
+}
+/*void TableServicies::Menu::on_show()
+{
+	Gtk::Menu::show();
+	if(parent->is_runnig) parent->on_stop_services();
+}*/
+
+bool 	TableServicies::Menu::on_enter_notify_event (GdkEventCrossing* crossing_event)
+{
+	if(parent->is_runnig) parent->on_stop_services();
+		
+	//std::cout << "Showing menu\n";
+	return false;
+}
+/*void 	TableServicies::Menu::on_hide()
+{
+	std::cout << "Hiding menu\n";
+	Gtk::Menu::on_hide();
+	//if(parent->is_stop) parent->on_start_services();
+	
+}*/
+void 	TableServicies::Menu::set(TableServicies& p)
+{
+	parent = &p;
+}
+
+
+
+void TableServicies::on_start_services()
+{
+	if (updaterThread)
+	{
+		std::cout << "Can't start a worker thread while another one is running." << std::endl;
+	}
+	else
+	{
+		// Start a new worker thread.
+		std::cout << "Starting..\n" << std::endl;
+		updaterThread = new std::thread
+			(
+				[this]
+				{
+					updater.do_work(this);
+				}
+			);
+	}
   update_start_stop_buttons();
 }
 
-void TableServicies::on_stop_button_clicked()
+void TableServicies::on_stop_services()
 {
 	if (!updaterThread)
 	{
@@ -545,6 +603,10 @@ void TableServicies::on_stop_button_clicked()
 	// Order the worker thread to stop.
 		updater.stop_work();
 		is_stop = true;
+		is_runnig = false;
+		updaterThread->detach();
+		delete updaterThread;
+		updaterThread = NULL;
 	}
 }
 
@@ -552,10 +614,10 @@ void TableServicies::update_start_stop_buttons()
 {
 	const bool thread_is_running = updaterThread != nullptr;
 
-	is_runnig = !thread_is_running;
-	std::cout << "is_runnig is " << (is_runnig? "true" : "false")<< "\n";
-	is_stop = thread_is_running;
-	std::cout << "is_stop is " << (is_stop? "true" : "false")<< "\n";
+	is_runnig = thread_is_running;
+	//std::cout << "is_runnig is " << (is_runnig? "true" : "false")<< "\n";
+	is_stop = !thread_is_running;
+	//std::cout << "is_stop is " << (is_stop? "true" : "false")<< "\n";
 }
 
 /*void TableServicies::update_widgets()
@@ -582,7 +644,7 @@ void TableServicies::update_start_stop_buttons()
   }
 }*/
 
-void TableServicies::on_quit_button_clicked()
+void TableServicies::on_quit_services()
 {
 	if (updaterThread)
 	{
@@ -604,7 +666,7 @@ void TableServicies::notify()
 
 void TableServicies::on_notification_from_worker_thread()
 {
-	std::cout << "on_notification_from_worker_thread in\n";
+	//std::cout << "on_notification_from_worker_thread in\n";
 	if (updaterThread && updater.has_stopped())
 	{
 		// Work is done.
@@ -614,10 +676,68 @@ void TableServicies::on_notification_from_worker_thread()
 		updaterThread = nullptr;
 		update_start_stop_buttons();
 	}
-	std::cout << "on_notification_from_worker_thread out\n";
+	//std::cout << "on_notification_from_worker_thread out\n";
 	//update_widgets();
 }
-
+void TableServicies::on_menu_cooked_popup()
+{
+	std::cerr << "TableServicies::on_menu_cooked_popup\n";
+	if(serviceSelected > 0) //If anything is selected
+	{
+		std::string whereOrder;
+		whereOrder = "operation = ";
+		whereOrder += std::to_string(serviceSelected);
+		std::cerr << "whereOrder : " << whereOrder << "\n";
+		std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
+		if(lstOprs)
+		{
+			if(lstOprs->size() != 1)
+			{
+				std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
+				std::cerr << "Filtro  " << whereOrder << "\n";
+				return;
+			}
+			lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::cooked);
+			for(auto p : *lstOprs)
+			{
+				delete p;
+			}
+			delete lstOprs;
+		}
+		connDB.commit();
+	}
+	else
+	{
+		std::cerr << "TableServicies::on_menu_cooked_popup - No seleccion fila\n";
+	}
+}
+void TableServicies::on_menu_deliver_popup()
+{
+	std::cerr << "TableServicies::on_menu_deliver_popup\n";
+	if(serviceSelected > 0) //If anything is selected
+	{
+		std::string whereOrder;
+		whereOrder = "operation = ";
+		whereOrder += std::to_string(serviceSelected);
+		std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
+		if(lstOprs)
+		{
+			if(lstOprs->size() != 1)
+			{
+				std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
+				std::cerr << "Filtro  " << whereOrder << "\n";
+				return;
+			}
+			lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::delivered);
+			for(auto p : *lstOprs)
+			{
+				delete p;
+			}
+			delete lstOprs;
+		}
+	}
+	connDB.commit();
+}
 
 
 TableServicies::Updater::Updater() : m_shall_stop(false), m_has_stopped(false)
@@ -692,6 +812,58 @@ void TableServicies::Updater::do_work(TableServicies* caller)
 	std::cout << "Updating endded\n";*/
 }
 
+bool TableServicies::on_button_press_event(GdkEventButton* button_event)
+{
+	bool return_value = false;
+	if(is_runnig) on_stop_services();
+	
+	//Call base class, to allow normal handling,
+	//such as allowing the row to be selected by the right-click:
+	return_value = TreeView::on_button_press_event(button_event);
+
+	//Then do our custom stuff:
+	if( (button_event->type == GDK_BUTTON_PRESS) && (button_event->button == 3) )
+	{
+		Glib::RefPtr<Gtk::TreeSelection> refTreeSelection = get_selection();
+		Gtk::TreeModel::iterator itSelected = refTreeSelection->get_selected();
+		Gtk::TreeModel::Row rowSelected = *itSelected;
+		std::cout << "Selected service : " << rowSelected[columns.service] << " \n";
+		serviceSelected = rowSelected[columns.service];
+		menu.popup_at_pointer((GdkEvent*)button_event);
+	}
+	
+	return return_value;
+}
+bool TableServicies::on_enter_notify_event (GdkEventCrossing* crossing_event)
+{
+	//std::cout << "is_runnig is " << (is_runnig? "true" : "false")<< "\n";
+	if(is_runnig) on_stop_services();
+	
+	return false;
+}
+bool TableServicies::on_leave_notify_event (GdkEventCrossing* crossing_event)
+{
+	//std::cout << "is_stop is " << (is_stop? "true" : "false")<< "\n";
+	if(is_stop) on_start_services();
+	
+	return false;
+}
+/*
+bool TableServicies::on_button_release_event(GdkEventButton* button_event)
+{
+	if(is_stop)
+	{
+		on_start_button_clicked();
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
+	return false;
+}*/
+
+
+
+
+
+
 
 
 
@@ -706,9 +878,9 @@ void TableSaling::init()
 	
 	boxAditional.pack_start(boxName);
 	{
-			boxName.pack_start(lbName);
-			boxName.pack_start(inName);
-			lbName.set_text("Nombre : ");
+		boxName.pack_start(lbName);
+		boxName.pack_start(inName);
+		lbName.set_text("Nombre : ");
 	}
 }
 TableSaling::~TableSaling()
