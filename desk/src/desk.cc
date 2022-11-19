@@ -259,7 +259,7 @@ PendingServices::~PendingServices()
 
 
 
-TableServicies::TableServicies() : connDB_flag(false),updaterThread(NULL)
+TableServicies::TableServicies() : connDB_flag(false),updaterThread(NULL),lstOprs(NULL),lstProgress(NULL)
 {
 	init();	
 }
@@ -300,8 +300,12 @@ void TableServicies::init()
 	update_start_stop_buttons();
 	on_start_services();
 	
-	auto item = Gtk::make_managed<Gtk::MenuItem>("Hornear", true);
+	/*auto item = Gtk::make_managed<Gtk::MenuItem>("Hornear", true);
 	item->signal_activate().connect(sigc::mem_fun(*this, &TableServicies::on_menu_cooked_popup));
+	menu.append(*item);*/
+	
+	auto item = Gtk::make_managed<Gtk::MenuItem>("Esperando", true);
+	item->signal_activate().connect(sigc::mem_fun(*this, &TableServicies::on_menu_waiting_popup));
 	menu.append(*item);
 	
 	item = Gtk::make_managed<Gtk::MenuItem>("Entregar", true);
@@ -334,17 +338,17 @@ void TableServicies::on_show()
 }
 void TableServicies::load()
 {
-	//std::cout << "TableServicies::load\n";
+	std::cout << "TableServicies::load\n";
 	tree_model->clear();
-	//std::cout << "TableServicies::load : cleaned model\n";
+	std::cout << "TableServicies::load : cleaned model\n";
 	std::string whereOrder;
 	whereOrder = "step >= ";
 	whereOrder += std::to_string((int)ServiceStep::created);
 	whereOrder += " and step < ";
 	whereOrder += std::to_string((int)ServiceStep::delivered);
-	//std::cout << "TableServicies::load : " << whereOrder << "\n";
+	std::cout << "TableServicies::load : WHERE :  " << whereOrder << "\n";
 	std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
-	//std::cout << "TableServicies::load : query done.\n";
+	std::cout << "TableServicies::load : query done.\n";
     if(lstOprs)
 	{
 		int pendings,totals;
@@ -352,7 +356,7 @@ void TableServicies::load()
 		for(auto p : *lstOprs)
 		{
 			p->downStep(connDB);
-			//std::cout << "TableServicies::load : order " << p->getOperation().getOperation().getID() << "\n";
+			std::cout << "TableServicies::load : order " << p->getOperation().getOperation().getID() << "\n";
 			pendings = 0;
 			totals = 0;
 			std::string whereItem;
@@ -364,7 +368,7 @@ void TableServicies::load()
 			whereItem += std::to_string((int)steping::Pizza::finalized);
 			//std::cout << "\tTableServicies::load : " << whereItem << "\n";
 			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(connDB,whereItem,0,'A');
-			//std::cout << "\tTableServicies::load : query done.\n";
+			std::cout << "\tTableServicies::load : query done.\n";
 			if(lstProgress)
 			{
 				totals = lstProgress->size();
@@ -372,7 +376,7 @@ void TableServicies::load()
 				{
 					progress_item->getStocking().downItem(connDB);
 					
-					//std::cout << "\titem : " << progress_item->getStocking().getItem().getItem().getID();
+					std::cout << "\titem : " << progress_item->getStocking().getItem().getItem().getID();
 					progress_item->downStep(connDB);
 					
 					if((steping::Pizza)progress_item->getStep() == steping::Pizza::finalized) pendings++;
@@ -384,9 +388,9 @@ void TableServicies::load()
 			}
 			delete lstProgress;
 			
-			//std::cout << "order : " << p->getOperation().getOperation().getID() << "\n";
-			//std::cout << "pendings : " << pendings << "\n";
-			//std::cout << "totals : " << totals << "\n";
+			std::cout << "order : " << p->getOperation().getOperation().getID() << "\n";
+			std::cout << "pendings : " << pendings << "\n";
+			std::cout << "totals : " << totals << "\n";
 			if(totals > 0)
 			{
 				percen = pendings * 100;
@@ -411,7 +415,7 @@ void TableServicies::load()
 			Gtk::TreeModel::Row row;	
 			row = *(tree_model->append());
 			row[columns.service] = p->getOperation().getOperation().getID();
-			//std::cout << "columns.service : " << p->getOperation().getOperation().getID() << "\n";
+			std::cout << "columns.service : " << p->getOperation().getOperation().getID() << "\n";
 			if(not p->getName().empty()) 	row[columns.name] = p->getName();
 			else row[columns.name] = "Desconocido";
 			row[columns.progress] = percen;
@@ -431,6 +435,117 @@ void TableServicies::load()
 		row = *it;
 		row[columns.step] = to_text(row[columns.step_number]);
 	}
+}
+bool TableServicies::is_reloadable()
+{
+	std::cout << "TableServicies::is_reloadable\n";
+	bool flret = false;
+	std::vector<muposysdb::Progress*>* lstProgress;
+	std::cout << "TableServicies::is_reloadable : cleaned model\n";
+	std::string whereOrder;
+	whereOrder = "step >= ";
+	whereOrder += std::to_string((int)ServiceStep::created);
+	whereOrder += " and step < ";
+	whereOrder += std::to_string((int)ServiceStep::delivered);
+	//std::cout << "TableServicies::load : " << whereOrder << "\n";
+	std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
+	std::cout << "TableServicies::is_reloadable : query done.\n";
+    if(lstOprs)
+	{
+		int maxItOprs;
+		if(this->lstOprs) 
+		{
+			if(this->lstOprs->size() != lstOprs->size()) flret = true;//reload
+			maxItOprs = std::min(this->lstOprs->size(),lstOprs->size());
+		}
+		else
+		{
+			maxItOprs = lstOprs->size();
+		}
+		for(auto p : *lstOprs)
+		{
+			p->downStep(connDB);
+			p->downName(connDB);
+		}
+		
+		for(int i = 0; i < maxItOprs; i++)
+		{
+			if(this->lstOprs) if(this->lstOprs->at(i)->getOperation().getOperation().getID() != lstOprs->at(i)->getOperation().getOperation().getID()) flret = true;//reload
+			if(this->lstOprs) if(this->lstOprs->at(i)->getStep() != lstOprs->at(i)->getStep()) flret = true;//reload
+			if(flret) break;
+		}
+		std::cout << "TableServicies::is_reloadable : readin items.\n";
+		for(auto p : *lstOprs)
+		{
+			std::string whereItem;
+			whereItem = "operation = ";
+			whereItem += std::to_string(p->getOperation().getOperation().getID());
+			whereItem += " and step >= ";
+			whereItem += std::to_string((int)steping::Pizza::accept);
+			whereItem += " and step <=  ";
+			whereItem += std::to_string((int)steping::Pizza::finalized);
+			std::cout << "\tTableServicies::is_reloadable : " << whereItem << "\n";
+			lstProgress = muposysdb::Progress::select(connDB,whereItem,0,'A');
+			std::cout << "\tTableServicies::is_reloadable : query done.\n";
+			if(lstProgress)
+			{
+				int maxItProgress;
+				if(this->lstProgress) 
+				{
+					if(this->lstProgress->size() != lstProgress->size()) flret = true;//reload
+					maxItProgress = std::min(this->lstProgress->size(),lstProgress->size());
+				}
+				else
+				{
+					maxItProgress = lstProgress->size();
+				}
+				for(auto p : *lstProgress)
+				{
+					p->downStep(connDB);
+					p->getStocking().downItem(connDB);
+					p->getStocking().getItem().downStation(connDB);
+				}
+				
+				for(int i = 0; i < maxItProgress; i++)
+				{
+					std::cout << "\tTableServicies::is_reloadable : compare steps\n";
+					if(this->lstProgress) if(this->lstProgress->at(i)->getStep() != lstProgress->at(i)->getStep()) flret = true;//reload
+				}
+			}
+		}
+	}
+	std::cout << "TableServicies::is_reloadable : ending done.\n";
+	if(flret)
+	{
+		std::cout << "TableServicies::is_reloadable : free lstOprs.\n";
+		if(this->lstOprs)
+		{
+			for(auto p : *this->lstOprs)
+			{
+				delete p;
+			}
+			delete this->lstOprs;
+		}
+		std::cout << "TableServicies::is_reloadable : free lstProgress.\n";
+		if(this->lstProgress)
+		{
+			for(auto p : *this->lstProgress)
+			{
+				delete p;
+			}
+			delete this->lstProgress;
+		}
+		std::cout << "TableServicies::is_reloadable : copying new params.\n";
+		this->lstOprs = lstOprs;
+		this->lstProgress = lstProgress;
+	}
+	else if(not this->lstOprs and not this->lstProgress)
+	{
+		this->lstOprs = lstOprs;
+		this->lstProgress = lstProgress;
+	}
+	
+	return flret;
 }
 /*
 void TableServicies::load()
@@ -529,11 +644,6 @@ void TableServicies::load()
 	connDB.commit();
 }
 */
-
-void TableServicies::update_table()
-{
-	
-}
 
 
 
@@ -711,6 +821,38 @@ void TableServicies::on_menu_cooked_popup()
 		std::cerr << "TableServicies::on_menu_cooked_popup - No seleccion fila\n";
 	}
 }
+void TableServicies::on_menu_waiting_popup()
+{
+	std::cerr << "TableServicies::on_menu_cooked_popup\n";
+	if(serviceSelected > 0) //If anything is selected
+	{
+		std::string whereOrder;
+		whereOrder = "operation = ";
+		whereOrder += std::to_string(serviceSelected);
+		std::cerr << "whereOrder : " << whereOrder << "\n";
+		std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
+		if(lstOprs)
+		{
+			if(lstOprs->size() != 1)
+			{
+				std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
+				std::cerr << "Filtro  " << whereOrder << "\n";
+				return;
+			}
+			lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::waiting);
+			for(auto p : *lstOprs)
+			{
+				delete p;
+			}
+			delete lstOprs;
+		}
+		connDB.commit();
+	}
+	else
+	{
+		std::cerr << "TableServicies::on_menu_cooked_popup - No seleccion fila\n";
+	}
+}
 void TableServicies::on_menu_deliver_popup()
 {
 	std::cerr << "TableServicies::on_menu_deliver_popup\n";
@@ -791,9 +933,12 @@ void TableServicies::Updater::do_work(TableServicies* caller)
 
 	while(not m_shall_stop)
 	{
-		//std::lock_guard<std::mutex> lock(mutex);
-		std::cout << "Updating view\n";
-		caller->load();  
+		if(caller->is_reloadable())
+		{
+			std::cout << "Updating view\n";
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+			caller->load();  
+		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		//caller->notify();
 	}

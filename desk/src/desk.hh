@@ -43,7 +43,7 @@ public:
 	virtual ~TableServicies();
 	
 	void load();
-	void update_table();
+	bool is_reloadable();
 	void notify();
 	
 	void on_show()override;
@@ -56,7 +56,6 @@ public:
 	void on_quit_services();
 
   void update_start_stop_buttons();
-  //void update_widgets();
   
   void step_data(Gtk::CellRenderer* renderer, const Gtk::TreeModel::iterator& iter);
   
@@ -64,6 +63,7 @@ public:
   bool on_enter_notify_event (GdkEventCrossing* crossing_event)override;
   bool on_leave_notify_event (GdkEventCrossing* crossing_event)override;
   void on_menu_cooked_popup();
+  void on_menu_waiting_popup();
   void on_menu_deliver_popup();
   
 protected:
@@ -135,6 +135,8 @@ private:
 	std::thread* updaterThread;
 	Menu menu;
 	long serviceSelected;
+	std::vector<muposysdb::MiasService*>* lstOprs;
+	std::vector<muposysdb::Progress*>* lstProgress;
 };
 
 class SearchItem : public Gtk::ComboBox
