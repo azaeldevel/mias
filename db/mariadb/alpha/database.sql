@@ -1,6 +1,6 @@
 
 
-ALTER TABLE CatalogItem ADD COLUMN station ENUM('pizza','stove','oven') COMMENT 'Estación de producción';
+ALTER TABLE CatalogItem ADD COLUMN station TINYINT COMMENT 'Estación de producción';
 
 
 ALTER TABLE Operation ADD COLUMN serie VARCHAR(5) COMMENT 'Serie de Fólio';

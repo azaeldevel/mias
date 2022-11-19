@@ -114,3 +114,15 @@ function toBegin()
   
   cmdBegin.href = ref;
 }
+function toContinue() 
+{  
+  const urlParams = new URLSearchParams(window.location.search);
+  var station = urlParams.get("station");
+  var orderSelected = urlParams.get("order"); 
+  var item = document.getElementById("restoreItemList").value;
+  var step = urlParams.get("step");  
+    
+  var ref = "/application.cgi?station=" + station + "&order=" + orderSelected + "&step=" + step + "&item="+ item; 
+  
+  window.location.href = ref;
+}
