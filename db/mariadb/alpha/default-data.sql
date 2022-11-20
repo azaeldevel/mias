@@ -176,7 +176,17 @@ UPDATE CatalogItem SET station=1  WHERE item >= 1011 and item <= 1035;
 UPDATE CatalogItem SET type = 'service'  WHERE item >= 1036 and item <= 1047;
 UPDATE CatalogItem SET station=2  WHERE item >= 1036 and item <= 1047;
 
+INSERT INTO Person(ente,name1,name3) VALUES(1048,'Ana','V.');
+INSERT INTO UserManagement(um) VALUES(1049);
+INSERT INTO User(user,person,name) VALUES(1049,1048,'ana');
+UPDATE User SET pwdtxt='ana' WHERE user = 1049;
+UPDATE User SET status='autorizado' WHERE user = 1049;
 
+INSERT INTO Person(ente,name1,name3) VALUES(1050,'Joana','R.');
+INSERT INTO UserManagement(um) VALUES(1051);
+INSERT INTO User(user,person,name) VALUES(1051,1050,'cesia');
+UPDATE User SET pwdtxt='cesia' WHERE user = 1051;
+UPDATE User SET status='autorizado' WHERE user = 1051;
 
 
 
