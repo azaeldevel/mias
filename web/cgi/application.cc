@@ -190,7 +190,7 @@ void BodyApplication::programs_pizza(std::ostream& out)
 				std::string where = "operation = ";
 				where += std::to_string(params.order);
 				where += " and step =";
-				where += std::to_string((short)steping::Pizza::none);
+				where += std::to_string((short)steping::Pizza::created);
 				std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
 				if(lstProgress)
 				{

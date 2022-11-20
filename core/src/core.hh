@@ -22,6 +22,7 @@ namespace mias
 		pizza,
 		stove,
 		oven,
+		salad,
 	};
 	
 	namespace steping
@@ -29,6 +30,7 @@ namespace mias
 		enum class Pizza
 		{
 			none,
+			created,
 			accept,
 			accepted,
 			prepare,

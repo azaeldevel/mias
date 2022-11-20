@@ -338,7 +338,7 @@ void TableServicies::on_show()
 }
 void TableServicies::load()
 {
-	//std::cout << "TableServicies::load\n";
+	std::cout << "TableServicies::load\n";
 	tree_model->clear();
 	//std::cout << "TableServicies::load : cleaned model\n";
 	std::string whereOrder;
@@ -353,6 +353,7 @@ void TableServicies::load()
 	{
 		int pendings,totals;
 		float percen;
+		std::cout << "\torder count : " << lstOprs->size() << "\n";
 		for(auto p : *lstOprs)
 		{
 			p->downStep(connDB);
@@ -363,10 +364,10 @@ void TableServicies::load()
 			whereItem = "operation = ";
 			whereItem += std::to_string(p->getOperation().getOperation().getID());
 			whereItem += " and step >= ";
-			whereItem += std::to_string((int)steping::Pizza::accept);
+			whereItem += std::to_string((int)steping::Pizza::created);
 			whereItem += " and step <=  ";
 			whereItem += std::to_string((int)steping::Pizza::finalized);
-			//std::cout << "\tTableServicies::load : " << whereItem << "\n";
+			std::cout << "\tTableServicies::load : " << whereItem << "\n";
 			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(connDB,whereItem,0,'A');
 			//std::cout << "\tTableServicies::load : query done.\n";
 			if(lstProgress)
@@ -388,14 +389,20 @@ void TableServicies::load()
 			}
 			delete lstProgress;
 			
-			//std::cout << "order : " << p->getOperation().getOperation().getID() << "\n";
-			//std::cout << "pendings : " << pendings << "\n";
-			//std::cout << "totals : " << totals << "\n";
+			std::cout << "\torder : " << p->getOperation().getOperation().getID() << "\n";
+			std::cout << "\tpendings : " << pendings << "\n";
+			std::cout << "\ttotals : " << totals << "\n";
 			if(totals > 0)
 			{
-				percen = pendings * 100;
-				percen /= totals;
-				//std::cout << "percen : " << percen <<  "\n";
+				if(pendings > 0)
+				{
+					percen = pendings * 100;
+					percen /= totals;
+				}
+				else
+				{
+					percen = 0;
+				}
 			}
 			else
 			{
@@ -406,7 +413,7 @@ void TableServicies::load()
 			{
 				p->upStep(connDB,(unsigned char)ServiceStep::working);
 			}
-			if(pendings == totals)
+			if(pendings == totals and totals > 0)
 			{
 				p->upStep(connDB,(unsigned char)ServiceStep::waiting);
 			}
@@ -418,6 +425,7 @@ void TableServicies::load()
 			//std::cout << "columns.service : " << p->getOperation().getOperation().getID() << "\n";
 			if(not p->getName().empty()) 	row[columns.name] = p->getName();
 			else row[columns.name] = "Desconocido";
+			std::cout << "\tpercen : " << percen <<  "\n";
 			row[columns.progress] = percen;
 			row[columns.step_number] = (ServiceStep)p->getStep();
 		}
@@ -458,7 +466,7 @@ bool TableServicies::is_reloadable()
 			if(this->lstOprs->size() != lstOprs->size()) 
 			{
 				flret = true;//reload
-				std::cout << "is_reloadable : true devido a las listas de ordenes son de diferente tamaño\n";
+				//std::cout << "is_reloadable : true devido a las listas de ordenes son de diferente tamaño\n";
 			}
 			maxItOprs = std::min(this->lstOprs->size(),lstOprs->size());
 		}
@@ -466,7 +474,7 @@ bool TableServicies::is_reloadable()
 		{
 			maxItOprs = lstOprs->size();
 		}
-		std::cout << "maxItOprs : " << maxItOprs << "\n";
+		//std::cout << "maxItOprs : " << maxItOprs << "\n";
 		for(auto p : *lstOprs)
 		{
 			p->downStep(connDB);
@@ -479,15 +487,15 @@ bool TableServicies::is_reloadable()
 			if(this->lstOprs) if(this->lstOprs->at(i)->getOperation().getOperation().getID() != lstOprs->at(i)->getOperation().getOperation().getID()) 
 			{
 				flret = true;//reload
-				std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde\n";
+				//std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde\n";
 			}
-			if(this->lstOprs) std::cout << "main list order : " << this->lstOprs->at(i)->getStep() <<"\n";
-			std::cout << "local list order : " << lstOprs->at(i)->getStep() <<"\n";
+			//if(this->lstOprs) std::cout << "main list order : " << this->lstOprs->at(i)->getStep() <<"\n";
+			//std::cout << "local list order : " << lstOprs->at(i)->getStep() <<"\n";
 			
 			if(this->lstOprs) if(this->lstOprs->at(i)->getStep() != lstOprs->at(i)->getStep())
 			{
 				flret = true;//reload
-				std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde en el Step\n";
+				//std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde en el Step\n";
 			}
 		}
 		//std::cout << "TableServicies::is_reloadable : readin items.\n";
@@ -518,7 +526,7 @@ bool TableServicies::is_reloadable()
 				{
 					maxItProgress = lstProgress->size();
 				}
-				std::cout << "maxItProgress : " << maxItProgress << "\n";
+				//std::cout << "maxItProgress : " << maxItProgress << "\n";
 				for(auto p : *lstProgress)
 				{
 					p->downStep(connDB);
@@ -532,7 +540,7 @@ bool TableServicies::is_reloadable()
 					if(this->lstProgress) if(this->lstProgress->at(i)->getStep() != lstProgress->at(i)->getStep())
 					{
 						flret = true;//reload
-						std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde con el Step\n";
+						//std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde con el Step\n";
 					}
 				}
 			}
@@ -568,10 +576,10 @@ bool TableServicies::is_reloadable()
 		this->lstOprs = lstOprs;
 		this->lstProgress = lstProgress;
 		flret = true;
-		std::cout << "is_reloadable : true devido a que no hay registros cargos\n";
+		//std::cout << "is_reloadable : true devido a que no hay registros cargos\n";
 	}
 	
-	std::cout << "is_reloadable : " << (flret? "true" : "false")<< "\n";
+	//std::cout << "is_reloadable : " << (flret? "true" : "false")<< "\n";
 	return flret;
 }
 /*
@@ -1147,7 +1155,7 @@ void TableSaling::save()
 					return;
 				}
 				operationProgress = new muposysdb::Progress;
-				if(not operationProgress->insert(connDB,*stocking,*operation,0))
+				if(not operationProgress->insert(connDB,*stocking,*operation,(signed char)steping::Pizza::created))
 				{
 					Gtk::MessageDialog dlg("Error detectado en acceso a BD",true,Gtk::MESSAGE_ERROR);
 					dlg.set_secondary_text("Durante la escritura de Stoking Production.");
@@ -1161,7 +1169,7 @@ void TableSaling::save()
 		else
 		{
 			stocking = new muposysdb::Stocking;
-			if(not stocking->insert(connDB,stock,*cat_item,-quantity))
+			if(not stocking->insert(connDB,stock,*cat_item,quantity))
 			{
 				Gtk::MessageDialog dlg("Error detectado en acces a BD",true,Gtk::MESSAGE_ERROR);
 				dlg.set_secondary_text("Durante la escritura de Stoking.");

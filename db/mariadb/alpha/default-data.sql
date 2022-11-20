@@ -152,23 +152,30 @@ INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VAL
 INSERT INTO Ente(id) VALUES(1049);
 INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1049,7,'gen-vg','Ensalada Vegetariana - Grande','Y',75,'Pz');
 
-INSERT INTO Ente(id) VALUES(1049);
-INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1049,7,'cen-gr','Ensalada Griega - Chico','Y',55,'Pz');
 INSERT INTO Ente(id) VALUES(1050);
-INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1050,7,'gen-gr','Ensalada Griega - Grande','Y',75,'Pz');
-
+INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1050,7,'cen-gr','Ensalada Griega - Chico','Y',55,'Pz');
 INSERT INTO Ente(id) VALUES(1051);
-INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1051,7,'cen-po','Ensalada Pollo - Chico','Y',70,'Pz');
+INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1051,7,'gen-gr','Ensalada Griega - Grande','Y',75,'Pz');
+
 INSERT INTO Ente(id) VALUES(1052);
-INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1052,7,'gen-po','Ensalada Pollo - Grande','Y',95,'Pz');
-
-
+INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1052,7,'cen-po','Ensalada Pollo - Chico','Y',70,'Pz');
 INSERT INTO Ente(id) VALUES(1053);
-INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1053,7,'ing-pp','Pepperoni','Y',20,'Pz');
+INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1053,7,'gen-po','Ensalada Pollo - Grande','Y',95,'Pz');
+
+
 INSERT INTO Ente(id) VALUES(1054);
-INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1054,7,'ing-qs','Queso','Y',20,'Pz');
+INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1054,7,'ing-pp','Pepperoni','Y',20,'Pz');
 INSERT INTO Ente(id) VALUES(1055);
-INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1055,7,'ing-sl','Salami','Y',20,'Pz');
+INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1055,7,'ing-qs','Queso','Y',20,'Pz');
+INSERT INTO Ente(id) VALUES(1056);
+INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1056,7,'ing-sl','Salami','Y',20,'Pz');
+
+UPDATE CatalogItem SET type = 'service'  WHERE item >= 1011 and item <= 1035;
+UPDATE CatalogItem SET station=1  WHERE item >= 1011 and item <= 1035;
+
+UPDATE CatalogItem SET type = 'service'  WHERE item >= 1036 and item <= 1047;
+UPDATE CatalogItem SET station=2  WHERE item >= 1036 and item <= 1047;
+
 
 
 
