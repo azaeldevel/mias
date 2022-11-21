@@ -277,7 +277,6 @@ void TableServicies::init()
 		return;
 	}
 	
-	
 	tree_model = Gtk::ListStore::create(columns);
 	set_model(tree_model);
 	
@@ -328,6 +327,7 @@ TableServicies::ModelColumns::ModelColumns()
 	add(progress);	
 	add(step);	
 	add(step_number);	
+	add(updated);	
 }
 
 void TableServicies::on_show()
@@ -338,8 +338,8 @@ void TableServicies::on_show()
 }
 void TableServicies::load()
 {
+	bool flcleared = false;
 	std::cout << "TableServicies::load\n";
-	tree_model->clear();
 	//std::cout << "TableServicies::load : cleaned model\n";
 	std::string whereOrder;
 	whereOrder = "step >= ";
@@ -349,91 +349,116 @@ void TableServicies::load()
 	//std::cout << "TableServicies::load : where :  " << whereOrder << "\n";
 	std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
 	//std::cout << "TableServicies::load : query done.\n";
+	//Gtk::TreeModel::iterator itRow;
     if(lstOprs)
 	{
-		int pendings,totals;
+		if(tree_model->children().size() != lstOprs->size()) 	
+		{
+			tree_model->clear();
+			flcleared = true;
+		}
+		int finalized,working;
 		float percen;
 		std::cout << "\torder count : " << lstOprs->size() << "\n";
-		for(auto p : *lstOprs)
+		for(int i = 0; i < lstOprs->size(); i++)
 		{
-			p->downStep(connDB);
+			if(lstOprs->at(i)->downUpdated(connDB))
+			{
+				if(not flcleared) 
+				{
+					auto itRow = *tree_model->children()[i];
+					std::cout << "TableServicies::load : Service " << itRow[columns.service] << "\n";
+					if(lstOprs->at(i)->getUpdated() == itRow[columns.updated] and lstOprs->at(i)->getOperation().getOperation().getID() ==  itRow[columns.service]) continue;
+				}
+			}
+			lstOprs->at(i)->downStep(connDB);
+			
 			//std::cout << "TableServicies::load : order " << p->getOperation().getOperation().getID() << "\n";
-			pendings = 0;
-			totals = 0;
 			std::string whereItem;
 			whereItem = "operation = ";
-			whereItem += std::to_string(p->getOperation().getOperation().getID());
-			whereItem += " and step >= ";
-			whereItem += std::to_string((int)steping::Pizza::created);
-			whereItem += " and step <=  ";
-			whereItem += std::to_string((int)steping::Pizza::finalized);
+			whereItem += std::to_string(lstOprs->at(i)->getOperation().getOperation().getID());
 			std::cout << "\tTableServicies::load : " << whereItem << "\n";
 			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(connDB,whereItem,0,'A');
-			//std::cout << "\tTableServicies::load : query done.\n";
+			std::cout << "\tTableServicies::load : query done.\n";
+			
+			float percen_order;
+			finalized = 0;
+			working = 0;
+			percen_order = 0;
+			int totals_items;
 			if(lstProgress)
 			{
-				totals = lstProgress->size();
+				totals_items = lstProgress->size();
 				for(auto progress_item : *lstProgress)
 				{
-					progress_item->getStocking().downItem(connDB);
+					std::cout << "\n";
+					if(progress_item->getStocking().downItem(connDB))
+					{
+						std::cout << "\t\titem : " << progress_item->getStocking().getItem().getItem().getID() << "\n";
+					}
 					
-					//std::cout << "\titem : " << progress_item->getStocking().getItem().getItem().getID();
-					progress_item->downStep(connDB);
+					if(progress_item->downStep(connDB))
+					{
+						std::cout << "\t\tstep : " << (int)progress_item->getStep() << "\n";
+					}
 					
-					if((steping::Pizza)progress_item->getStep() == steping::Pizza::finalized) pendings++;
+					if(progress_item->getStep() < (int)steping::Pizza::created or progress_item->getStep() > (int)steping::Pizza::finalized) 
+					{
+						std::cout << "\t\tstep : jumping item\n";
+						continue;
+					}
+					
+					if(progress_item->getStocking().getItem().downStation(connDB))
+					{
+						if((Station)progress_item->getStocking().getItem().getStation() == Station::pizza) std::cout << "\t\tStation : pizza\n";
+						else std::cout << "\t\tStation : unknow\n";
+					}
+					
+					if((steping::Pizza)progress_item->getStep() < steping::Pizza::finalized) working++;
+					if((steping::Pizza)progress_item->getStep() == steping::Pizza::finalized) finalized++;
+					
+					if((int)progress_item->getStocking().getItem().getStation() == (int)Station::pizza)
+					{
+						short precen_total = (int)steping::Pizza::finalized - (int)steping::Pizza::created;
+						if(precen_total > 0)
+						{
+							float percen_item;
+							int percen_partial = (int)progress_item->getStep() - (int)steping::Pizza::created;
+							std::cout << "\t\tpercen_partial = " << percen_partial << "\n";
+							std::cout << "\t\tprecen_total = " << precen_total << "\n";
+							percen_item = float(percen_partial * 100);
+							percen_item /= float(precen_total);
+							std::cout << "\t\tpercen_item = " << percen_item << "\n";
+							percen_order += percen_item;
+						}
+					}
 				}
 			}
-			for(auto p : *lstProgress)
-			{
-					delete p;
-			}
-			delete lstProgress;
+			std::cout << "\tpercen_order : " << percen_order <<  "\n";
+			percen_order /= float(totals_items);
+			std::cout << "\tpercen_order : " << percen_order <<  "\n";
 			
-			std::cout << "\torder : " << p->getOperation().getOperation().getID() << "\n";
-			std::cout << "\tpendings : " << pendings << "\n";
-			std::cout << "\ttotals : " << totals << "\n";
-			if(totals > 0)
+			if(working > 0)
 			{
-				if(pendings > 0)
-				{
-					percen = pendings * 100;
-					percen /= totals;
-				}
-				else
-				{
-					percen = 0;
-				}
+				lstOprs->at(i)->upStep(connDB,(unsigned char)ServiceStep::working);
 			}
-			else
+			if(working == lstOprs->size())
 			{
-				percen = 100;
+				lstOprs->at(i)->upStep(connDB,(unsigned char)ServiceStep::waiting);
 			}
 			
-			if(pendings > 0)
-			{
-				p->upStep(connDB,(unsigned char)ServiceStep::working);
-			}
-			if(pendings == totals and totals > 0)
-			{
-				p->upStep(connDB,(unsigned char)ServiceStep::waiting);
-			}
-			
-			p->downName(connDB);
+			lstOprs->at(i)->downName(connDB);
 			Gtk::TreeModel::Row row;	
 			row = *(tree_model->append());
-			row[columns.service] = p->getOperation().getOperation().getID();
+			row[columns.service] = lstOprs->at(i)->getOperation().getOperation().getID();
 			//std::cout << "columns.service : " << p->getOperation().getOperation().getID() << "\n";
-			if(not p->getName().empty()) 	row[columns.name] = p->getName();
+			if(not lstOprs->at(i)->getName().empty()) 	row[columns.name] = lstOprs->at(i)->getName();
 			else row[columns.name] = "Desconocido";
-			std::cout << "\tpercen : " << percen <<  "\n";
-			row[columns.progress] = percen;
-			row[columns.step_number] = (ServiceStep)p->getStep();
+			std::cout << "\tpercen : " << percen_order <<  "\n";
+			row[columns.progress] = (int)percen_order;
+			row[columns.step_number] = (ServiceStep)lstOprs->at(i)->getStep();
+			row[columns.updated] = lstOprs->at(i)->getUpdated();
 		}
-		for(auto p : *lstOprs)
-		{
-			delete p;
-		}
-		delete lstOprs;
 	}
 	connDB.commit();
 	
@@ -466,7 +491,7 @@ bool TableServicies::is_reloadable()
 			if(this->lstOprs->size() != lstOprs->size()) 
 			{
 				flret = true;//reload
-				//std::cout << "is_reloadable : true devido a las listas de ordenes son de diferente tamaño\n";
+				std::cout << "is_reloadable : true devido a las listas de ordenes son de diferente tamaño\n";
 			}
 			maxItOprs = std::min(this->lstOprs->size(),lstOprs->size());
 		}
@@ -483,26 +508,21 @@ bool TableServicies::is_reloadable()
 		
 		for(int i = 0; i < maxItOprs; i++)
 		{
-			//if(flret) break;
 			if(this->lstOprs) if(this->lstOprs->at(i)->getOperation().getOperation().getID() != lstOprs->at(i)->getOperation().getOperation().getID()) 
 			{
 				flret = true;//reload
-				//std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde\n";
+				std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde\n";
 			}
-			//if(this->lstOprs) std::cout << "main list order : " << this->lstOprs->at(i)->getStep() <<"\n";
-			//std::cout << "local list order : " << lstOprs->at(i)->getStep() <<"\n";
 			
 			if(this->lstOprs) if(this->lstOprs->at(i)->getStep() != lstOprs->at(i)->getStep())
 			{
 				flret = true;//reload
-				//std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde en el Step\n";
+				std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde en el Step\n";
 			}
 		}
 		//std::cout << "TableServicies::is_reloadable : readin items.\n";
 		for(auto p : *lstOprs)
 		{
-			//if(flret) break;
-			
 			std::string whereItem;
 			whereItem = "operation = ";
 			whereItem += std::to_string(p->getOperation().getOperation().getID());
@@ -510,17 +530,23 @@ bool TableServicies::is_reloadable()
 			whereItem += std::to_string((int)steping::Pizza::accept);
 			whereItem += " and step <=  ";
 			whereItem += std::to_string((int)steping::Pizza::finalized);
-			//std::cout << "\tTableServicies::is_reloadable : " << whereItem << "\n";
+			/*whereItem += " and stocking = ";
+			whereItem += std::to_string((int)steping::Pizza::finalized);*/
+			std::cout << "\tTableServicies::is_reloadable Progress : " << whereItem << "\n";
 			lstProgress = muposysdb::Progress::select(connDB,whereItem,0,'A');
-			//std::cout << "\tTableServicies::is_reloadable : query done.\n";
+			std::cout << "\tTableServicies::is_reloadable : query done.\n";
 			if(lstProgress)
 			{
 				int maxItProgress;
 				if(this->lstProgress) 
 				{
-					if(this->lstProgress->size() != lstProgress->size()) flret = true;//reload
+					if(this->lstProgress->size() != lstProgress->size()) 
+					{
+						std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista de progreso no corrresponde en el tamaño\n";
+						std::cout << "this->lstProgress->size() = " << this->lstProgress->size() << ", lstProgress->size() = " <<  lstProgress->size() << "\n";
+						flret = true;//reload
+					}
 					maxItProgress = std::min(this->lstProgress->size(),lstProgress->size());
-					//if(flret) break;
 				}
 				else
 				{
@@ -536,11 +562,10 @@ bool TableServicies::is_reloadable()
 				
 				for(int i = 0; i < maxItProgress; i++)
 				{
-					//if(flret) break;
 					if(this->lstProgress) if(this->lstProgress->at(i)->getStep() != lstProgress->at(i)->getStep())
 					{
 						flret = true;//reload
-						//std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde con el Step\n";
+						std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde con el Step\n";
 					}
 				}
 			}
@@ -576,10 +601,11 @@ bool TableServicies::is_reloadable()
 		this->lstOprs = lstOprs;
 		this->lstProgress = lstProgress;
 		flret = true;
-		//std::cout << "is_reloadable : true devido a que no hay registros cargos\n";
+		std::cout << "is_reloadable : true devido a que no hay registros cargados\n";
 	}
 	
-	//std::cout << "is_reloadable : " << (flret? "true" : "false")<< "\n";
+	connDB.commit();
+	std::cout << "is_reloadable : " << (flret? "true" : "false")<< "\n";
 	return flret;
 }
 /*
@@ -969,12 +995,7 @@ void TableServicies::Updater::do_work(TableServicies* caller)
 
 	while(not m_shall_stop)
 	{
-		if(caller->is_reloadable())
-		{
-			//std::cout << "Updating view\n";
-			std::this_thread::sleep_for(std::chrono::milliseconds(10));
-			caller->load();  
-		}
+		caller->load();
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		//caller->notify();
 	}

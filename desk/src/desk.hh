@@ -89,6 +89,7 @@ private:
 		Gtk::TreeModelColumn<long> service;
 		Gtk::TreeModelColumn<Glib::ustring> name;
 		Gtk::TreeModelColumn<int> progress;
+		Gtk::TreeModelColumn<short> updated;
 		Gtk::TreeModelColumn<Glib::ustring> step;
 		Gtk::TreeModelColumn<ServiceStep> step_number;
 	};

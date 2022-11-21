@@ -12,6 +12,7 @@ CREATE TABLE MiasService (operation BIGINT NOT NULL, name VARCHAR(50) NOT NULL);
 ALTER TABLE MiasService ADD CONSTRAINT pk_MiasService PRIMARY KEY(operation);
 ALTER TABLE MiasService ADD CONSTRAINT fk_MiasService_operation_Operation_operation FOREIGN KEY(operation) REFERENCES Operation(operation);
 ALTER TABLE MiasService ADD COLUMN step TINYINT DEFAULT 0 COMMENT 'Progreso actual del Servicio';
+ALTER TABLE MiasService ADD COLUMN updated SMALLINT DEFAULT 0 COMMENT 'Indiucador de actualizacion';
 
 CREATE TABLE ProgressLog(progress BIGINT PRIMARY KEY NOT NULL, FOREIGN KEY(progress) REFERENCES Progress(stocking));
 ALTER TABLE ProgressLog ADD user BIGINT NOT NULL COMMENT 'Usuario que realiza la actualización progreso';

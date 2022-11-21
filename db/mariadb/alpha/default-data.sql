@@ -162,7 +162,6 @@ INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VAL
 INSERT INTO Ente(id) VALUES(1053);
 INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1053,7,'gen-po','Ensalada Pollo - Grande','Y',95,'Pz');
 
-
 INSERT INTO Ente(id) VALUES(1054);
 INSERT INTO CatalogItem(item,catalog,number,brief,active,value,presentation) VALUES(1054,7,'ing-pp','Pepperoni','Y',20,'Pz');
 INSERT INTO Ente(id) VALUES(1055);
@@ -176,18 +175,42 @@ UPDATE CatalogItem SET station=1  WHERE item >= 1011 and item <= 1035;
 UPDATE CatalogItem SET type = 'service'  WHERE item >= 1036 and item <= 1047;
 UPDATE CatalogItem SET station=2  WHERE item >= 1036 and item <= 1047;
 
-INSERT INTO Person(ente,name1,name3) VALUES(1048,'Ana','V.');
-INSERT INTO UserManagement(um) VALUES(1049);
-INSERT INTO User(user,person,name) VALUES(1049,1048,'ana');
-UPDATE User SET pwdtxt='ana' WHERE user = 1049;
-UPDATE User SET status='autorizado' WHERE user = 1049;
+INSERT INTO Ente(id) VALUES(1059);
+INSERT INTO Ente(id) VALUES(1060);
+INSERT INTO Person(ente,name1,name3) VALUES(1059,'Ana','V.');
+INSERT INTO UserManagement(um) VALUES(1060);
+INSERT INTO User(user,person,name) VALUES(1060,1059,'ana');
+UPDATE User SET pwdtxt='ana' WHERE user = 1060;
+UPDATE User SET status='autorizado' WHERE user = 1060;
 
-INSERT INTO Person(ente,name1,name3) VALUES(1050,'Joana','R.');
-INSERT INTO UserManagement(um) VALUES(1051);
-INSERT INTO User(user,person,name) VALUES(1051,1050,'cesia');
-UPDATE User SET pwdtxt='cesia' WHERE user = 1051;
-UPDATE User SET status='autorizado' WHERE user = 1051;
+INSERT INTO Ente(id) VALUES(1061);
+INSERT INTO Ente(id) VALUES(1062);
+INSERT INTO Person(ente,name1,name3) VALUES(1061,'Joana','R.');
+INSERT INTO UserManagement(um) VALUES(1062);
+INSERT INTO User(user,person,name) VALUES(1062,1061,'cesia');
+UPDATE User SET pwdtxt='cesia' WHERE user = 1062;
+UPDATE User SET status='autorizado' WHERE user = 1062;
 
+INSERT INTO UserPermission(user,permission) VALUES(1060,3);
+INSERT INTO UserPermission(user,permission) VALUES(1062,3);
 
+INSERT INTO Ente(id) VALUES(1063);
+INSERT INTO Ente(id) VALUES(1064);
+INSERT INTO Person(ente,name1,name3) VALUES(1063,'Beto','X');
+INSERT INTO UserManagement(um) VALUES(1064);
+INSERT INTO User(user,person,name) VALUES(1064,1063,'beto');
+UPDATE User SET pwdtxt='beto' WHERE user = 1064;
+UPDATE User SET status='autorizado' WHERE user = 1064;
+
+INSERT INTO Ente(id) VALUES(1065);
+INSERT INTO Ente(id) VALUES(1066);
+INSERT INTO Person(ente,name1,name3) VALUES(1065,'Maria','X');
+INSERT INTO UserManagement(um) VALUES(1066);
+INSERT INTO User(user,person,name) VALUES(1066,1065,'maria');
+UPDATE User SET pwdtxt='maria' WHERE user = 1066;
+UPDATE User SET status='autorizado' WHERE user = 1066;
+
+INSERT INTO UserPermission(user,permission) VALUES(1064,3);
+INSERT INTO UserPermission(user,permission) VALUES(1066,3);
 
 INSERT INTO Ente(id) VALUES(2000);

@@ -5,7 +5,7 @@ function accepthref()
   var station = urlParams.get("station");
     
   var orderSelected = document.getElementById("orderList").value;
-  var ref = "/application.cgi?station=" + station + "&order=" + orderSelected + "&step=none";
+  var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&step=none";
   
   window.location.href = ref;
 }
@@ -16,18 +16,18 @@ function acceptinghref()
   var station = urlParams.get("station");
   var orderSelected = urlParams.get("order");  
   var itemList = document.getElementById("itemList").value;
-  var ref = "/application.cgi?station=" + station + "&order=" + orderSelected + "&step=accept&item=" + itemList;
+  var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&step=accept&item=" + itemList;
   
   window.location.href = ref;
 }
 
 function restoreOrderhref() 
-{  
+{
   const urlParams = new URLSearchParams(window.location.search);
   var station = urlParams.get("station");
     
   var orderSelected = document.getElementById("restoreOrderList").value;
-  var ref = "/application.cgi?station=" + station + "&order=" + orderSelected + "&step=none&restoring";
+  var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&step=none&restoring";
   
   window.location.href = ref;
 }
@@ -38,7 +38,7 @@ function restoreStephref()
   var station = urlParams.get("station");
   var orderSelected = urlParams.get("order");  
   var restoreStep = document.getElementById("restoreStepList").value;
-  var ref = "/application.cgi?station=" + station + "&order=" + orderSelected + "&restoring&step=" + restoreStep;
+  var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&restoring&step=" + restoreStep;
   
   window.location.href = ref;
 }
@@ -50,7 +50,7 @@ function toPrepare()
   var item = urlParams.get("item");  
     
   var cmdPreparing = document.getElementById("cmdPreparing");
-  var ref = "/application.cgi?station=" + station + "&order=" + orderSelected + "&step=prepare&item="+ item; 
+  var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&step=prepare&item="+ item; 
   
   cmdPreparing.href = ref;
 }
@@ -62,7 +62,7 @@ function toPrepared()
   var item = urlParams.get("item");  
     
   var cmdPrepared = document.getElementById("cmdPrepared");
-  var ref = "/application.cgi?station=" + station + "&order=" + orderSelected + "&step=prepared&item="+ item; 
+  var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&step=prepared&item="+ item; 
   
   cmdPrepared.href = ref;
 }
@@ -74,7 +74,7 @@ function toBaking()
   var item = urlParams.get("item");  
     
   var cmdBaking = document.getElementById("cmdBaking");
-  var ref = "/application.cgi?station=" + station + "&order=" + orderSelected + "&step=baking&item="+ item; 
+  var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&step=baking&item="+ item; 
   
   cmdBaking.href = ref;
 }
@@ -86,7 +86,7 @@ function toBaked()
   var item = urlParams.get("item");  
     
   var cmdBaked = document.getElementById("cmdBaked");
-  var ref = "/application.cgi?station=" + station + "&order=" + orderSelected + "&step=baked&item="+ item; 
+  var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&step=baked&item="+ item; 
   
   cmdBaked.href = ref;
 }
@@ -98,7 +98,7 @@ function toFinalized()
   var item = urlParams.get("item");  
     
   var cmdFinalized = document.getElementById("cmdFinalized");
-  var ref = "/application.cgi?station=" + station + "&order=" + orderSelected + "&step=finalized&item="+ item; 
+  var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&step=finalized&item="+ item; 
   
   cmdFinalized.href = ref;
 }
@@ -110,7 +110,7 @@ function toBegin()
   var item = urlParams.get("item");  
     
   var cmdBegin = document.getElementById("cmdBegin");
-  var ref = "/application.cgi?station=" + station + "&step=none"; 
+  var ref = "application.cgi?station=" + station + "&step=none"; 
   
   cmdBegin.href = ref;
 }
@@ -122,7 +122,7 @@ function toContinue()
   var item = document.getElementById("restoreItemList").value;
   var step = urlParams.get("step");  
     
-  var ref = "/application.cgi?station=" + station + "&order=" + orderSelected + "&step=" + step + "&item="+ item; 
+  var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&step=" + step + "&item="+ item; 
   
   window.location.href = ref;
 }

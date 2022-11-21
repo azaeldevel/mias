@@ -49,7 +49,8 @@ theme_DATA=
 if MIAS_WEB_ENABLE_RUNNABLE
 
 install-data-hook:
-	
+	chown $(USER_GROUP) -R $(bindir)/css
+	chown $(USER_GROUP) -R $(bindir)/js
 
 install-exec-hook:
 	
