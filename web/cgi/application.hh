@@ -48,7 +48,7 @@ private:
 	
 public:
 	BodyApplication(const GetParams& params);
-	virtual std::ostream& operator >> (std::ostream& out);
+	virtual std::ostream& print (std::ostream& out);
 	virtual void programs(std::ostream& out);
 	void programs_pizza(std::ostream& out);
 	virtual void panel(std::ostream& out);
@@ -63,7 +63,6 @@ protected:
 class Application : public mps::Application
 {
 public:
-	//virtual std::ostream& operator >> (std::ostream& out);
 	virtual int main(std::ostream& out = std::cout);
 	
 	void init();
