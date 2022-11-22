@@ -213,4 +213,17 @@ UPDATE User SET status='autorizado' WHERE user = 1066;
 INSERT INTO UserPermission(user,permission) VALUES(1064,3);
 INSERT INTO UserPermission(user,permission) VALUES(1066,3);
 
+INSERT INTO Ente(id) VALUES(1067);
+INSERT INTO Ente(id) VALUES(1068);
+INSERT INTO Person(ente,name1,name3) VALUES(1067,'Azael','R.');
+INSERT INTO UserManagement(um) VALUES(1068);
+INSERT INTO User(user,person,name) VALUES(1068,1067,'azael');
+UPDATE User SET pwdtxt='azael' WHERE user = 1068;
+UPDATE User SET status='autorizado' WHERE user = 1068;
+
+INSERT INTO UserPermission(user,permission) VALUES(1068,3);
+
+
+
+
 INSERT INTO Ente(id) VALUES(2000);

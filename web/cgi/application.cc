@@ -288,10 +288,9 @@ void BodyApplication::panel(std::ostream& out)
 	}
 }
 void BodyApplication::panel_pizza(std::ostream& out) 
-{	
+{
 	out << "\t\t\t<div id=\"logout\"><a href=\"logout.cgi\"></a></div>\n";
 	out << "\t\t\t<div class=\"space\"></div>\n";	
-	out << "\t\t\t<div id=\"system\"><a href=\"system.html\"></a></div>\n";	
 	//out << "Step : " << params.order  << "\n";	
 	if(params.step == (short)steping::Pizza::none and params.order == -1)
 	{

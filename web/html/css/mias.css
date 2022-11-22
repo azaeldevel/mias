@@ -27,7 +27,7 @@ body > #commands > #right > *
 {
 	float : right;
 }
-	
+
 .cmd 
 {
   background-color: lightgray;
@@ -83,7 +83,11 @@ body > #menu > #programs > #order, body > #menu > #programs > #item
 }
 @media screen and (min-width: 1200px)
 {
-	
+	body > #menu
+	{
+		height: 2.2em;
+		font-size : 1em;
+	}
 }
 
 
