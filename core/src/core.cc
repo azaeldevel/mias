@@ -91,6 +91,18 @@ namespace mias
 		
 		return "unknow";
 	}
+	const char* to_text(Station s)
+	{
+		switch(s)
+		{
+			case Station::none: return "Ninguna";	
+			case Station::pizza: return "Pizza";	
+			case Station::stove: return "Estufa";	
+			case Station::oven: return "Horno";
+		}
+		
+		return "unknow";
+	}
 	void to_step(const char* str, steping::Pizza& step)
 	{
 		if(strcmp(str,"none") == 0)

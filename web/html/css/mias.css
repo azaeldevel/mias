@@ -40,10 +40,37 @@ body > #menu > #programs > div
 {
 	color : inherit;
 }
+#itemBrief
+{
+	font-size: 100%;
+}
+body > #work
+{
+	min-height : 80%;
+}
+#itemBrief
+{
+	font-size: 100%;
+	min-height : 33.3%;
+	font-weight: bold;
+}
+body > #menu > #programs > div
+{
+	min-width : 50%;
+}
+body > #menu > #programs > #order, body > #menu > #programs > #item
+{
+	color: white;
+}
+
 
 @media screen and (max-width : 299px)
 {
-	
+	body > #menu > #programs > div
+	{
+		font-size: 5%;
+		margin: 2px;
+	}
 }
 @media screen and (min-width: 300px) and (max-width : 599px)
 {
@@ -59,10 +86,7 @@ body > #menu > #programs > div
 }
 @media screen and (min-width: 1200px)
 {
-	body > #menu > #programs > div
-	{
-		min-width : 15%;
-	}
+	
 }
 
 

@@ -153,6 +153,7 @@ void BodyApplication::programs_pizza(std::ostream& out)
 			std::vector<muposysdb::MiasService*>* lstService = muposysdb::MiasService::select(*connDB,where,0,'A');
 			if(lstService->size() > 0)
 			{
+				out << "\t\t\t\t<label for=\"order\"><b>Orden:</b></label><br>\n";
 				out << "\t\t\t\t<select name=\"order\" id=\"orderList\" onchange=\"accepthref()\">\n";
 				{
 					if(lstService)
@@ -170,7 +171,11 @@ void BodyApplication::programs_pizza(std::ostream& out)
 						delete lstService;
 					}
 				}
-			out << "\t\t\t\t</select>\n";
+				out << "\t\t\t\t</select>\n";
+			}
+			else
+			{
+				out << "\t\t\t\t<label ><b>Orden:</b></label><br>Ninugna\n";
 			}
 		}
 		out << "\t\t\t</div>\n";
@@ -185,34 +190,36 @@ void BodyApplication::programs_pizza(std::ostream& out)
 		
 		out << "\t\t\t<div id=\"item\">\n";
 		{
-			out << "\t\t\t\t<select name=\"item\" id=\"itemList\" onchange=\"acceptinghref()\">\n";
+			std::string where = "operation = ";
+			where += std::to_string(params.order);
+			where += " and step =";
+			where += std::to_string((short)steping::Pizza::created);
+			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
+			if(lstProgress->size() > 0)
 			{
-				std::string where = "operation = ";
-				where += std::to_string(params.order);
-				where += " and step =";
-				where += std::to_string((short)steping::Pizza::created);
-				std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
-				if(lstProgress)
+				out << "\t\t\t\t<label for=\"item\"><b>Pizza:</b></label><br>\n";
+				out << "\t\t\t\t<select name=\"item\" id=\"itemList\" onchange=\"acceptinghref()\">\n";
 				{
-					if(lstProgress->size() > 0)
-					{
 						out << "\t\t\t\t\t<option value=\"next\">next</option>\n";
-					}
-					for(auto p : *lstProgress)
-					{
-						p->getStocking().downItem(*connDB);
-						p->getStocking().getItem().downNumber(*connDB);
-						p->getStocking().getItem().downBrief(*connDB);
-						out << "\t\t\t\t\t<option value=\"" << p->getStocking().getStocking() << "\">" << p->getStocking().getItem().getBrief() << "</option>\n";
-					}
-					for(auto p : *lstProgress)
-					{
-							delete p;
-					}
-					delete lstProgress;
+						for(auto p : *lstProgress)
+						{
+							p->getStocking().downItem(*connDB);
+							p->getStocking().getItem().downNumber(*connDB);
+							p->getStocking().getItem().downBrief(*connDB);
+							out << "\t\t\t\t\t<option value=\"" << p->getStocking().getStocking() << "\">" << p->getStocking().getItem().getBrief() << "</option>\n";
+						}
+						for(auto p : *lstProgress)
+						{
+								delete p;
+						}
+						delete lstProgress;
 				}
+				out << "\t\t\t\t</select>\n";
 			}
-			out << "\t\t\t\t</select>\n";
+			else
+			{
+				out << "\t\t\t\t<label ><b>Pizza:</b></label><br>Ninugna\n";
+			}
 		}
 		out << "\t\t\t</div>\n";
 	}	
@@ -220,15 +227,42 @@ void BodyApplication::programs_pizza(std::ostream& out)
 	{
 		out << "\t\t\t<div id=\"order\">\n";
 		{
-			out << "\t\t\t\tOrden : " << params.order << " \n";
+			out << "\t\t\t\t<label><b>Orden:</b></label><br>" << params.order << "\n";
 		}
 		out << "\t\t\t</div>\n";
 		out << "\t\t\t<div id=\"item\">\n";
 		{
-			out << "\t\t\t\tItem : " << params.item << " \n";
+			std::string itemNumber;
+			std::string where = "operation = ";
+			where += std::to_string(params.order);
+			//out << " where : " << where << "\n";
+			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
+			if(lstProgress->size() > 0)
+			{
+				//if(lstProgress->size() > 1) break;
+				for(auto p : *lstProgress)
+				{
+					p->getStocking().downItem(*connDB);
+					p->getStocking().getItem().downNumber(*connDB);
+					//p->getStocking().getItem().downBrief(*connDB);
+					//out << "\t\t\t\titem : " << p->getStocking().getItem().getItem().getID() << "\n";
+					//out << "\t\t\t\titem : " <<  params.item << "\n";
+					if(p->getStocking().getStocking() == params.item) 
+					{
+						//out << "\t\t\t\titem : x\n";
+						itemNumber = p->getStocking().getItem().getNumber();
+						break;
+					}
+				}
+				for(auto p : *lstProgress)
+				{
+					delete p;
+				}
+				delete lstProgress;
+			}
+			out << "\t\t\t\t<label><b>Pizza:</b></label><br>" << itemNumber << "\n";
 		}
 		out << "\t\t\t</div>\n";
-		
 	}
 	else if(params.restoring)
 	{
@@ -270,6 +304,7 @@ void BodyApplication::panel_pizza(std::ostream& out)
 			std::vector<muposysdb::MiasService*>* lstService = muposysdb::MiasService::select(*connDB,where,0,'A');
 			if(lstService) if(lstService->size() > 0)
 			{
+				out << "\t\t\t\t<label for=\"order\"><b>Orden:</b></label><br>\n";
 				out << "\t\t\t\t<select name=\"restoreOrder\" id=\"restoreOrderList\" onchange=\"restoreOrderhref()\">\n";
 				{
 					out << "\t\t\t\t\t<option value=\"next\">next</option>\n";
@@ -361,9 +396,47 @@ std::ostream& BodyApplication::operator >> (std::ostream& out)
 	out << "\t</div>\n";
 	if(params.station != Station::none)
 	{
-		out << "\t<div id=\"working\">\n";		
+		out << "\t<div id=\"work\">\n";		
 		{
-			
+			muposysdb::CatalogItem* item = NULL;
+			std::string where = "operation = ";
+			where += std::to_string(params.order);
+			//out << " where : " << where << "\n";
+			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
+			if(lstProgress) if(lstProgress->size() > 0)
+			{
+				for(auto p : *lstProgress)
+				{
+					p->getStocking().downItem(*connDB);
+					p->getStocking().getItem().downNumber(*connDB);
+					p->getStocking().getItem().downBrief(*connDB);
+					if(p->getStocking().getStocking() == params.item)
+					{
+						item = new muposysdb::CatalogItem(p->getStocking().getItem());
+						//item->downItem(*connDB);
+						//item->downNumber(*connDB);
+						item->downBrief(*connDB);						
+					}
+				}
+				for(auto p : *lstProgress)
+				{
+					delete p;
+				}
+				delete lstProgress;
+			}
+			out << "\t<div id=\"brief\">\n";		
+			{
+				out << "\t<div id=\"itemBrief\">\n";		
+				{
+					if(item)
+					{
+						out << "\t" << to_text(params.station) << " : "<< item->getBrief() << "<br>\n";
+					}
+				}
+				out << "\t</div>\n";
+			}
+			out << "\t</div>\n";
+			delete item;
 		}
 		out << "\t</div>\n";
 		
@@ -403,8 +476,9 @@ std::ostream& BodyApplication::operator >> (std::ostream& out)
 				}
 			}
 			out << "\t</div>\n";
-			out << "\t<div id=\"right\">\n";		
+			if(params.step > (short)steping::Pizza::accept)
 			{
+				out << "\t<div id=\"right\">\n";	
 				switch((steping::Pizza)params.step)
 				{
 					case steping::Pizza::none: 
@@ -414,20 +488,20 @@ std::ostream& BodyApplication::operator >> (std::ostream& out)
 						
 						break;
 					case steping::Pizza::accepted:
-						out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPrepare()\">Preparar</a>";
 						out << "\t<a id=\"cmdBaking\" class=\"cmd\" onclick=\"toBaking()\">Hornear</a>";
+						out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPrepare()\">Preparar</a>";
 						break;
 					case steping::Pizza::preparing: 
-						out << "\t<a id=\"cmdPrepared\" class=\"cmd\" onclick=\"toPrepared()\">Preparada</a>";
 						out << "\t<a id=\"cmdBaking\" class=\"cmd\" onclick=\"toBaking()\">Hornear</a>";
+						out << "\t<a id=\"cmdPrepared\" class=\"cmd\" onclick=\"toPrepared()\">Preparada</a>";
 						break;
 					case steping::Pizza::prepared: 
-						out << "\t<a id=\"cmdBaking\" class=\"cmd\" onclick=\"toBaking()\">Hornear</a>";
 						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";	
+						out << "\t<a id=\"cmdBaking\" class=\"cmd\" onclick=\"toBaking()\">Hornear</a>";
 						break;
 					case steping::Pizza::baking: 
-						out << "\t<a id=\"cmdBaked\" class=\"cmd\" onclick=\"toBaked()\">Horneada</a>";
 						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";	
+						out << "\t<a id=\"cmdBaked\" class=\"cmd\" onclick=\"toBaked()\">Horneada</a>";
 						break;
 					case steping::Pizza::baked: 
 						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";	
@@ -439,9 +513,8 @@ std::ostream& BodyApplication::operator >> (std::ostream& out)
 						
 						break;
 				}
-				
+				out << "\t</div>\n";
 			}
-			out << "\t</div>\n";
 		}
 		out << "\t</div>\n";
 	}
