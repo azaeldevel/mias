@@ -8,6 +8,9 @@ body > #commands
 	position: absolute;
 	bottom: 0;
 	width: 100%;
+	height : 1.4em;
+	padding-top : 0.2em;
+	background-color: royalblue;	
 }
 body > #commands > #left
 {
@@ -18,23 +21,21 @@ body > #commands > #right
 {
 	float : right;
 	width: 50%;
-	border-style: solid;
-	background-color: brown;
-	margin : 5px;
-	padding : 5px;
+	height : 100%;
 }
 body > #commands > #right > *
 {
 	float : right;
 }
 	
-body > #commands > #right > .cmd 
+.cmd 
 {
-  background-color: green;
-  color: white;
-  margin-left: 8px;
+  background-color: lightgray;
+  color: black;
+  margin-right: 8px;
   border: none;
-  cursor: pointer;
+  padding-left : 0.3em;
+  padding-right : 0.3em;
 }
 body > #menu > #programs > div
 {
@@ -66,11 +67,7 @@ body > #menu > #programs > #order, body > #menu > #programs > #item
 
 @media screen and (max-width : 299px)
 {
-	body > #menu > #programs > div
-	{
-		font-size: 5%;
-		margin: 2px;
-	}
+	
 }
 @media screen and (min-width: 300px) and (max-width : 599px)
 {

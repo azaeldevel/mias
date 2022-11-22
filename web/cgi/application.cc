@@ -184,7 +184,7 @@ void BodyApplication::programs_pizza(std::ostream& out)
 	{
 		out << "\t\t\t<div id=\"order\">\n";
 		{
-			out << "\t\t\t\tOrden : " << params.order << " \n";
+			out << "\t\t\t\t<label ><b>Orden:</b></label><br>" << params.order << "\n";
 		}
 		out << "\t\t\t</div>\n";
 		
@@ -476,13 +476,12 @@ std::ostream& BodyApplication::operator >> (std::ostream& out)
 				}
 			}
 			out << "\t</div>\n";
-			if(params.step > (short)steping::Pizza::accept)
+			out << "\t<div id=\"right\">\n";	
 			{
-				out << "\t<div id=\"right\">\n";	
 				switch((steping::Pizza)params.step)
 				{
 					case steping::Pizza::none: 
-						
+						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
 						break;
 					case steping::Pizza::accept:
 						
