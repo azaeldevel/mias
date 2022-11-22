@@ -311,6 +311,10 @@ void TableServicies::init()
 	item->signal_activate().connect(sigc::mem_fun(*this, &TableServicies::on_menu_deliver_popup));
 	menu.append(*item);
 	
+	item = Gtk::make_managed<Gtk::MenuItem>("Cencelar", true);
+	item->signal_activate().connect(sigc::mem_fun(*this, &TableServicies::on_menu_cancel_popup));
+	menu.append(*item);
+	
 	menu.accelerate(*this);
 	menu.show_all();
 	menu.set(*this);
@@ -859,7 +863,7 @@ void TableServicies::on_menu_cooked_popup()
 		std::string whereOrder;
 		whereOrder = "operation = ";
 		whereOrder += std::to_string(serviceSelected);
-		std::cerr << "whereOrder : " << whereOrder << "\n";
+		//std::cerr << "whereOrder : " << whereOrder << "\n";
 		std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
 		if(lstOprs)
 		{
@@ -867,9 +871,8 @@ void TableServicies::on_menu_cooked_popup()
 			{
 				std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
 				std::cerr << "Filtro  " << whereOrder << "\n";
-				return;
+				lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::cooked);
 			}
-			lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::cooked);
 			for(auto p : *lstOprs)
 			{
 				delete p;
@@ -891,17 +894,16 @@ void TableServicies::on_menu_waiting_popup()
 		std::string whereOrder;
 		whereOrder = "operation = ";
 		whereOrder += std::to_string(serviceSelected);
-		std::cerr << "whereOrder : " << whereOrder << "\n";
+		//std::cerr << "whereOrder : " << whereOrder << "\n";
 		std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
 		if(lstOprs)
 		{
 			if(lstOprs->size() != 1)
 			{
-				std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
-				std::cerr << "Filtro  " << whereOrder << "\n";
-				return;
+				//std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
+				//std::cerr << "Filtro  " << whereOrder << "\n";
+				lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::waiting);
 			}
-			lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::waiting);
 			for(auto p : *lstOprs)
 			{
 				delete p;
@@ -912,12 +914,12 @@ void TableServicies::on_menu_waiting_popup()
 	}
 	else
 	{
-		std::cerr << "TableServicies::on_menu_cooked_popup - No seleccion fila\n";
+		//std::cerr << "TableServicies::on_menu_cooked_popup - No seleccion fila\n";
 	}
 }
 void TableServicies::on_menu_deliver_popup()
 {
-	std::cerr << "TableServicies::on_menu_deliver_popup\n";
+	//std::cerr << "TableServicies::on_menu_deliver_popup\n";
 	if(serviceSelected > 0) //If anything is selected
 	{
 		std::string whereOrder;
@@ -928,11 +930,10 @@ void TableServicies::on_menu_deliver_popup()
 		{
 			if(lstOprs->size() != 1)
 			{
-				std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
-				std::cerr << "Filtro  " << whereOrder << "\n";
-				return;
+				//std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
+				//std::cerr << "Filtro  " << whereOrder << "\n";
+				lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::delivered);
 			}
-			lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::delivered);
 			for(auto p : *lstOprs)
 			{
 				delete p;
@@ -942,7 +943,32 @@ void TableServicies::on_menu_deliver_popup()
 	}
 	connDB.commit();
 }
-
+void TableServicies::on_menu_cancel_popup()
+{
+	//std::cerr << "TableServicies::on_menu_deliver_popup\n";
+	if(serviceSelected > 0) //If anything is selected
+	{
+		std::string whereOrder;
+		whereOrder = "operation = ";
+		whereOrder += std::to_string(serviceSelected);
+		std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
+		if(lstOprs)
+		{
+			if(lstOprs->size() != 1)
+			{
+				//std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
+				//std::cerr << "Filtro  " << whereOrder << "\n";
+			}
+			lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::cancel);
+			for(auto p : *lstOprs)
+			{
+				delete p;
+			}
+			delete lstOprs;
+		}
+	}
+	connDB.commit();
+}
 
 TableServicies::Updater::Updater() : m_shall_stop(false), m_has_stopped(false)
 {	

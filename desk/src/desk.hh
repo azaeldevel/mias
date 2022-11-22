@@ -65,6 +65,7 @@ public:
   void on_menu_cooked_popup();
   void on_menu_waiting_popup();
   void on_menu_deliver_popup();
+  void on_menu_cancel_popup();
   
 protected:
 	
