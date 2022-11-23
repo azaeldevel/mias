@@ -4,6 +4,103 @@
 
 #include "desk.hh"
 
+
+
+
+
+
+namespace mps
+{
+	SearchItem::SearchItem(Glib::ustring& n) : number(n)
+	{
+		init();
+	}
+	void SearchItem::init()
+	{
+		try
+		{
+			connDB_flag = connDB.connect(muposysdb::datconex);
+		}
+		catch(const std::exception& e)
+		{
+			Gtk::MessageDialog dlg("Error detectado durante conexion a BD",true,Gtk::MESSAGE_ERROR);
+			dlg.set_secondary_text(e.what());
+			dlg.run();
+			return;
+		}
+		
+		set_title("Buscar...");
+		
+		btCancel.signal_clicked().connect(sigc::mem_fun(*this,&SearchItem::on_bt_cancel_clicked));
+		btOK.signal_clicked().connect(sigc::mem_fun(*this,&SearchItem::on_bt_ok_clicked));
+		signal_response().connect(sigc::mem_fun(*this, &SearchItem::on_response));
+		btOK.set_image_from_icon_name("gtk-ok");
+		btCancel.set_image_from_icon_name("gtk-cancel");
+		
+		//
+		//entry->signal_search_changed().connect(sigc::mem_fun(*this, &SearchItem::on_search_text_changed));
+		
+		//
+		get_vbox()->pack_start(bar,false,true);
+		bar.connect_entry(entry);
+		get_vbox()->pack_start(panel,false,true);
+		get_vbox()->pack_start(boxButtons,false,true);
+		boxButtons.pack_start(btOK,false,true);
+		boxButtons.pack_start(btCancel,false,true);
+				
+		set_default_size(340,200);
+		entry.show();
+		bar.show();
+		show_all_children();
+	}
+	
+
+	void SearchItem::on_bt_cancel_clicked()
+	{
+		response(Gtk::RESPONSE_CANCEL);
+	}
+	void SearchItem::on_bt_ok_clicked()
+	{
+		response(Gtk::RESPONSE_OK);
+	}
+	void SearchItem::on_response(int res)
+	{
+		if(res == Gtk::RESPONSE_OK)
+		{
+			hide();
+		}
+		else
+		{
+			switch (res)
+			{
+			case Gtk::RESPONSE_CLOSE:
+			case Gtk::RESPONSE_CANCEL:
+			case Gtk::RESPONSE_DELETE_EVENT:
+				hide();
+				break;
+			}
+		}
+	}
+	
+	muposysdb::CatalogItem* SearchItem::searching(const Glib::ustring& s)
+	{
+		
+		
+		return NULL;
+	}
+	void SearchItem::on_search_text_changed()
+	{
+		std::cout << "searching : " << entry.get_text() << "\n";
+	}
+	
+	
+	
+	
+	
+}
+
+
+
 namespace mias
 {
 Mias::Mias()
@@ -59,167 +156,14 @@ Sales::~Sales()
 
 
 
-SearchItem::SearchItem() : Gtk::ComboBox(true)
-{
-	init();
-}
-void SearchItem::init()
-{
-	octetos::db::maria::Connector connector;
-	if(not connector.connect(muposysdb::datconex)) throw octetos::db::SQLException("Fallo la conexión a la Base de datos",__FILE__,__LINE__);
-	
-	//set_icon_from_icon_name("edit-find");
 
-	refModel = Gtk::ListStore::create(columns);
-	set_model(refModel);
-		
-	std::vector<muposysdb::CatalogItem*>* lstCatItems = muposysdb::CatalogItem::select(connector,"");
-	std::vector<muposysdb::CatalogItem*>::const_iterator it = lstCatItems->begin();
-	Gtk::TreeModel::Row row;
-	for(unsigned int  i = 0; i < lstCatItems->size();i++)
-	{
-		row = *(refModel->append());
-		
-		it[i]->downNumber(connector);
-		it[i]->downBrief(connector);
-		
-		row[columns.id] = i + 1;
-		row[columns.number] = it[i]->getNumber();
-		row[columns.name] = it[i]->getBrief();
-		row[columns.db] = it[i];
-		//std::cout << "number : " << it[i]->getNumber() << "\n";
-		//std::cout << "name : " << it[i]->getName() << "\n";
-	}
-	
-	set_cell_data_func(cell,sigc::mem_fun(*this, &SearchItem::on_cell_data_extra));
-	pack_start(cell);
-	signal_changed().connect( sigc::mem_fun(*this, &SearchItem::on_combo_changed) );
-	signal_key_press_event().connect(sigc::mem_fun(*this,	&SearchItem::on_combo_key_presst) );
-		
-	item = get_entry();
-	if (item)
-	{
-		//item->add_events(Gdk::KEY_PRESS_MASK);
-		// The Entry shall receive focus-out events.
-		item->add_events(Gdk::FOCUS_CHANGE_MASK);
 
-		// Alternatively you can connect to m_Combo.signal_changed().
-		item->signal_changed().connect(sigc::mem_fun(*this,	&SearchItem::on_entry_changed) );
-		item->signal_activate().connect(sigc::mem_fun(*this,&SearchItem::on_entry_activate) );
-		item->signal_focus_out_event().connect(sigc::mem_fun(*this,	&SearchItem::on_entry_focus_out_event) );
-		//item->signal_key_press_event().connect(sigc::mem_fun(*this,	&SearchItem::on_entry_key_presst) );
-		focusOut = item->signal_focus_out_event(). connect(sigc::mem_fun(*this, &SearchItem::on_entry_focus_out_event) );
-	}
-	
-	connector.close();
-}
-SearchItem::~SearchItem()
-{
-	for(auto p : *lstCatItems)
-	{
-		        delete p;
-	}
-	delete lstCatItems;
-	focusOut.disconnect();
-}
 
-SearchItem::ModelColumnsItem::ModelColumnsItem()
-{
-	add(id);
-	add(number);
-	add(name);
-	add(db);
-}
 
-void SearchItem::on_cell_data_extra(const Gtk::TreeModel::const_iterator& iter)
-{
-  auto row = *iter;
-  const Glib::ustring extra = row[columns.name];
 
-  //Transform the value, deciding how to represent it as text:
-  if(extra.empty())
-    cell.property_text() = "(none)";
-  else
-    cell.property_text() = extra;
-	//item->set_text(extra);
-	//cell.property_foreground() = (extra == "yadda" ? "red" : "green");
-}
 
-void SearchItem::on_combo_changed()
-{
-	Gtk::TreeModel::iterator iter = get_active();
-	if(iter)
-	{
-		Gtk::TreeModel::Row row = *iter;
-		if(row)
-		{
-			//Get the data for the selected row, using our knowledge of the tree
-			//model:
-			//int id = row[columns.id];
-			//Glib::ustring name = row[columns.name];
-			//set_active((int)row[columns.id]);
-			const muposysdb::CatalogItem* reg = row[columns.db];
-			item->set_text(reg->getBrief()) ;
-			
-			//std::cout << " ID=" << get_active_row_number() << ", db=" << reg->getNumber() << std::endl;
-		}
-	}
-	else
-	{
-		std::cout << "invalid iter" << std::endl;
-	}
-}
-void SearchItem::on_entry_changed()
-{
-	if (item)
-	{
-		//std::cout << "on_entry_changed(): Row=" << get_active_row_number() << ", ID=" << item->get_text() << std::endl;
-		//popdown();
-		//set_focus_child(*item);
-		//item->set_text(item->get_text());
-		//item->grab_focus();
-		popup ();
-		//item->grab_focus_without_selecting();
-	}
-}
 
-void SearchItem::on_entry_activate()
-{
-	if (item)
-	{
-		//std::cout << "on_entry_activate(): Row=" << get_active_row_number()  << ", ID=" << item->get_text() << std::endl;
-	}
-}
 
-bool SearchItem::on_entry_focus_out_event(GdkEventFocus* /* event */)
-{
-	if (item)
-	{
-		//std::cout << "on_entry_focus_out_event(): Row=" << get_active_row_number() << ", ID=" << item->get_text() << std::endl;
-		return true;
-	}
-	
-	return false;
-}
-bool SearchItem::on_entry_key_presst(GdkEventKey* event)
-{
-	//if (event->type == GDK_KEY_PRESS and event->keyval >= GDK_KEY_A and event->keyval <= GDK_KEY_Z)
-	{
-		std::cout << "Char :" << (wchar_t) event->keyval << "\n";
-		return true;
-	}
-  return false;
-}
-bool SearchItem::on_combo_key_presst(GdkEventKey* event)
-{
-	//if (event->type == GDK_KEY_PRESS and event->keyval >= GDK_KEY_A and event->keyval <= GDK_KEY_Z)
-	{
-		std::cout << "Char :" << (wchar_t) event->keyval << "\n";
-		return true;
-	}
-  
-	return false;
-}
 
 Saling::Saling() : Gtk::Box(Gtk::ORIENTATION_VERTICAL)
 {
@@ -343,7 +287,7 @@ void TableServicies::on_show()
 void TableServicies::load()
 {
 	bool flcleared = false;
-	std::cout << "TableServicies::load\n";
+	//std::cout << "TableServicies::load\n";
 	//std::cout << "TableServicies::load : cleaned model\n";
 	std::string whereOrder;
 	whereOrder = "step >= ";
@@ -363,7 +307,7 @@ void TableServicies::load()
 		}
 		int finalized,working;
 		float percen;
-		std::cout << "\torder count : " << lstOprs->size() << "\n";
+		//std::cout << "\torder count : " << lstOprs->size() << "\n";
 		for(int i = 0; i < lstOprs->size(); i++)
 		{
 			if(lstOprs->at(i)->downUpdated(connDB))
@@ -371,7 +315,7 @@ void TableServicies::load()
 				if(not flcleared) 
 				{
 					auto itRow = *tree_model->children()[i];
-					std::cout << "TableServicies::load : Service " << itRow[columns.service] << "\n";
+					//std::cout << "TableServicies::load : Service " << itRow[columns.service] << "\n";
 					if(lstOprs->at(i)->getUpdated() == itRow[columns.updated] and lstOprs->at(i)->getOperation().getOperation().getID() ==  itRow[columns.service]) continue;
 				}
 			}
@@ -381,9 +325,9 @@ void TableServicies::load()
 			std::string whereItem;
 			whereItem = "operation = ";
 			whereItem += std::to_string(lstOprs->at(i)->getOperation().getOperation().getID());
-			std::cout << "\tTableServicies::load : " << whereItem << "\n";
+			//std::cout << "\tTableServicies::load : " << whereItem << "\n";
 			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(connDB,whereItem,0,'A');
-			std::cout << "\tTableServicies::load : query done.\n";
+			//std::cout << "\tTableServicies::load : query done.\n";
 			
 			float percen_order;
 			finalized = 0;
@@ -395,27 +339,27 @@ void TableServicies::load()
 				totals_items = lstProgress->size();
 				for(auto progress_item : *lstProgress)
 				{
-					std::cout << "\n";
+					//std::cout << "\n";
 					if(progress_item->getStocking().downItem(connDB))
 					{
-						std::cout << "\t\titem : " << progress_item->getStocking().getItem().getItem().getID() << "\n";
+						//std::cout << "\t\titem : " << progress_item->getStocking().getItem().getItem().getID() << "\n";
 					}
 					
 					if(progress_item->downStep(connDB))
 					{
-						std::cout << "\t\tstep : " << (int)progress_item->getStep() << "\n";
+						//std::cout << "\t\tstep : " << (int)progress_item->getStep() << "\n";
 					}
 					
 					if(progress_item->getStep() < (int)steping::Pizza::created or progress_item->getStep() > (int)steping::Pizza::finalized) 
 					{
-						std::cout << "\t\tstep : jumping item\n";
+						//std::cout << "\t\tstep : jumping item\n";
 						continue;
 					}
 					
 					if(progress_item->getStocking().getItem().downStation(connDB))
 					{
-						if((Station)progress_item->getStocking().getItem().getStation() == Station::pizza) std::cout << "\t\tStation : pizza\n";
-						else std::cout << "\t\tStation : unknow\n";
+						/*if((Station)progress_item->getStocking().getItem().getStation() == Station::pizza) std::cout << "\t\tStation : pizza\n";
+						else std::cout << "\t\tStation : unknow\n";*/
 					}
 					
 					if((steping::Pizza)progress_item->getStep() < steping::Pizza::finalized) working++;
@@ -428,19 +372,19 @@ void TableServicies::load()
 						{
 							float percen_item;
 							int percen_partial = (int)progress_item->getStep() - (int)steping::Pizza::created;
-							std::cout << "\t\tpercen_partial = " << percen_partial << "\n";
-							std::cout << "\t\tprecen_total = " << precen_total << "\n";
+							//std::cout << "\t\tpercen_partial = " << percen_partial << "\n";
+							//std::cout << "\t\tprecen_total = " << precen_total << "\n";
 							percen_item = float(percen_partial * 100);
 							percen_item /= float(precen_total);
-							std::cout << "\t\tpercen_item = " << percen_item << "\n";
+							//std::cout << "\t\tpercen_item = " << percen_item << "\n";
 							percen_order += percen_item;
 						}
 					}
 				}
 			}
-			std::cout << "\tpercen_order : " << percen_order <<  "\n";
+			//std::cout << "\tpercen_order : " << percen_order <<  "\n";
 			percen_order /= float(totals_items);
-			std::cout << "\tpercen_order : " << percen_order <<  "\n";
+			//std::cout << "\tpercen_order : " << percen_order <<  "\n";
 			
 			if(working > 0)
 			{
@@ -458,7 +402,7 @@ void TableServicies::load()
 			//std::cout << "columns.service : " << p->getOperation().getOperation().getID() << "\n";
 			if(not lstOprs->at(i)->getName().empty()) 	row[columns.name] = lstOprs->at(i)->getName();
 			else row[columns.name] = "Desconocido";
-			std::cout << "\tpercen : " << percen_order <<  "\n";
+			//std::cout << "\tpercen : " << percen_order <<  "\n";
 			row[columns.progress] = (int)percen_order;
 			row[columns.step_number] = (ServiceStep)lstOprs->at(i)->getStep();
 			row[columns.updated] = lstOprs->at(i)->getUpdated();
@@ -472,6 +416,12 @@ void TableServicies::load()
 		row = *it;
 		row[columns.step] = to_text(row[columns.step_number]);
 	}
+}
+
+void TableServicies::reload()
+{
+	tree_model->clear();
+	load();
 }
 bool TableServicies::is_reloadable()
 {
@@ -495,7 +445,7 @@ bool TableServicies::is_reloadable()
 			if(this->lstOprs->size() != lstOprs->size()) 
 			{
 				flret = true;//reload
-				std::cout << "is_reloadable : true devido a las listas de ordenes son de diferente tamaño\n";
+				//std::cout << "is_reloadable : true devido a las listas de ordenes son de diferente tamaño\n";
 			}
 			maxItOprs = std::min(this->lstOprs->size(),lstOprs->size());
 		}
@@ -515,13 +465,13 @@ bool TableServicies::is_reloadable()
 			if(this->lstOprs) if(this->lstOprs->at(i)->getOperation().getOperation().getID() != lstOprs->at(i)->getOperation().getOperation().getID()) 
 			{
 				flret = true;//reload
-				std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde\n";
+				//std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde\n";
 			}
 			
 			if(this->lstOprs) if(this->lstOprs->at(i)->getStep() != lstOprs->at(i)->getStep())
 			{
 				flret = true;//reload
-				std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde en el Step\n";
+				//std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde en el Step\n";
 			}
 		}
 		//std::cout << "TableServicies::is_reloadable : readin items.\n";
@@ -536,9 +486,9 @@ bool TableServicies::is_reloadable()
 			whereItem += std::to_string((int)steping::Pizza::finalized);
 			/*whereItem += " and stocking = ";
 			whereItem += std::to_string((int)steping::Pizza::finalized);*/
-			std::cout << "\tTableServicies::is_reloadable Progress : " << whereItem << "\n";
+			//std::cout << "\tTableServicies::is_reloadable Progress : " << whereItem << "\n";
 			lstProgress = muposysdb::Progress::select(connDB,whereItem,0,'A');
-			std::cout << "\tTableServicies::is_reloadable : query done.\n";
+			//std::cout << "\tTableServicies::is_reloadable : query done.\n";
 			if(lstProgress)
 			{
 				int maxItProgress;
@@ -546,8 +496,8 @@ bool TableServicies::is_reloadable()
 				{
 					if(this->lstProgress->size() != lstProgress->size()) 
 					{
-						std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista de progreso no corrresponde en el tamaño\n";
-						std::cout << "this->lstProgress->size() = " << this->lstProgress->size() << ", lstProgress->size() = " <<  lstProgress->size() << "\n";
+						//std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista de progreso no corrresponde en el tamaño\n";
+						//std::cout << "this->lstProgress->size() = " << this->lstProgress->size() << ", lstProgress->size() = " <<  lstProgress->size() << "\n";
 						flret = true;//reload
 					}
 					maxItProgress = std::min(this->lstProgress->size(),lstProgress->size());
@@ -569,7 +519,7 @@ bool TableServicies::is_reloadable()
 					if(this->lstProgress) if(this->lstProgress->at(i)->getStep() != lstProgress->at(i)->getStep())
 					{
 						flret = true;//reload
-						std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde con el Step\n";
+						//std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde con el Step\n";
 					}
 				}
 			}
@@ -605,11 +555,11 @@ bool TableServicies::is_reloadable()
 		this->lstOprs = lstOprs;
 		this->lstProgress = lstProgress;
 		flret = true;
-		std::cout << "is_reloadable : true devido a que no hay registros cargados\n";
+		//std::cout << "is_reloadable : true devido a que no hay registros cargados\n";
 	}
 	
 	connDB.commit();
-	std::cout << "is_reloadable : " << (flret? "true" : "false")<< "\n";
+	//std::cout << "is_reloadable : " << (flret? "true" : "false")<< "\n";
 	return flret;
 }
 /*
@@ -709,7 +659,19 @@ void TableServicies::load()
 	connDB.commit();
 }
 */
-
+bool TableSaling::on_key_press_event(GdkEventKey* event)
+{
+	std::cout << "on_key_press_event\n";
+	if (event->type == GDK_KEY_PRESS and event->keyval == GDK_KEY_F4)
+	{
+		std::cout << "on_key_press_event F4 begin\n";
+		Glib::ustring number;
+		mps::SearchItem search(number);
+		int res = search.run();
+		std::cout << "on_key_press_event F4 end\n";
+	}
+	return false;
+}
 
 
 
@@ -751,12 +713,12 @@ void TableServicies::on_start_services()
 {
 	if (updaterThread)
 	{
-		std::cout << "Can't start a worker thread while another one is running." << std::endl;
+		//std::cout << "Can't start a worker thread while another one is running." << std::endl;
 	}
 	else
 	{
 		// Start a new worker thread.
-		std::cout << "Starting..\n" << std::endl;
+		//std::cout << "Starting..\n" << std::endl;
 		updaterThread = new std::thread
 			(
 				[this]
@@ -772,7 +734,7 @@ void TableServicies::on_stop_services()
 {
 	if (!updaterThread)
 	{
-		std::cout << "Can't stop a worker thread. None is running." << std::endl;
+		//std::cout << "Can't stop a worker thread. None is running." << std::endl;
 	}
 	else
 	{
@@ -857,7 +819,8 @@ void TableServicies::on_notification_from_worker_thread()
 }
 void TableServicies::on_menu_cooked_popup()
 {
-	std::cerr << "TableServicies::on_menu_cooked_popup\n";
+	//std::cerr << "TableServicies::on_menu_cooked_popup\n";
+	bool flag = false;
 	if(serviceSelected > 0) //If anything is selected
 	{
 		std::string whereOrder;
@@ -869,9 +832,10 @@ void TableServicies::on_menu_cooked_popup()
 		{
 			if(lstOprs->size() != 1)
 			{
-				std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
-				std::cerr << "Filtro  " << whereOrder << "\n";
+				//std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
+				//std::cerr << "Filtro  " << whereOrder << "\n";
 				lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::cooked);
+				flag = true;
 			}
 			for(auto p : *lstOprs)
 			{
@@ -879,16 +843,14 @@ void TableServicies::on_menu_cooked_popup()
 			}
 			delete lstOprs;
 		}
-		connDB.commit();
 	}
-	else
-	{
-		std::cerr << "TableServicies::on_menu_cooked_popup - No seleccion fila\n";
-	}
+	connDB.commit();
+	if(flag) reload();
 }
 void TableServicies::on_menu_waiting_popup()
 {
-	std::cerr << "TableServicies::on_menu_cooked_popup\n";
+	//std::cerr << "TableServicies::on_menu_cooked_popup\n";
+	bool flag = false;
 	if(serviceSelected > 0) //If anything is selected
 	{
 		std::string whereOrder;
@@ -898,11 +860,12 @@ void TableServicies::on_menu_waiting_popup()
 		std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
 		if(lstOprs)
 		{
-			if(lstOprs->size() != 1)
+			if(lstOprs->size() == 1)
 			{
 				//std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
 				//std::cerr << "Filtro  " << whereOrder << "\n";
 				lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::waiting);
+				flag = true;
 			}
 			for(auto p : *lstOprs)
 			{
@@ -910,16 +873,14 @@ void TableServicies::on_menu_waiting_popup()
 			}
 			delete lstOprs;
 		}
-		connDB.commit();
 	}
-	else
-	{
-		//std::cerr << "TableServicies::on_menu_cooked_popup - No seleccion fila\n";
-	}
+	connDB.commit();
+	if(flag) reload();
 }
 void TableServicies::on_menu_deliver_popup()
 {
 	//std::cerr << "TableServicies::on_menu_deliver_popup\n";
+	bool flag = false;
 	if(serviceSelected > 0) //If anything is selected
 	{
 		std::string whereOrder;
@@ -928,11 +889,12 @@ void TableServicies::on_menu_deliver_popup()
 		std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
 		if(lstOprs)
 		{
-			if(lstOprs->size() != 1)
+			if(lstOprs->size() == 1)
 			{
 				//std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
 				//std::cerr << "Filtro  " << whereOrder << "\n";
 				lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::delivered);
+				flag = true;
 			}
 			for(auto p : *lstOprs)
 			{
@@ -942,10 +904,12 @@ void TableServicies::on_menu_deliver_popup()
 		}
 	}
 	connDB.commit();
+	if(flag) reload();	
 }
 void TableServicies::on_menu_cancel_popup()
 {
 	//std::cerr << "TableServicies::on_menu_deliver_popup\n";
+	bool flag = false;
 	if(serviceSelected > 0) //If anything is selected
 	{
 		std::string whereOrder;
@@ -954,12 +918,13 @@ void TableServicies::on_menu_cancel_popup()
 		std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
 		if(lstOprs)
 		{
-			if(lstOprs->size() != 1)
+			if(lstOprs->size() == 1)
 			{
 				//std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
 				//std::cerr << "Filtro  " << whereOrder << "\n";
+				lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::cancel);
+				flag = true;
 			}
-			lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::cancel);
 			for(auto p : *lstOprs)
 			{
 				delete p;
@@ -968,6 +933,7 @@ void TableServicies::on_menu_cancel_popup()
 		}
 	}
 	connDB.commit();
+	if(flag)reload();
 }
 
 TableServicies::Updater::Updater() : m_shall_stop(false), m_has_stopped(false)
@@ -1055,7 +1021,7 @@ bool TableServicies::on_button_press_event(GdkEventButton* button_event)
 		Glib::RefPtr<Gtk::TreeSelection> refTreeSelection = get_selection();
 		Gtk::TreeModel::iterator itSelected = refTreeSelection->get_selected();
 		Gtk::TreeModel::Row rowSelected = *itSelected;
-		std::cout << "Selected service : " << rowSelected[columns.service] << " \n";
+		//std::cout << "Selected service : " << rowSelected[columns.service] << " \n";
 		serviceSelected = rowSelected[columns.service];
 		menu.popup_at_pointer((GdkEvent*)button_event);
 	}

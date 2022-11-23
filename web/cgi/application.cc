@@ -32,7 +32,7 @@ namespace mps
 		std::stringstream sqs(qs);
 		
 		//std::cout << qs << "\n";
-		std::getline(sqs,str,'?');
+		if(not std::getline(sqs,str,'?')) return;
 		//std::cout << "GetParams::build str "<< str << "\n<br>";
 		std::stringstream sparam_list(str),sparam_pair;
 		while(std::getline(sparam_list,param_pair,'&'))

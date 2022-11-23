@@ -10,6 +10,48 @@
 #include <thread>
 #include <mutex>
 
+
+
+
+
+namespace mps
+{
+
+class SearchItem : public Gtk::Dialog
+{
+public:
+	SearchItem(Glib::ustring&);
+	void init();
+	
+protected:
+	void on_bt_ok_clicked();
+	void on_bt_cancel_clicked();
+	void on_response(int);
+	void on_search_text_changed();
+	void on_visible_child_changed();
+  
+	muposysdb::CatalogItem* searching(const Glib::ustring& s);
+	
+private:
+	mps::Connector connDB;
+	bool connDB_flag;
+	Glib::ustring& number;
+	
+	Gtk::Button btOK;
+	Gtk::Button btCancel;
+	Gtk::SearchBar bar;
+	Gtk::SearchEntry entry;
+	Gtk::ButtonBox boxButtons;
+	Gtk::VBox panel;
+	
+	std::vector<muposysdb::CatalogItem*>* lstCatalog;
+};
+	
+}
+
+
+
+
 namespace mias
 {
 
@@ -27,6 +69,8 @@ public:
 protected:
 	virtual void save();
 	void on_save_clicked();
+	bool on_key_press_event(GdkEventKey* key_event) override;
+	
 	
 	Gtk::Label lbName;
 	Gtk::Entry inName;
@@ -43,6 +87,7 @@ public:
 	virtual ~TableServicies();
 	
 	void load();
+	void reload();
 	bool is_reloadable();
 	void notify();
 	
@@ -50,23 +95,24 @@ public:
 	
 	// Dispatcher handler.
 	void on_notification_from_worker_thread();
+	
 	// Signal handlers.
 	void on_start_services();
 	void on_stop_services();
 	void on_quit_services();
 
-  void update_start_stop_buttons();
+	void update_start_stop_buttons();
   
-  void step_data(Gtk::CellRenderer* renderer, const Gtk::TreeModel::iterator& iter);
+	void step_data(Gtk::CellRenderer* renderer, const Gtk::TreeModel::iterator& iter);
   
-  bool on_button_press_event(GdkEventButton* button_event) override;
-  bool on_enter_notify_event (GdkEventCrossing* crossing_event)override;
-  bool on_leave_notify_event (GdkEventCrossing* crossing_event)override;
-  void on_menu_cooked_popup();
-  void on_menu_waiting_popup();
-  void on_menu_deliver_popup();
-  void on_menu_cancel_popup();
-  
+	bool on_button_press_event(GdkEventButton* button_event) override;
+	bool on_enter_notify_event (GdkEventCrossing* crossing_event)override;
+	bool on_leave_notify_event (GdkEventCrossing* crossing_event)override;
+	void on_menu_cooked_popup();
+	void on_menu_waiting_popup();
+	void on_menu_deliver_popup();
+	void on_menu_cancel_popup();
+
 protected:
 	
 private:
@@ -141,42 +187,6 @@ private:
 	std::vector<muposysdb::Progress*>* lstProgress;
 };
 
-class SearchItem : public Gtk::ComboBox
-{
-public:
-	SearchItem();	
-	void init();
-	virtual ~SearchItem();
-	
-protected:
-	void on_cell_data_extra(const Gtk::TreeModel::const_iterator& iter);
-	void on_combo_changed();
-	bool on_combo_key_presst(GdkEventKey* event);
-	
-	void on_entry_changed();
-	void on_entry_activate();
-	bool on_entry_focus_out_event(GdkEventFocus* event);
-	bool on_entry_key_presst(GdkEventKey* event);
-	
-private:	
-	class ModelColumnsItem : public Gtk::TreeModel::ColumnRecord
-	{
-	public:
-		ModelColumnsItem();
-		
-		Gtk::TreeModelColumn<unsigned int> id;
-		Gtk::TreeModelColumn<Glib::ustring> number;
-		Gtk::TreeModelColumn<Glib::ustring> name;
-		Gtk::TreeModelColumn<const muposysdb::CatalogItem*> db;
-	};
-	
-	ModelColumnsItem columns;
-	Glib::RefPtr<Gtk::ListStore> refModel;
-	Gtk::CellRendererText cell;
-	std::vector<muposysdb::CatalogItem*>* lstCatItems;
-	Gtk::Entry* item;
-	sigc::connection focusOut;
-};
 
 class Saling : public Gtk::Box
 {
