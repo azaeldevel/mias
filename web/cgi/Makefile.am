@@ -21,8 +21,8 @@ endif
 if DATABASE_ENGINE_MARIA
 FLAGS += -DDATABASE_ENGINE_MARIA
 endif
- 
-application_cgi_SOURCES = application-main.cc application.cc application-pizza.cc
+
+application_cgi_SOURCES = application-main.cc application.cc application-pizza.cc application-stove.cc
 application_cgi_LDADD = $(LIBS)
 application_cgi_CXXFLAGS = $(FLAGS)
 

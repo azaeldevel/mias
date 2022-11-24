@@ -126,3 +126,28 @@ function toContinue()
   
   window.location.href = ref;
 }
+
+function toCooking() 
+{  
+  const urlParams = new URLSearchParams(window.location.search);
+  var station = urlParams.get("station");
+  var orderSelected = urlParams.get("order");  
+  var item = urlParams.get("item");  
+    
+  var cmdBaking = document.getElementById("cmdCooking");
+  var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&step=cooking&item="+ item; 
+  
+  cmdBaking.href = ref;
+}
+function toCooked() 
+{  
+  const urlParams = new URLSearchParams(window.location.search);
+  var station = urlParams.get("station");
+  var orderSelected = urlParams.get("order");  
+  var item = urlParams.get("item");  
+    
+  var cmdBaked = document.getElementById("cmdCooked");
+  var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&step=cooked&item="+ item; 
+  
+  cmdBaked.href = ref;
+}
