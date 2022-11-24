@@ -260,20 +260,20 @@ std::ostream& BodyApplication::print(std::ostream& out)
 						
 						break;
 					case steping::Eat::accepted:
-						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">Hornear</a>";
+						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(steping::Eat::cooking) << "</a>";
 						out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPrepare()\">Preparar</a>";
 						break;
 					case steping::Eat::preparing: 
-						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">Hornear</a>";
+						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(steping::Eat::cooking) << "</a>";
 						out << "\t<a id=\"cmdPrepared\" class=\"cmd\" onclick=\"toPrepared()\">Preparada</a>";
 						break;
 					case steping::Eat::prepared: 
 						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";	
-						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">Hornear</a>";
+						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(steping::Eat::cooking) << "</a>";
 						break;
 					case steping::Eat::cooking: 
 						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";	
-						out << "\t<a id=\"cmdCooked\" class=\"cmd\" onclick=\"toCooked()\">Horneada</a>";
+						out << "\t<a id=\"cmdCooked\" class=\"cmd\" onclick=\"toCooked()\">" << to_text(steping::Eat::cooked) << "</a>";
 						break;
 					case steping::Eat::cooked: 
 						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";	
