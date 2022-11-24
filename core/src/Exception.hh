@@ -74,9 +74,9 @@ public:
 	
 	Exception(unsigned int code,const std::string& message);
 	Exception(unsigned int code,const std::string& message,const char* filename, unsigned int line);
-	~Exception();
+	virtual ~Exception();
 	
-	const char* what () const throw ();
+	virtual const char* what () const throw ();
 	
 private:
 	

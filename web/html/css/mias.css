@@ -55,10 +55,6 @@ body > #work
 	min-height : 33.3%;
 	font-weight: bold;
 }
-body > #menu > #programs > div
-{
-	min-width : 50%;
-}
 body > #menu > #programs > #order, body > #menu > #programs > #item
 {
 	color: white;

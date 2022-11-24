@@ -7,7 +7,7 @@ AC_PROG_CXX
 
 LT_INIT
 
-PKG_CHECK_MODULES(MUPOSYS, [cgicc muposys-core])
+PKG_CHECK_MODULES(MIAS_CORE, [cgicc octetos-core muposys-core])
 
 AM_CONDITIONAL(LINUX_ARCH, false)
 AM_CONDITIONAL(LINUX_DEBIAN, false)

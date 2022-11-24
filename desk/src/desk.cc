@@ -937,7 +937,7 @@ void TableServicies::on_menu_cancel_popup()
 }
 
 TableServicies::Updater::Updater() : m_shall_stop(false), m_has_stopped(false)
-{	
+{
 	try
 	{
 		connDB_flag = connDB.connect(muposysdb::datconex);

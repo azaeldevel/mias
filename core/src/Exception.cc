@@ -2,7 +2,7 @@
 /*
  * Copyright (C) 2022 Azael R. <azael.devel@gmail.com>
  * 
- * octetos-cc is free software: you can redistribute it and/or modify it
+ * mias-core is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -23,36 +23,44 @@ namespace mias
 	
 Exception::Exception()
 {
-
 }
-Exception::Exception(const Exception&)
+Exception::Exception(const Exception& e) : mps::Exception(e)
 {
-
 }
-Exception::Exception(Exception&&)
+Exception::Exception(Exception&& e) : mps::Exception(e)
 {
-
 }
+
 
 Exception::Exception(unsigned int c) : mps::Exception(c)
 {
 }
-Exception::Exception(unsigned int c,const char* f, unsigned int l) : mps::Exception(c,f,l)
-{
-}
-
-
 Exception::Exception(unsigned int c,const char* s) : mps::Exception(c,s)
 {
 }
-Exception::Exception(unsigned int c,const char* s,const char* f, unsigned int l) : mps::Exception(c,s,f,l)
+Exception::Exception(unsigned int c,const char* fn, unsigned int l) : mps::Exception(c,fn,l)
+{
+}
+Exception::Exception(unsigned int c,const char* s,const char* fn, unsigned int l) : mps::Exception(c,s,fn,l)
 {
 }
 
+Exception::Exception(const std::string& m) : mps::Exception(m)
+{
+}
+Exception::Exception(const std::string& m,const char* f, unsigned int l) : mps::Exception(m,f,l)
+{
+}
+
+	
 Exception::Exception(unsigned int c,const std::string& m) : mps::Exception(c,m)
 {
 }
 Exception::Exception(unsigned int c,const std::string& m,const char* f, unsigned int l) : mps::Exception(c,m,f,l)
+{
+}
+
+Exception::~Exception()
 {
 }
 
