@@ -32,7 +32,7 @@ struct GetParams : public mps::GetParams
 {
 	Station station;
 	long order;
-	short step;
+	steping::Eat step;
 	long item;
 	bool restoring;
 	
@@ -58,6 +58,9 @@ public:
 	void programs_stove(std::ostream& out);
 	
 	virtual void panel(std::ostream& out);
+	void select_order_restore(std::ostream& out);
+	void select_step_restore(std::ostream& out);
+	void select_item_restore(std::ostream& out);
 	virtual void panel_pizza(std::ostream& out);
 	virtual void panel_stove(std::ostream& out);
 	

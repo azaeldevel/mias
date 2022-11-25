@@ -134,10 +134,10 @@ function toCooking()
   var orderSelected = urlParams.get("order");  
   var item = urlParams.get("item");  
     
-  var cmdBaking = document.getElementById("cmdCooking");
+  var cmdCooking = document.getElementById("cmdCooking");
   var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&step=cooking&item="+ item; 
   
-  cmdBaking.href = ref;
+  cmdCooking.href = ref;
 }
 function toCooked() 
 {  
@@ -146,8 +146,8 @@ function toCooked()
   var orderSelected = urlParams.get("order");  
   var item = urlParams.get("item");  
     
-  var cmdBaked = document.getElementById("cmdCooked");
+  var cmdCooked = document.getElementById("cmdCooked");
   var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&step=cooked&item="+ item; 
   
-  cmdBaked.href = ref;
+  cmdCooked.href = ref;
 }

@@ -195,6 +195,27 @@ namespace mias
 		
 		return "unknow";
 	}
+	Station to_station(const char* s)
+	{
+		if(strcmp("none",s) == 0)
+		{
+			return Station::none;
+		}
+		else if(strcmp("pizza",s) == 0)
+		{
+			return Station::pizza;
+		}
+		else if(strcmp("stove",s) == 0)
+		{
+			return Station::stove;
+		}
+		else if(strcmp("oven",s) == 0)
+		{
+			return Station::oven;
+		}
+
+		return Station::none;
+	}
 	void to_step(const char* str, steping::Pizza& step)
 	{
 		if(strcmp(str,"none") == 0)

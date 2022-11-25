@@ -350,7 +350,7 @@ void TableServicies::load()
 						//std::cout << "\t\tstep : " << (int)progress_item->getStep() << "\n";
 					}
 					
-					if(progress_item->getStep() < (int)steping::Pizza::created or progress_item->getStep() > (int)steping::Pizza::finalized) 
+					if(progress_item->getStep() < (int)steping::Eat::created or progress_item->getStep() > (int)steping::Eat::finalized) 
 					{
 						//std::cout << "\t\tstep : jumping item\n";
 						continue;
@@ -362,24 +362,22 @@ void TableServicies::load()
 						else std::cout << "\t\tStation : unknow\n";*/
 					}
 					
-					if((steping::Pizza)progress_item->getStep() < steping::Pizza::finalized) working++;
-					if((steping::Pizza)progress_item->getStep() == steping::Pizza::finalized) finalized++;
+					if((steping::Eat)progress_item->getStep() < steping::Eat::finalized) working++;
+					if((steping::Eat)progress_item->getStep() == steping::Eat::finalized) finalized++;
 					
-					if((int)progress_item->getStocking().getItem().getStation() == (int)Station::pizza)
+					short precen_total = (int)steping::Eat::finalized - (int)steping::Eat::created;
+					if(precen_total > 0)
 					{
-						short precen_total = (int)steping::Pizza::finalized - (int)steping::Pizza::created;
-						if(precen_total > 0)
-						{
 							float percen_item;
-							int percen_partial = (int)progress_item->getStep() - (int)steping::Pizza::created;
+							int percen_partial = (int)progress_item->getStep() - (int)steping::Eat::created;
 							//std::cout << "\t\tpercen_partial = " << percen_partial << "\n";
 							//std::cout << "\t\tprecen_total = " << precen_total << "\n";
 							percen_item = float(percen_partial * 100);
 							percen_item /= float(precen_total);
 							//std::cout << "\t\tpercen_item = " << percen_item << "\n";
 							percen_order += percen_item;
-						}
 					}
+					
 				}
 			}
 			//std::cout << "\tpercen_order : " << percen_order <<  "\n";
@@ -481,11 +479,11 @@ bool TableServicies::is_reloadable()
 			whereItem = "operation = ";
 			whereItem += std::to_string(p->getOperation().getOperation().getID());
 			whereItem += " and step >= ";
-			whereItem += std::to_string((int)steping::Pizza::accept);
+			whereItem += std::to_string((int)steping::Eat::accept);
 			whereItem += " and step <=  ";
-			whereItem += std::to_string((int)steping::Pizza::finalized);
+			whereItem += std::to_string((int)steping::Eat::finalized);
 			/*whereItem += " and stocking = ";
-			whereItem += std::to_string((int)steping::Pizza::finalized);*/
+			whereItem += std::to_string((int)steping::Eat::finalized);*/
 			//std::cout << "\tTableServicies::is_reloadable Progress : " << whereItem << "\n";
 			lstProgress = muposysdb::Progress::select(connDB,whereItem,0,'A');
 			//std::cout << "\tTableServicies::is_reloadable : query done.\n";
@@ -617,15 +615,15 @@ void TableServicies::load()
 						float progress_percentage;
 						step = progress_item->getStep();
 						//std::cout << " : Step " << step;
-						if((short)steping::Pizza::none < step and step <= (short)steping::Pizza::finalized )
+						if((short)steping::Eat::none < step and step <= (short)steping::Eat::finalized )
 						{
-							 progress_percentage = ((short)steping::Pizza::finalized) - step;
+							 progress_percentage = ((short)steping::Eat::finalized) - step;
 							 //std::cout << " : progress = " << progress_percentage << "\n";
-							 progress_percentage /= float(steping::Pizza::finalized);
+							 progress_percentage /= float(steping::Eat::finalized);
 							 //std::cout << " : progress = " << progress_percentage << "\n";
 							 progress_service += progress_percentage;
 						}
-						else if(step == (short)steping::Pizza::finalized )
+						else if(step == (short)steping::Eat::finalized )
 						{
 							finalizeds++;
 						}
@@ -1168,7 +1166,7 @@ void TableSaling::save()
 					return;
 				}
 				operationProgress = new muposysdb::Progress;
-				if(not operationProgress->insert(connDB,*stocking,*operation,(signed char)steping::Pizza::created))
+				if(not operationProgress->insert(connDB,*stocking,*operation,(signed char)steping::Eat::created))
 				{
 					Gtk::MessageDialog dlg("Error detectado en acceso a BD",true,Gtk::MESSAGE_ERROR);
 					dlg.set_secondary_text("Durante la escritura de Stoking Production.");

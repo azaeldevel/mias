@@ -65,7 +65,7 @@ namespace mias
 		const char* param = find("station");
 		if(param)
 		{
-			station = mias::Station::pizza;
+			station = to_station(param);
 		}
 		else
 		{
@@ -92,7 +92,7 @@ namespace mias
 		param = find("step");
 		if(param)
 		{
-			step = (short)to_step(param);
+			step = to_step(param);
 		}
 		
 		param = find("item");
@@ -127,6 +127,9 @@ void BodyApplication::programs(std::ostream& out)
 		case Station::pizza:
 			programs_pizza(out);
 			break;
+		case Station::stove:
+			programs_stove(out);
+			break;
 		default:
 			out << "\t\t\t<div id=\"pizza\"><a href=\"application.cgi?station=pizza&step=none\">Pizza</a></div>\n";
 			out << "\t\t\t<div id=\"stove\"><a href=\"application.cgi?station=stove&step=none\">Estufa</a></div>\n";
@@ -140,6 +143,9 @@ void BodyApplication::panel(std::ostream& out)
 	{
 		case Station::pizza:
 			panel_pizza(out);
+			break;
+		case Station::stove:
+			panel_stove(out);
 			break;
 		default:
 			out << "\t\t\t<div id=\"logout\"><a href=\"logout.cgi\"></a></div>\n";
@@ -296,136 +302,21 @@ void BodyApplication::set(mps::Connector& c)
 {
 	connDB = &c;
 }
-void BodyApplication::select_order(std::ostream& out)
-{
-		out << "\t\t\t<div id=\"order\">\n";
-		{
-			std::string where = "step >= " ;
-			where += std::to_string((int)ServiceStep::created);
-			where += " and step < ";
-			where += std::to_string((int)ServiceStep::delivered);
-			std::vector<muposysdb::MiasService*>* lstService = muposysdb::MiasService::select(*connDB,where,0,'A');
-			if(lstService->size() > 0)
-			{
-				out << "\t\t\t\t<label for=\"order\"><b>Orden:</b></label><br>\n";
-				out << "\t\t\t\t<select name=\"order\" id=\"orderList\" onchange=\"accepthref()\">\n";
-				{
-						out << "\t\t\t\t\t<option value=\"next\">next</option>\n";
-						for(auto p : *lstService)
-						{
-							p->downName(*connDB);
-							out << "\t\t\t\t\t<option value=\"" << p->getOperation().getOperation().getID() << "\">" << p->getOperation().getOperation().getID() << "</option>\n";
-						}
-						for(auto p : *lstService)
-						{
-							delete p;
-						}
-						delete lstService;
-				}
-				out << "\t\t\t\t</select>\n";
-			}
-			else
-			{
-				delete lstService;
-				out << "\t\t\t\t<label ><b>Orden:</b></label><br>Ninguna\n";
-			}
-		}
-		out << "\t\t\t</div>\n";
-}
-void BodyApplication::select_item(std::ostream& out)
-{
-		out << "\t\t\t<div id=\"order\">\n";
-		{
-			out << "\t\t\t\t<label ><b>Orden:</b></label><br>" << params.order << "\n";
-		}
-		out << "\t\t\t</div>\n";
-		
-		out << "\t\t\t<div id=\"item\">\n";
-		{
-			std::string where = "operation = ";
-			where += std::to_string(params.order);
-			where += " and step =";
-			where += std::to_string((short)steping::Eat::created);
-			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
-			if(lstProgress->size() > 0)
-			{
-				out << "\t\t\t\t<label for=\"item\"><b>Pizza:</b></label><br>\n";
-				out << "\t\t\t\t<select name=\"item\" id=\"itemList\" onchange=\"acceptinghref()\">\n";
-				{
-						out << "\t\t\t\t\t<option value=\"next\">next</option>\n";
-						for(auto p : *lstProgress)
-						{
-							p->getStocking().downItem(*connDB);
-							p->getStocking().getItem().downNumber(*connDB);
-							p->getStocking().getItem().downBrief(*connDB);
-							out << "\t\t\t\t\t<option value=\"" << p->getStocking().getStocking() << "\">" << p->getStocking().getItem().getBrief() << "</option>\n";
-						}
-						for(auto p : *lstProgress)
-						{
-								delete p;
-						}
-						delete lstProgress;
-				}
-				out << "\t\t\t\t</select>\n";
-			}
-			else
-			{
-				delete lstProgress;
-				out << "\t\t\t\t<label ><b>Pizza:</b></label><br>Ninguna\n";
-			}
-		}
-		out << "\t\t\t</div>\n";
-}
 
-void BodyApplication::accepted_item(std::ostream& out)
-{
-		out << "\t\t\t<div id=\"order\">\n";
-		{
-			out << "\t\t\t\t<label><b>Orden:</b></label><br>" << params.order << "\n";
-		}
-		out << "\t\t\t</div>\n";
-		out << "\t\t\t<div id=\"item\">\n";
-		{
-			std::string itemNumber;
-			std::string where = "operation = ";
-			where += std::to_string(params.order);
-			//out << " where : " << where << "\n";
-			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
-			if(lstProgress->size() > 0)
-			{
-				//if(lstProgress->size() > 1) break;
-				for(auto p : *lstProgress)
-				{
-					p->getStocking().downItem(*connDB);
-					p->getStocking().getItem().downNumber(*connDB);
-					//p->getStocking().getItem().downBrief(*connDB);
-					//out << "\t\t\t\titem : " << p->getStocking().getItem().getItem().getID() << "\n";
-					//out << "\t\t\t\titem : " <<  params.item << "\n";
-					if(p->getStocking().getStocking() == params.item) 
-					{
-						//out << "\t\t\t\titem : x\n";
-						itemNumber = p->getStocking().getItem().getNumber();
-						break;
-					}
-				}
-				for(auto p : *lstProgress)
-				{
-					delete p;
-				}
-				delete lstProgress;
-			}
-			out << "\t\t\t\t<label><b>Pizza:</b></label><br>" << itemNumber << "\n";
-		}
-		out << "\t\t\t</div>\n";
-}
-void BodyApplication::restoring_order(std::ostream& out)
-{
-		out << "\t\t\t<div id=\"order\">\n";
-		{
-			out << "\t\t\t\tOrden : " << params.order << " \n";
-		}
-		out << "\t\t\t</div>\n";	
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Application::~Application()
 {
