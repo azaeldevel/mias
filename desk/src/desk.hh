@@ -65,6 +65,8 @@ public:
 	TableSaling();
 	void init();
 	virtual ~TableSaling();
+	
+	void clear();
 
 protected:
 	virtual void save();

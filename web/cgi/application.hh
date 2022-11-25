@@ -54,15 +54,15 @@ public:
 	void select_item(std::ostream& out);
 	void accepted_item(std::ostream& out);
 	void restoring_order(std::ostream& out);
-	void programs_pizza(std::ostream& out);
-	void programs_stove(std::ostream& out);
+	//void programs_pizza(std::ostream& out);
+	//void programs_stove(std::ostream& out);
 	
 	virtual void panel(std::ostream& out);
 	void select_order_restore(std::ostream& out);
 	void select_step_restore(std::ostream& out);
 	void select_item_restore(std::ostream& out);
-	virtual void panel_pizza(std::ostream& out);
-	virtual void panel_stove(std::ostream& out);
+	//virtual void panel_pizza(std::ostream& out);
+	//virtual void panel_stove(std::ostream& out);
 	
 	void set(mps::Connector& connDB);
 	
@@ -83,9 +83,9 @@ public:
 private:	
 	const GetParams& params;
 	
-	long pizza_accepting();
-	void pizza_preparing();
-	void pizza_steping(steping::Eat);
+	long accepting();
+	void preparing();
+	void steping(steping::Eat);
 	
 protected:
 	

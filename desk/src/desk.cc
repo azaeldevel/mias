@@ -305,7 +305,7 @@ void TableServicies::load()
 			tree_model->clear();
 			flcleared = true;
 		}
-		int finalized,working;
+		int working;
 		float percen;
 		//std::cout << "\torder count : " << lstOprs->size() << "\n";
 		for(int i = 0; i < lstOprs->size(); i++)
@@ -321,7 +321,7 @@ void TableServicies::load()
 			}
 			lstOprs->at(i)->downStep(connDB);
 			
-			//std::cout << "TableServicies::load : order " << p->getOperation().getOperation().getID() << "\n";
+			//std::cout << "TableServicies::load : order " << lstOprs->at(i)->getOperation().getOperation().getID() << "\n";
 			std::string whereItem;
 			whereItem = "operation = ";
 			whereItem += std::to_string(lstOprs->at(i)->getOperation().getOperation().getID());
@@ -330,7 +330,7 @@ void TableServicies::load()
 			//std::cout << "\tTableServicies::load : query done.\n";
 			
 			float percen_order;
-			finalized = 0;
+			//finalized = 0;
 			working = 0;
 			percen_order = 0;
 			int totals_items;
@@ -363,7 +363,7 @@ void TableServicies::load()
 					}
 					
 					if((steping::Eat)progress_item->getStep() < steping::Eat::finalized) working++;
-					if((steping::Eat)progress_item->getStep() == steping::Eat::finalized) finalized++;
+					//if((steping::Eat)progress_item->getStep() == steping::Eat::finalized) finalized++;
 					
 					short precen_total = (int)steping::Eat::finalized - (int)steping::Eat::created;
 					if(precen_total > 0)
@@ -1245,6 +1245,13 @@ void TableSaling::save()
 	dlg.run();	
 }
 
+void TableSaling::clear()
+{
+	tree_model->clear();
+	newrow();
+	lbTotalAmount.set_text("");
+	inName.set_text("");
+}
 
 
 

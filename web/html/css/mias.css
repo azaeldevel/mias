@@ -15,12 +15,12 @@ body > #commands
 body > #commands > #left
 {
 	float : left;
-	width: 50%;
+	min-width: 50%;
 }
 body > #commands > #right
 {
 	float : right;
-	width: 50%;
+	min-width: 50%;
 	height : 100%;
 }
 body > #commands > #right > *

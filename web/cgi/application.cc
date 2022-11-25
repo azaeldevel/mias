@@ -122,35 +122,59 @@ BodyApplication::BodyApplication(const GetParams& p) : params(p)
 }
 void BodyApplication::programs(std::ostream& out) 
 {
-	switch(params.station)
+	if(params.station > Station::none)
 	{
-		case Station::pizza:
-			programs_pizza(out);
-			break;
-		case Station::stove:
-			programs_stove(out);
-			break;
-		default:
-			out << "\t\t\t<div id=\"pizza\"><a href=\"application.cgi?station=pizza&step=none\">Pizza</a></div>\n";
-			out << "\t\t\t<div id=\"stove\"><a href=\"application.cgi?station=stove&step=none\">Estufa</a></div>\n";
-			out << "\t\t\t<div id=\"oven\"><a href=\"application.cgi?station=oven&step=none\">Horno</a></div>\n";
+		if(params.step == steping::Eat::none and params.order == -1)
+		{
+			select_order(out);
+		}
+		else if(params.step == steping::Eat::none and params.order > 0 and not params.restoring)
+		{
+			select_item(out);
+		}	
+		else if(params.step == steping::Eat::accepted and params.order > 0 and not params.restoring)
+		{
+			accepted_item(out);
+		}
+		else if(params.restoring)
+		{
+			restoring_order(out);
+		}
+	}
+	else
+	{
+		out << "\t\t\t<div id=\"pizza\"><a href=\"application.cgi?station=pizza&step=none\">Pizza</a></div>\n";
+		out << "\t\t\t<div id=\"stove\"><a href=\"application.cgi?station=stove&step=none\">Estufa</a></div>\n";
+		out << "\t\t\t<div id=\"oven\"><a href=\"application.cgi?station=oven&step=none\">Horno</a></div>\n";
 	}
 }
 
 void BodyApplication::panel(std::ostream& out) 
 {	
-	switch(params.station)
+
+	//out << "Step : " << params.order  << "\n";	
+	if(params.station > Station::none)
 	{
-		case Station::pizza:
-			panel_pizza(out);
-			break;
-		case Station::stove:
-			panel_stove(out);
-			break;
-		default:
-			out << "\t\t\t<div id=\"logout\"><a href=\"logout.cgi\"></a></div>\n";
-			out << "\t\t\t<div class=\"space\"></div>\n";	
-			out << "\t\t\t<div id=\"system\"><a href=\"system.html\"></a></div>\n";	
+		out << "\t\t\t<div id=\"logout\"><a href=\"logout.cgi\"></a></div>\n";
+		out << "\t\t\t<div class=\"space\"></div>\n";	
+		if(params.step == steping::Eat::none and params.order == -1)
+		{
+			select_order_restore(out);
+		}
+		else if(params.restoring and params.step == steping::Eat::none and params.order > 0)
+		{
+			select_step_restore(out);
+		}
+		else if(params.restoring and params.step > steping::Eat::none and params.step < steping::Eat::finalized and params.order > 0)
+		{
+			select_item_restore(out);
+		}
+	}
+	else
+	{
+		out << "\t\t\t<div id=\"logout\"><a href=\"logout.cgi\"></a></div>\n";
+		out << "\t\t\t<div class=\"space\"></div>\n";	
+		out << "\t\t\t<div id=\"system\"><a href=\"system.html\"></a></div>\n";	
 	}
 }
 std::ostream& BodyApplication::print(std::ostream& out)
@@ -361,7 +385,7 @@ int Application::main(std::ostream& out)
 		case steping::Eat::accept:
 		{
 			//out << "Procesando solicitud de acceptacion...\n";
-			long order = pizza_accepting();
+			long order = accepting();
 			cgicc::Cgicc cgi;
 			//cgicc::CgiInput:
 			const cgicc::CgiEnvironment& cgienv = cgi.getEnvironment();
@@ -390,12 +414,12 @@ int Application::main(std::ostream& out)
 			return EXIT_SUCCESS;
 		}
 		case steping::Eat::accepted:
-			pizza_steping(steping::Eat::accepted);
+			steping(steping::Eat::accepted);
 			break;
 		case steping::Eat::prepare:
 		{
 			//out << "Procesando solicitud de acceptacion...\n";
-			pizza_steping(steping::Eat::prepare);
+			steping(steping::Eat::prepare);
 			cgicc::Cgicc cgi;
 			//cgicc::CgiInput:
 			const cgicc::CgiEnvironment& cgienv = cgi.getEnvironment();
@@ -417,31 +441,31 @@ int Application::main(std::ostream& out)
 			return EXIT_SUCCESS;
 		}
 		case steping::Eat::preparing:
-			pizza_steping(steping::Eat::prepared);
+			steping(steping::Eat::prepared);
 			connDB.commit();
 			break;
 		case steping::Eat::prepared:
-			pizza_steping(steping::Eat::prepared);
+			steping(steping::Eat::prepared);
 			connDB.commit();
 			break;
 		case steping::Eat::cook:
-			pizza_steping(steping::Eat::cook);
+			steping(steping::Eat::cook);
 			connDB.commit();
 			break;
 		case steping::Eat::cooking:
-			pizza_steping(steping::Eat::cooking);
+			steping(steping::Eat::cooking);
 			connDB.commit();
 			break;
 		case steping::Eat::cooked:
-			pizza_steping(steping::Eat::cooked);
+			steping(steping::Eat::cooked);
 			connDB.commit();
 			break;
 		case steping::Eat::finalized:
-			pizza_steping(steping::Eat::finalized);
+			steping(steping::Eat::finalized);
 			connDB.commit();
 			break;
 		case steping::Eat::cancel:
-			pizza_steping(steping::Eat::cancel);
+			steping(steping::Eat::cancel);
 			connDB.commit();
 			break;
 	}
@@ -475,7 +499,7 @@ void params_get(std::map<std::string, std::string>& lst)
 }*/
 
 
-long Application::pizza_accepting()
+long Application::accepting()
 {
 	long order = params.order;
 	std::string where = "step = ";
@@ -510,7 +534,7 @@ long Application::pizza_accepting()
 		delete lstService;
 	}
 	
-	pizza_steping(steping::Eat::accept);
+	steping(steping::Eat::accept);
 		
 	return order;
 }
@@ -540,7 +564,7 @@ long Application::pizza_accepting()
 	}
 	connDB.commit();
 }*/
-void Application::pizza_steping(steping::Eat to_step)
+void Application::steping(steping::Eat to_step)
 {
 	short updated;
 	long order = params.order;
