@@ -151,11 +151,8 @@ function toCooked()
   
   cmdCooked.href = ref;
 }
-
 function toOvenFinalized(order,item) 
-{  
-    const urlParams = new URLSearchParams(window.location.search);
-    
+{
     var cmdFinalized = document.getElementById("cmdFinalized");
     var ref = "application.cgi?station=oven&order=" + order + "&step=finalized&item="+ item; 
     

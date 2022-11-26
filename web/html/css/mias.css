@@ -23,7 +23,7 @@ body > #commands > #right
 	min-width: 50%;
 	height : 100%;
 }
-body > #commands > #right > *,
+body > #commands > #right > *
 {
 	float : right;
 }
@@ -61,29 +61,57 @@ body > #menu > #programs > #order, body > #menu > #programs > #item
 	color: white;
 }
 
+#list_oven
+{
+}
+.oven_item > div
+{
+	background-color: royalblue;	
+}
+.oven_item_name
+{
+	padding : 0.2em;
+	float :left;
+}
+.oven_item_cmd
+{
+	padding : 0.2em;
+	float : left;
+}
 
 @media screen and (max-width : 299px)
 {
-	
+	.oven_item
+	{
+		width : 20%;
+	}
 }
 @media screen and (min-width: 300px) and (max-width : 599px)
 {
-	
+	.oven_item
+	{
+		width : 20%;
+	}
 }
 @media screen and (min-width: 600px) and (max-width : 899px)
 {
-	
+	.oven_item
+	{
+		width : 20%;
+	}
 }
 @media screen and (min-width: 900px) and (max-width : 1199px)
 {
-	
+	.oven_item
+	{
+		width : 20%;
+	}	
 }
 @media screen and (min-width: 1200px)
 {
-	body > #menu
+	.oven_item
 	{
-		height: 2.2em;
-		font-size : 1em;
+		width : 20%;
 	}
 }
 

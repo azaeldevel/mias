@@ -324,8 +324,9 @@ std::ostream& BodyApplication::print_common_commands(std::ostream& out)
 						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
 						break;
 					case steping::Eat::accepted:
+						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
 						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(steping::Eat::cooking) << "</a>";
-						out << "\t<a id=\"cmdCooked\" class=\"cmd\" onclick=\"toCooked()\">" << to_text(steping::Eat::cooked) << "</a>";
+						//out << "\t<a id=\"cmdCooked\" class=\"cmd\" onclick=\"toCooked()\">" << to_text(steping::Eat::cooked) << "</a>";
 						//out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPreparing()\">" << to_text(steping::Eat::preparing) << "</a>";
 						break;
 					case steping::Eat::prepare:
@@ -337,14 +338,17 @@ std::ostream& BodyApplication::print_common_commands(std::ostream& out)
 						out << "\t<a id=\"cmdPrepared\" class=\"cmd\" onclick=\"toPrepared()\">Preparada</a>";
 						break;
 					case steping::Eat::prepared: 
-						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";	
+						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
 						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(steping::Eat::cooking) << "</a>";
+						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";	
 						break;
 					case steping::Eat::cooking: 
+						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
+						//out << "\t<a id=\"cmdCooked\" class=\"cmd\" onclick=\"toCooked()\">" << to_text(steping::Eat::cooked) << "</a>";
 						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";	
-						out << "\t<a id=\"cmdCooked\" class=\"cmd\" onclick=\"toCooked()\">" << to_text(steping::Eat::cooked) << "</a>";
 						break;
 					case steping::Eat::cooked: 
+						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
 						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";	
 						break;
 					case steping::Eat::finalized:
@@ -394,11 +398,13 @@ std::ostream& BodyApplication::print_oven(std::ostream& out)
 						p->getStocking().getItem().downBrief(*connDB);
 						p->getStocking().getItem().downStation(*connDB);
 						
+						if((Station)p->getStocking().getItem().getStation() != Station::pizza) continue;
+						
 						out << "\t\t\t<div id=\"item_" << p->getStocking().getStocking() << "\" class=\"oven_item\">\n";
 						{
 							out << "\t\t\t\t<div class=\"oven_item_name\">\n";
 							{
-								out << "\t\t\t\t\t" << p->getStocking().getItem().getBrief() << "\n";
+								out << "\t\t\t\t\t" << p->getStocking().getItem().getBrief() << " - " << s->getOperation().getOperation().getID() << "\n";
 							}
 							out << "\t\t\t\t</div>\n";
 							out << "\t\t\t\t<div class=\"oven_item_cmd\">\n";
@@ -415,16 +421,6 @@ std::ostream& BodyApplication::print_oven(std::ostream& out)
 					}
 					delete lstProgress;
 				}
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
 			}
 			for(auto s : *lstService)
 			{
