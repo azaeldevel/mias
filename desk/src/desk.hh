@@ -7,6 +7,7 @@
 
 #include <muposys/desk/desk.hh>
 #include <mias/core/core.hh>
+#include <mias/core/Exception.hh>
 #include <thread>
 #include <mutex>
 
@@ -55,18 +56,15 @@ private:
 namespace mias
 {
 
-
-
-
-	
 class TableSaling : public mps::TableSaling
-{	
+{
 public:
 	TableSaling();
 	void init();
 	virtual ~TableSaling();
 	
 	void clear();
+	void set(const muposysdb::User& user);
 
 protected:
 	virtual void save();
@@ -77,6 +75,9 @@ protected:
 	Gtk::Label lbName;
 	Gtk::Entry inName;
 	Gtk::HBox boxName;
+	
+private:
+	const muposysdb::User* user;
 };
 
 class TableServicies : public Gtk::TreeView
@@ -84,7 +85,7 @@ class TableServicies : public Gtk::TreeView
 public:
 	
 public:
-	TableServicies();	
+	TableServicies();
 	void init();
 	virtual ~TableServicies();
 	
@@ -198,13 +199,12 @@ public:
 	void init();
 	virtual ~Saling();
 	
+	void set(const muposysdb::User& user);
 protected:
 	
 private:
-	
-		
 	TableSaling table;
-	
+	const muposysdb::User* user;
 };
 
 class PendingServices : public Gtk::Box
@@ -225,9 +225,11 @@ private:
 class Sales : public Gtk::Paned
 {
 public:
-	Sales();	
+	Sales();
 	void init();
 	virtual ~Sales();
+	
+	void set(const muposysdb::User& user);
 	
 protected:
 	
@@ -236,6 +238,7 @@ private:
 	Gtk::Label label2;
 	Saling saling;
 	PendingServices pending;
+	const muposysdb::User* user;
 };
 
 
@@ -251,6 +254,7 @@ public:
 	//Mias(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade,bool);
 	void init();
 	virtual ~Mias();
+	
 	
 protected:
 	

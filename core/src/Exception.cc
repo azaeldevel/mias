@@ -78,6 +78,8 @@ const char* Exception::what () const throw ()
 		return "La lectura en Base de Datos falló";
 	case Errors::DB_WRITE_FAIL:
 		return "La escritura en Base de Datos falló";
+	case Errors::INTERNAL_ERROR:
+		return "Error interno desconocido";
 	default:
 		return "Error desconocido.";
 	}

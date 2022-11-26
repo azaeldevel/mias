@@ -46,23 +46,25 @@ private:
 	const GetParams& params;
 	mps::Connector* connDB;
 	
+	const char* to_text(steping::Eat);
+	
 public:
 	BodyApplication(const GetParams& params);
 	virtual std::ostream& print (std::ostream& out);
+	virtual std::ostream& print_common(std::ostream& out);
+	virtual std::ostream& print_common_commands(std::ostream& out);
+	virtual std::ostream& print_oven(std::ostream& out);
 	virtual void programs(std::ostream& out);
 	void select_order(std::ostream& out);
 	void select_item(std::ostream& out);
 	void accepted_item(std::ostream& out);
 	void restoring_order(std::ostream& out);
-	//void programs_pizza(std::ostream& out);
-	//void programs_stove(std::ostream& out);
+	void select_item_oven(std::ostream& out);
 	
 	virtual void panel(std::ostream& out);
 	void select_order_restore(std::ostream& out);
 	void select_step_restore(std::ostream& out);
 	void select_item_restore(std::ostream& out);
-	//virtual void panel_pizza(std::ostream& out);
-	//virtual void panel_stove(std::ostream& out);
 	
 	void set(mps::Connector& connDB);
 	

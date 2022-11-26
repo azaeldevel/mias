@@ -40,7 +40,7 @@ namespace mias
 			case steping::Eat::prepared: return "Preparado";
 			case steping::Eat::cook: return "Cocinar";
 			case steping::Eat::cooking: return "Cocinando";
-			case steping::Eat::cooked: return "Cocinando";
+			case steping::Eat::cooked: return "Cocinado";
 			case steping::Eat::finalized: return "Finalizado";		
 			case steping::Eat::cancel: return "Cancel";
 		}

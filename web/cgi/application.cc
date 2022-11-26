@@ -49,8 +49,6 @@ namespace mps
 		}
 	}
 	
-	
-	
 }
 
 
@@ -122,7 +120,7 @@ BodyApplication::BodyApplication(const GetParams& p) : params(p)
 }
 void BodyApplication::programs(std::ostream& out) 
 {
-	if(params.station > Station::none)
+	if(params.station == Station::pizza or params.station == Station::stove)
 	{
 		if(params.step == steping::Eat::none and params.order == -1)
 		{
@@ -141,6 +139,10 @@ void BodyApplication::programs(std::ostream& out)
 			restoring_order(out);
 		}
 	}
+	else if(params.station == Station::oven)
+	{
+		
+	}
 	else
 	{
 		out << "\t\t\t<div id=\"pizza\"><a href=\"application.cgi?station=pizza&step=none\">Pizza</a></div>\n";
@@ -150,10 +152,8 @@ void BodyApplication::programs(std::ostream& out)
 }
 
 void BodyApplication::panel(std::ostream& out) 
-{	
-
-	//out << "Step : " << params.order  << "\n";	
-	if(params.station > Station::none)
+{
+	if(params.station == Station::pizza or params.station == Station::stove)
 	{
 		out << "\t\t\t<div id=\"logout\"><a href=\"logout.cgi\"></a></div>\n";
 		out << "\t\t\t<div class=\"space\"></div>\n";	
@@ -169,6 +169,10 @@ void BodyApplication::panel(std::ostream& out)
 		{
 			select_item_restore(out);
 		}
+	}
+	else if(params.station == Station::oven)
+	{
+		
 	}
 	else
 	{
@@ -197,8 +201,63 @@ std::ostream& BodyApplication::print(std::ostream& out)
 		out << "\t\t</div>\n";
 
 	out << "\t</div>\n";
-	if(params.station != Station::none)
+	if(params.station == Station::pizza or params.station == Station::stove)
 	{
+		print_common(out);
+		print_common_commands(out);
+	}
+	else if(params.station == Station::oven)
+	{
+		print_oven(out);
+	}
+	return out;
+}
+void BodyApplication::set(mps::Connector& c)
+{
+	connDB = &c;
+}
+
+const char* BodyApplication::to_text(steping::Eat s)
+{
+		switch(s)
+		{
+			case steping::Eat::cook: 
+				if(params.station == Station::pizza)
+				{
+					return "Hornear";
+				}
+				else if(params.station == Station::stove)
+				{
+					return "Freir";
+				}
+				break;
+			case steping::Eat::cooking:
+				if(params.station == Station::pizza)
+				{
+					return "Horneando";
+				}
+				else if(params.station == Station::stove)
+				{
+					return "Friendo";
+				}
+				break;
+			case steping::Eat::cooked: 
+				if(params.station == Station::pizza)
+				{
+					return "Horneado";
+				}
+				else if(params.station == Station::stove)
+				{
+					return "Frito";
+				}
+				break;
+		}
+		
+		return mias::to_text(s);
+}
+
+std::ostream& BodyApplication::print_common(std::ostream& out)
+{
 		out << "\t<div id=\"work\">\n";		
 		{
 			muposysdb::CatalogItem* item = NULL;
@@ -233,7 +292,7 @@ std::ostream& BodyApplication::print(std::ostream& out)
 				{
 					if(item)
 					{
-						out << "\t" << to_text(params.station) << " : "<< item->getBrief() << "<br>\n";
+						out << "\t" << mias::to_text(params.station) << " : "<< item->getBrief() << "<br>\n";
 					}
 				}
 				out << "\t</div>\n";
@@ -242,56 +301,36 @@ std::ostream& BodyApplication::print(std::ostream& out)
 			delete item;
 		}
 		out << "\t</div>\n";
-		
+	
+	return out;
+}
+std::ostream& BodyApplication::print_common_commands(std::ostream& out)
+{
 		out << "\t<div id=\"commands\">\n";	
 		{
 			out << "\t<div id=\"left\">\n";		
 			{
-				switch((steping::Eat)params.step)
-				{
-					case steping::Eat::none: 
-						
-						break;
-					case steping::Eat::accept:
-						
-						break;
-					case steping::Eat::accepted:
-						
-						break;
-					case steping::Eat::preparing: 
-						
-						break;
-					case steping::Eat::prepared: 
-						
-						break;
-					case steping::Eat::cooking: 
-						
-						break;
-					case steping::Eat::cooked: 
-						
-						break;
-					case steping::Eat::finalized:
-						
-						break;	
-					case steping::Eat::cancel:
-						
-						break;
-				}
+				
 			}
 			out << "\t</div>\n";
 			out << "\t<div id=\"right\">\n";	
 			{
-				switch((steping::Eat)params.step)
+				switch(params.step)
 				{
 					case steping::Eat::none: 
 						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
 						break;
 					case steping::Eat::accept:
-						
+						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
 						break;
 					case steping::Eat::accepted:
 						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(steping::Eat::cooking) << "</a>";
-						out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPrepare()\">Preparar</a>";
+						out << "\t<a id=\"cmdCooked\" class=\"cmd\" onclick=\"toCooked()\">" << to_text(steping::Eat::cooked) << "</a>";
+						//out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPreparing()\">" << to_text(steping::Eat::preparing) << "</a>";
+						break;
+					case steping::Eat::prepare:
+						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(steping::Eat::cooking) << "</a>";
+						out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPreparing()\">" << to_text(steping::Eat::preparing) << "</a>";
 						break;
 					case steping::Eat::preparing: 
 						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(steping::Eat::cooking) << "</a>";
@@ -319,15 +358,86 @@ std::ostream& BodyApplication::print(std::ostream& out)
 			}
 		}
 		out << "\t</div>\n";
-	}
+		
 	return out;
 }
-void BodyApplication::set(mps::Connector& c)
+std::ostream& BodyApplication::print_oven(std::ostream& out)
 {
-	connDB = &c;
+	out << "\t<div id=\"work\">\n";
+	out << "\t<div id=\"list_oven\">\n";
+	{
+		std::string whereService = "step > " ;
+		whereService += std::to_string((int)ServiceStep::created);
+		whereService += " and step < ";
+		whereService += std::to_string((int)ServiceStep::delivered);
+		std::vector<muposysdb::MiasService*>* lstService = muposysdb::MiasService::select(*connDB,whereService,0,'A');
+		if(lstService->size() > 0)
+		{
+			for(auto s : *lstService)
+			{
+				s->downName(*connDB);
+				
+				std::string whereProcess;
+				whereProcess = "operation = ";
+				whereProcess += std::to_string(s->getOperation().getOperation().getID());
+				whereProcess += " and step >= ";
+				whereProcess += std::to_string((short)steping::Eat::cook);
+				whereProcess += " and step < ";
+				whereProcess += std::to_string((short)steping::Eat::finalized);
+				std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,whereProcess,0,'A');
+				if(lstProgress->size() > 0)
+				{
+					for(auto p : *lstProgress)
+					{
+						p->getStocking().downItem(*connDB);
+						p->getStocking().getItem().downNumber(*connDB);
+						p->getStocking().getItem().downBrief(*connDB);
+						p->getStocking().getItem().downStation(*connDB);
+						
+						out << "\t<div id=\"item_" << p->getStocking().getStocking() << "\" class=\"oven_item\">\n";
+						{
+							out << "\t<div class=\"oven_item_name\">\n";
+							{
+								out << p->getStocking().getItem().getBrief();
+							}
+							out << "\t</div>\n";
+							out << "\t<div class=\"oven_item_cmd\">\n";
+							{
+								out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";	
+							}
+							out << "\t</div>\n";
+						}
+						out << "\t</div>\n";
+					}
+					for(auto p : *lstProgress)
+					{
+						delete p;
+					}
+					delete lstProgress;
+				}
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			}
+			for(auto s : *lstService)
+			{
+				delete s;
+			}
+			delete lstService;
+		}
+	}
+	out << "\t</div\n";	
+	out << "\t</div\n";	
+	
+	return out;
 }
-
-
 
 
 
@@ -417,29 +527,8 @@ int Application::main(std::ostream& out)
 			steping(steping::Eat::accepted);
 			break;
 		case steping::Eat::prepare:
-		{
-			//out << "Procesando solicitud de acceptacion...\n";
 			steping(steping::Eat::prepare);
-			cgicc::Cgicc cgi;
-			//cgicc::CgiInput:
-			const cgicc::CgiEnvironment& cgienv = cgi.getEnvironment();
-			
-			std::string strgets = "station=";
-			strgets += to_string(params.station);
-			strgets += "&order=";
-			strgets += std::to_string(params.order);
-			strgets += "&step=preparing";
-			strgets += "&item=";
-			strgets += std::to_string(params.item);
-			std::string url = "application.cgi?";
-			url += strgets;
-			head.redirect(0,url.c_str());
-			//out << "url : " << url << "<br>\n";
-			//out << "done<br>\n";
-			head.print(out);
-			connDB.commit();
-			return EXIT_SUCCESS;
-		}
+			break;
 		case steping::Eat::preparing:
 			steping(steping::Eat::prepared);
 			connDB.commit();

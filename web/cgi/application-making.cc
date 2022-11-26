@@ -68,7 +68,7 @@ void BodyApplication::select_item(std::ostream& out)
 			if(lstProgress->size() > 0)
 			{
 				out << "\t\t\t\t<label for=\"item\"><b>";
-				out << to_text(params.station);
+				out << mias::to_text(params.station);
 				out << ":</b></label><br>\n";
 				out << "\t\t\t\t<select name=\"item\" id=\"itemList\" onchange=\"acceptinghref()\">\n";
 				{
@@ -93,7 +93,7 @@ void BodyApplication::select_item(std::ostream& out)
 			{
 				delete lstProgress;
 				out << "\t\t\t\t<label ><b>";
-				out << to_text(params.station);
+				out << mias::to_text(params.station);
 				out << ":</b></label><br>Ninguna\n";
 			}
 		}
@@ -137,7 +137,7 @@ void BodyApplication::accepted_item(std::ostream& out)
 				delete lstProgress;
 			}
 			out << "\t\t\t\t<label><b>";
-			out << to_text(params.station);
+			out << mias::to_text(params.station);
 			out << ":</b></label><br>" << itemNumber << "\n";
 		}
 		out << "\t\t\t</div>\n";
@@ -194,7 +194,7 @@ void BodyApplication::select_step_restore(std::ostream& out)
 				out << "\t\t\t\t\t<option value=\"next\">next</option>\n";	
 				for(short i = (short) steping::Eat::accept; i < (short) steping::Eat::finalized; i++ )
 				{
-					out << "\t\t\t\t\t<option value=\"" << to_string((steping::Eat)i) <<  "\">" << to_text((steping::Eat)i) << "</option>\n";					
+					out << "\t\t\t\t\t<option value=\"" << to_string((steping::Eat)i) <<  "\">" << mias::to_text((steping::Eat)i) << "</option>\n";					
 				}
 			}
 			out << "\t\t\t\t</select>\n";
@@ -236,6 +236,57 @@ void BodyApplication::select_item_restore(std::ostream& out)
 		out << "\t\t\t</div>\n";
 }
 
+void BodyApplication::select_item_oven(std::ostream& out)
+{
+		out << "\t\t\t<div id=\"order\">\n";
+		{
+			out << "\t\t\t\t<label ><b>Orden:</b></label><br>" << params.order << "\n";
+		}
+		out << "\t\t\t</div>\n";
+		
+		out << "\t\t\t<div id=\"item\">\n";
+		{
+			std::string where = "operation = ";
+			where += std::to_string(params.order);
+			where += " and step >=";
+			where += std::to_string((short)steping::Eat::cook);
+			where += " and step <= ";
+			where += std::to_string((short)steping::Eat::cooked);
+			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
+			if(lstProgress->size() > 0)
+			{
+				out << "\t\t\t\t<label for=\"item\"><b>";
+				out << mias::to_text(params.station);
+				out << ":</b></label><br>\n";
+				out << "\t\t\t\t<select name=\"item\" id=\"itemList\" onchange=\"acceptinghref()\">\n";
+				{
+						out << "\t\t\t\t\t<option value=\"next\">next</option>\n";
+						for(auto p : *lstProgress)
+						{
+							p->getStocking().downItem(*connDB);
+							p->getStocking().getItem().downNumber(*connDB);
+							p->getStocking().getItem().downBrief(*connDB);
+							p->getStocking().getItem().downStation(*connDB);
+							if((Station)p->getStocking().getItem().getStation() == params.station) out << "\t\t\t\t\t<option value=\"" << p->getStocking().getStocking() << "\">" << p->getStocking().getItem().getBrief() << "</option>\n";
+						}
+						for(auto p : *lstProgress)
+						{
+								delete p;
+						}
+						delete lstProgress;
+				}
+				out << "\t\t\t\t</select>\n";
+			}
+			else
+			{
+				delete lstProgress;
+				out << "\t\t\t\t<label ><b>";
+				out << mias::to_text(params.station);
+				out << ":</b></label><br>Ninguna\n";
+			}
+		}
+		out << "\t\t\t</div>\n";
+}
 	
 	
 }

@@ -42,7 +42,7 @@ function restoreStephref()
   
   window.location.href = ref;
 }
-function toPrepare() 
+function toPreparing() 
 {  
   const urlParams = new URLSearchParams(window.location.search);
   var station = urlParams.get("station");
@@ -50,7 +50,7 @@ function toPrepare()
   var item = urlParams.get("item");  
     
   var cmdPreparing = document.getElementById("cmdPreparing");
-  var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&step=prepare&item="+ item; 
+  var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&step=preparing&item="+ item; 
   
   cmdPreparing.href = ref;
 }

@@ -12,7 +12,7 @@
 namespace mias
 {
 
-void BodyApplication::programs_stove(std::ostream& out)
+void BodyApplication::programs_oven(std::ostream& out)
 {
 	if(params.step == steping::Eat::none and params.order == -1)
 	{
@@ -32,7 +32,7 @@ void BodyApplication::programs_stove(std::ostream& out)
 	}
 }
 
-void BodyApplication::panel_stove(std::ostream& out) 
+void BodyApplication::panel_pizza(std::ostream& out) 
 {
 	out << "\t\t\t<div id=\"logout\"><a href=\"logout.cgi\"></a></div>\n";
 	out << "\t\t\t<div class=\"space\"></div>\n";	

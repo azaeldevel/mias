@@ -129,6 +129,8 @@ void Mias::init()
 	nbMain.append_page(sale);
 	
 	show_all_children();
+	std::cout << "MIAS user : " << &get_user() << "\n";
+	sale.set(get_user());
 }
 Mias::~Mias()
 {
@@ -138,7 +140,7 @@ Mias::~Mias()
 
 
 
-Sales::Sales()
+Sales::Sales() : user(NULL)
 {
 	init();	
 }
@@ -146,28 +148,31 @@ void Sales::init()
 {	
 	add1(pending);
 	add2(saling);	
-	
 }
 Sales::~Sales()
 {
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Saling::Saling() : Gtk::Box(Gtk::ORIENTATION_VERTICAL)
+void Sales::set(const muposysdb::User& u)
 {
-	init();	
+	user = &u;
+	saling.set(u);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+Saling::Saling() : Gtk::Box(Gtk::ORIENTATION_VERTICAL),user(NULL)
+{
+	init();
 }
 void Saling::init()
 {
@@ -176,7 +181,11 @@ void Saling::init()
 Saling::~Saling()
 {
 }
-
+void Saling::set(const muposysdb::User& u)
+{
+	user = &u;
+	table.set(u);
+}
 
 
 
@@ -190,7 +199,7 @@ void PendingServices::init()
 {	
 	pack_start(lbTitle,false,false);
 	lbTitle.set_text("Lista de Servicios : ");
-		
+	
 	pack_start(servicies);
 	
 }
@@ -205,7 +214,7 @@ PendingServices::~PendingServices()
 
 TableServicies::TableServicies() : connDB_flag(false),updaterThread(NULL),lstOprs(NULL),lstProgress(NULL)
 {
-	init();	
+	init();
 }
 void TableServicies::init()
 {
@@ -386,11 +395,11 @@ void TableServicies::load()
 			
 			if(working > 0)
 			{
-				lstOprs->at(i)->upStep(connDB,(unsigned char)ServiceStep::working);
+				lstOprs->at(i)->upStep(connDB,(short)ServiceStep::working);
 			}
 			if(working == lstOprs->size())
 			{
-				lstOprs->at(i)->upStep(connDB,(unsigned char)ServiceStep::waiting);
+				lstOprs->at(i)->upStep(connDB,(short)ServiceStep::waiting);
 			}
 			
 			lstOprs->at(i)->downName(connDB);
@@ -832,7 +841,7 @@ void TableServicies::on_menu_cooked_popup()
 			{
 				//std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
 				//std::cerr << "Filtro  " << whereOrder << "\n";
-				lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::cooked);
+				lstOprs->front()->upStep(connDB,(short)ServiceStep::cooked);
 				flag = true;
 			}
 			for(auto p : *lstOprs)
@@ -862,7 +871,7 @@ void TableServicies::on_menu_waiting_popup()
 			{
 				//std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
 				//std::cerr << "Filtro  " << whereOrder << "\n";
-				lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::waiting);
+				lstOprs->front()->upStep(connDB,(short)ServiceStep::waiting);
 				flag = true;
 			}
 			for(auto p : *lstOprs)
@@ -891,7 +900,7 @@ void TableServicies::on_menu_deliver_popup()
 			{
 				//std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
 				//std::cerr << "Filtro  " << whereOrder << "\n";
-				lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::delivered);
+				lstOprs->front()->upStep(connDB,(short)ServiceStep::delivered);
 				flag = true;
 			}
 			for(auto p : *lstOprs)
@@ -920,7 +929,7 @@ void TableServicies::on_menu_cancel_popup()
 			{
 				//std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
 				//std::cerr << "Filtro  " << whereOrder << "\n";
-				lstOprs->front()->upStep(connDB,(unsigned char)ServiceStep::cancel);
+				lstOprs->front()->upStep(connDB,(short)ServiceStep::cancel);
 				flag = true;
 			}
 			for(auto p : *lstOprs)
@@ -1059,8 +1068,13 @@ bool TableServicies::on_button_release_event(GdkEventButton* button_event)
 
 
 
-
-TableSaling::TableSaling()
+/*
+TableSaling::TableSaling() : user(NULL)
+{
+	init();
+}
+*/
+TableSaling::TableSaling() : user(NULL)
 {
 	init();
 }
@@ -1077,7 +1091,6 @@ void TableSaling::init()
 }
 TableSaling::~TableSaling()
 {
-	
 }
 
 void TableSaling::on_save_clicked()
@@ -1086,6 +1099,7 @@ void TableSaling::on_save_clicked()
 }
 void TableSaling::save()
 {
+	//std::cout << "saving :step 1\n";
 	if(inName.get_text().size() == 0)
 	{
 		Gtk::MessageDialog dlg("Validacion de datos",true,Gtk::MESSAGE_ERROR);
@@ -1098,7 +1112,7 @@ void TableSaling::save()
 		dlg.set_secondary_text("Capture los productos que seran vendidos, por favor.");
 		dlg.run();	
 	}
-	//std::cout << "saving..\n";
+	//std::cout << "saving :step 2\n";
 	Gtk::TreeModel::Row row;
 	muposysdb::Ente *ente_service,*ente_operation;
 	muposysdb::Stock stock(9);
@@ -1109,6 +1123,7 @@ void TableSaling::save()
 	const Gtk::TreeModel::iterator& last = (tree_model->children().end());	
 	int quantity,item;
 	ente_service = new muposysdb::Ente;
+	//std::cout << "saving :step 3\n";
 	if(not ente_service->insert(connDB))
 	{
 			Gtk::MessageDialog dlg("Error detectado en acces a BD",true,Gtk::MESSAGE_ERROR);
@@ -1132,6 +1147,7 @@ void TableSaling::save()
 			return;		
 	}*/
 	
+	//std::cout << "saving :step 4\n";
 	ente_operation = new muposysdb::Ente;
 	if(not ente_operation->insert(connDB))
 	{
@@ -1140,24 +1156,32 @@ void TableSaling::save()
 			dlg.run();
 			return;
 	}
+	//std::cout << "saving :step 5\n";
 	for(const Gtk::TreeModel::const_iterator& it : tree_model->children())
 	{
+		//std::cout << "saving :step 5.1\n";
 		if(last == it) break;
 		row = *it;
 		
+		//std::cout << "saving :step 5.2\n";
 		quantity = row[columns.quantity];
 		if(quantity == 0) break;
 		
 		item = row[columns.item];
 		
+		//std::cout << "saving :step 5.3\n";
 		cat_item = new muposysdb::CatalogItem(item);
 		
+		//std::cout << "saving :step 5.4\n";
 		cat_item->downType(connDB);
+		//std::cout << "saving :step 5.5\n";
 		if(cat_item->getType().compare("service") == 0)
 		{
 			for(unsigned int i = 0; i < quantity; i++ )
 			{
+				//std::cout << "saving :step 5.5.1\n";
 				stocking = new muposysdb::Stocking;
+				//std::cout << "saving :step 5.5.2\n";
 				if(not stocking->insert(connDB,stock,*cat_item,1))
 				{
 					Gtk::MessageDialog dlg("Error detectado en acces a BD",true,Gtk::MESSAGE_ERROR);
@@ -1165,16 +1189,24 @@ void TableSaling::save()
 					dlg.run();
 					return;
 				}
+				//std::cout << "saving :step 5.5.3\n";
 				operationProgress = new muposysdb::Progress;
-				if(not operationProgress->insert(connDB,*stocking,*operation,(signed char)steping::Eat::created))
+				//std::cout << "saving :step 5.5.4\n";
+				
+				//std::cout << "TableSaling user : " << user << "\n";
+				//muposysdb::User user(2);
+				if(not user) throw Exception(Exception::INTERNAL_ERROR,__FILE__,__LINE__);
+				if(not operationProgress->insert(connDB,*stocking,*operation,(short)steping::Eat::created,*user))
 				{
 					Gtk::MessageDialog dlg("Error detectado en acceso a BD",true,Gtk::MESSAGE_ERROR);
 					dlg.set_secondary_text("Durante la escritura de Stoking Production.");
 					dlg.run();
 					return;
 				}
+				//std::cout << "saving :step 5.5.5\n";
 				delete operationProgress;
 				delete stocking;
+				//std::cout << "saving :step 5.5.6\n";
 			}
 		}
 		else
@@ -1191,11 +1223,14 @@ void TableSaling::save()
 		}
 		
 		delete cat_item;
+		//std::cout << "saving :step 5.6\n";
 	}
+	//std::cout << "saving :step 6\n";
 	
 	delete ente_service;
 	delete ente_operation;	
 	
+	//std::cout << "saving :step 7\n";
 	muposysdb::Sale* sale;
 	for(const Gtk::TreeModel::const_iterator& it : tree_model->children())
 	{
@@ -1219,6 +1254,7 @@ void TableSaling::save()
 		
 		delete cat_item;
 	}
+	//std::cout << "saving :step 8\n";
 	
 	muposysdb::MiasService service;
 	if(not service.insert(connDB,*operation,inName.get_text()))
@@ -1228,6 +1264,7 @@ void TableSaling::save()
 		dlg.run();
 		return;
 	}
+	//std::cout << "saving :step 9\n";
 	if(not service.upStep(connDB,(short)ServiceStep::created))
 	{
 		Gtk::MessageDialog dlg("Error detectado en acces a BD",true,Gtk::MESSAGE_ERROR);
@@ -1235,16 +1272,19 @@ void TableSaling::save()
 		dlg.run();
 		return;
 	}
+	//std::cout << "saving :step 10\n";
 	delete operation;
 	
+	//std::cout << "saving :step 11\n";
 	connDB.commit();	
 	clear();
+	
+	//std::cout << "saving :step 12\n";
 	
 	Gtk::MessageDialog dlg("Operacion completada.",true,Gtk::MESSAGE_INFO);
 	dlg.set_secondary_text("La Venta se realizo satisfactoriamente.");
 	dlg.run();	
 }
-
 void TableSaling::clear()
 {
 	tree_model->clear();
@@ -1252,7 +1292,10 @@ void TableSaling::clear()
 	lbTotalAmount.set_text("");
 	inName.set_text("");
 }
-
+void TableSaling::set(const muposysdb::User& u)
+{
+	user = &u;
+}
 
 
 

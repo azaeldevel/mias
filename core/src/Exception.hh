@@ -56,6 +56,7 @@ public:
 		DB_CONECTION_FAIL,
 		DB_READ_FAIL,
 		DB_WRITE_FAIL,
+		INTERNAL_ERROR,
 	};
 
 public:
