@@ -23,10 +23,11 @@ body > #commands > #right
 	min-width: 50%;
 	height : 100%;
 }
-body > #commands > #right > *
+body > #commands > #right > *,
 {
 	float : right;
 }
+
 
 .cmd 
 {

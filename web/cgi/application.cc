@@ -364,7 +364,7 @@ std::ostream& BodyApplication::print_common_commands(std::ostream& out)
 std::ostream& BodyApplication::print_oven(std::ostream& out)
 {
 	out << "\t<div id=\"work\">\n";
-	out << "\t<div id=\"list_oven\">\n";
+	out << "\t\t<div id=\"list_oven\">\n";
 	{
 		std::string whereService = "step > " ;
 		whereService += std::to_string((int)ServiceStep::created);
@@ -394,20 +394,20 @@ std::ostream& BodyApplication::print_oven(std::ostream& out)
 						p->getStocking().getItem().downBrief(*connDB);
 						p->getStocking().getItem().downStation(*connDB);
 						
-						out << "\t<div id=\"item_" << p->getStocking().getStocking() << "\" class=\"oven_item\">\n";
+						out << "\t\t\t<div id=\"item_" << p->getStocking().getStocking() << "\" class=\"oven_item\">\n";
 						{
-							out << "\t<div class=\"oven_item_name\">\n";
+							out << "\t\t\t\t<div class=\"oven_item_name\">\n";
 							{
-								out << p->getStocking().getItem().getBrief();
+								out << "\t\t\t\t\t" << p->getStocking().getItem().getBrief() << "\n";
 							}
-							out << "\t</div>\n";
-							out << "\t<div class=\"oven_item_cmd\">\n";
+							out << "\t\t\t\t</div>\n";
+							out << "\t\t\t\t<div class=\"oven_item_cmd\">\n";
 							{
-								out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";	
+								out << "\t\t\t\t\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toOvenFinalized("<< s->getOperation().getOperation().getID() << "," <<  p->getStocking().getStocking() << ")\">" << to_text(steping::Eat::finalized) << "</a>\n";	
 							}
-							out << "\t</div>\n";
+							out << "\t\t\t\t</div>\n";
 						}
-						out << "\t</div>\n";
+						out << "\t\t\t</div>\n";
 					}
 					for(auto p : *lstProgress)
 					{
@@ -433,7 +433,7 @@ std::ostream& BodyApplication::print_oven(std::ostream& out)
 			delete lstService;
 		}
 	}
-	out << "\t</div\n";	
+	out << "\t\t</div\n";	
 	out << "\t</div\n";	
 	
 	return out;
