@@ -239,6 +239,7 @@ private:
 	Saling saling;
 	PendingServices pending;
 	const muposysdb::User* user;
+	
 };
 
 

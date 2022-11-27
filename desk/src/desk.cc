@@ -129,7 +129,7 @@ void Mias::init()
 	nbMain.append_page(sale);
 	
 	show_all_children();
-	std::cout << "MIAS user : " << &get_user() << "\n";
+	//std::cout << "MIAS user : " << &get_user() << "\n";
 	sale.set(get_user());
 }
 Mias::~Mias()
@@ -295,7 +295,10 @@ void TableServicies::on_show()
 }
 void TableServicies::load()
 {
+reload :
 	bool flcleared = false;
+	bool flreload;
+	flreload = false;
 	//std::cout << "TableServicies::load\n";
 	//std::cout << "TableServicies::load : cleaned model\n";
 	std::string whereOrder;
@@ -371,10 +374,10 @@ void TableServicies::load()
 						else std::cout << "\t\tStation : unknow\n";*/
 					}
 					
-					if((steping::Eat)progress_item->getStep() < steping::Eat::finalized) working++;
+					if((steping::Eat)progress_item->getStep() < steping::Eat::finalized and (steping::Eat)progress_item->getStep() >  steping::Eat::accepted ) working++;
 					//if((steping::Eat)progress_item->getStep() == steping::Eat::finalized) finalized++;
 					
-					short precen_total = (int)steping::Eat::finalized - (int)steping::Eat::created;
+					int precen_total = (int)steping::Eat::finalized - (int)steping::Eat::created;
 					if(precen_total > 0)
 					{
 							float percen_item;
@@ -396,10 +399,12 @@ void TableServicies::load()
 			if(working > 0)
 			{
 				lstOprs->at(i)->upStep(connDB,(short)ServiceStep::working);
+				flreload = true;
 			}
 			if(working == lstOprs->size())
 			{
 				lstOprs->at(i)->upStep(connDB,(short)ServiceStep::waiting);
+				flreload = true;
 			}
 			
 			lstOprs->at(i)->downName(connDB);
@@ -423,6 +428,7 @@ void TableServicies::load()
 		row = *it;
 		row[columns.step] = to_text(row[columns.step_number]);
 	}
+	//if(flreload) goto reload;
 }
 
 void TableServicies::reload()
@@ -1037,28 +1043,16 @@ bool TableServicies::on_button_press_event(GdkEventButton* button_event)
 }
 bool TableServicies::on_enter_notify_event (GdkEventCrossing* crossing_event)
 {
-	//std::cout << "is_runnig is " << (is_runnig? "true" : "false")<< "\n";
 	if(is_runnig) on_stop_services();
 	
 	return false;
 }
 bool TableServicies::on_leave_notify_event (GdkEventCrossing* crossing_event)
 {
-	//std::cout << "is_stop is " << (is_stop? "true" : "false")<< "\n";
 	if(is_stop) on_start_services();
 	
 	return false;
 }
-/*
-bool TableServicies::on_button_release_event(GdkEventButton* button_event)
-{
-	if(is_stop)
-	{
-		on_start_button_clicked();
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
-	}
-	return false;
-}*/
 
 
 
@@ -1081,7 +1075,7 @@ TableSaling::TableSaling() : user(NULL)
 void TableSaling::init()
 {
 	btSave.signal_clicked().connect( sigc::mem_fun(*this,&TableSaling::on_save_clicked));
-	
+		
 	boxAditional.pack_start(boxName);
 	{
 		boxName.pack_start(lbName);
