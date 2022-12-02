@@ -5,7 +5,7 @@
 /*
  * Copyright (C) 2022 Azael R. <azael.devel@gmail.com>
  *
- * MUPOSYS is free software: you can redistribute it and/or modify it
+ * mias is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -37,6 +37,8 @@
 
 #if defined(__linux__)
     #include <muposys/core/Exception.hh>
+#elif MSYS2
+    #include <muposys/core/src/Exception.hh>
 #elif defined(_WIN32) || defined(_WIN64)
     #include <Exception.hh>
 #else
@@ -63,24 +65,24 @@ public:
 	Exception();
 	Exception(const Exception&);
 	Exception(Exception&&);
-	
+
 	Exception(unsigned int code);
 	Exception(unsigned int code,const char* filename, unsigned int line);
-	
+
 	Exception(unsigned int code,const char* message);
 	Exception(unsigned int code,const char* message,const char* filename, unsigned int line);
 
 	Exception(const std::string& message);
 	Exception(const std::string& message,const char* filename, unsigned int line);
-	
+
 	Exception(unsigned int code,const std::string& message);
 	Exception(unsigned int code,const std::string& message,const char* filename, unsigned int line);
 	virtual ~Exception();
-	
+
 	virtual const char* what () const throw ();
-	
+
 private:
-	
+
 };
 
 }

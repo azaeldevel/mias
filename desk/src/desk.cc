@@ -1,6 +1,13 @@
 
 #include <gtkmm/application.h>
-#include <muposys/core/muposysdb.hpp>
+#if __linux__
+        #include <muposys/core/muposysdb.hpp>
+#elif MSYS2
+        #include <muposys/core/bin/muposysdb.hpp>
+        #include <muposys/core/src/apidb.hh>
+#else
+        #error "Plataforma desconocida."
+#endif
 
 #include "desk.hh"
 
@@ -28,18 +35,18 @@ namespace mps
 			dlg.run();
 			return;
 		}
-		
+
 		set_title("Buscar...");
-		
+
 		btCancel.signal_clicked().connect(sigc::mem_fun(*this,&SearchItem::on_bt_cancel_clicked));
 		btOK.signal_clicked().connect(sigc::mem_fun(*this,&SearchItem::on_bt_ok_clicked));
 		signal_response().connect(sigc::mem_fun(*this, &SearchItem::on_response));
 		btOK.set_image_from_icon_name("gtk-ok");
 		btCancel.set_image_from_icon_name("gtk-cancel");
-		
+
 		//
 		//entry->signal_search_changed().connect(sigc::mem_fun(*this, &SearchItem::on_search_text_changed));
-		
+
 		//
 		get_vbox()->pack_start(bar,false,true);
 		bar.connect_entry(entry);
@@ -47,13 +54,13 @@ namespace mps
 		get_vbox()->pack_start(boxButtons,false,true);
 		boxButtons.pack_start(btOK,false,true);
 		boxButtons.pack_start(btCancel,false,true);
-				
+
 		set_default_size(340,200);
 		entry.show();
 		bar.show();
 		show_all_children();
 	}
-	
+
 
 	void SearchItem::on_bt_cancel_clicked()
 	{
@@ -81,22 +88,22 @@ namespace mps
 			}
 		}
 	}
-	
+
 	muposysdb::CatalogItem* SearchItem::searching(const Glib::ustring& s)
 	{
-		
-		
+
+
 		return NULL;
 	}
 	void SearchItem::on_search_text_changed()
 	{
 		std::cout << "searching : " << entry.get_text() << "\n";
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 }
 
 
@@ -105,29 +112,29 @@ namespace mias
 {
 Mias::Mias()
 {
-	init();	
+	init();
 }
 Mias::Mias(bool d) : mps::Restaurant(d)
 {
-	init();	
+	init();
 }
 /*
 Mias::Mias(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& b) : mps::Restaurant(cobject,b)
 {
-	init();	
+	init();
 }
 Mias::Mias(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& b,bool d) : mps::Restaurant(cobject,b,d)
 {
-	init();	
+	init();
 }
 */
 void Mias::init()
-{	
-	add_events(Gdk::KEY_PRESS_MASK);		
+{
+	add_events(Gdk::KEY_PRESS_MASK);
 	set_title("Mia's Pizza & Pasta");
 	set_default_size(800,640);
 	nbMain.append_page(sale);
-	
+
 	show_all_children();
 	//std::cout << "MIAS user : " << &get_user() << "\n";
 	sale.set(get_user());
@@ -142,12 +149,12 @@ Mias::~Mias()
 
 Sales::Sales() : user(NULL)
 {
-	init();	
+	init();
 }
 void Sales::init()
-{	
+{
 	add1(pending);
-	add2(saling);	
+	add2(saling);
 }
 Sales::~Sales()
 {
@@ -193,15 +200,15 @@ void Saling::set(const muposysdb::User& u)
 
 PendingServices::PendingServices() : Gtk::Box(Gtk::ORIENTATION_VERTICAL)
 {
-	init();	
+	init();
 }
 void PendingServices::init()
-{	
+{
 	pack_start(lbTitle,false,false);
 	lbTitle.set_text("Lista de Servicios : ");
-	
+
 	pack_start(servicies);
-	
+
 }
 PendingServices::~PendingServices()
 {
@@ -229,12 +236,12 @@ void TableServicies::init()
 		dlg.run();
 		return;
 	}
-	
+
 	tree_model = Gtk::ListStore::create(columns);
 	set_model(tree_model);
-	
+
 	append_column("Servicio", columns.service);
-	append_column("Nombre", columns.name);	
+	append_column("Nombre", columns.name);
 	auto cell = Gtk::make_managed<Gtk::CellRendererProgress>();
 	int cols_count = append_column("Progreso", *cell);
 	auto pColumn = get_column(cols_count - 1);
@@ -246,28 +253,28 @@ void TableServicies::init()
 	//Gtk::CellRenderer* step_reder = static_cast<Gtk::CellRenderer*>(get_column_cell_renderer(get_n_columns() - 1));
 	//Gtk::TreeViewColumn* step_column = get_column(get_n_columns() - 1);
 	//step_column->set_cell_data_func(*step_reder,sigc::mem_fun(*this,&TableServicies::step_data));
-	
+
 	//load();
 	dispatcher.connect(sigc::mem_fun(*this, &TableServicies::on_notification_from_worker_thread));
 	update_start_stop_buttons();
 	on_start_services();
-	
+
 	/*auto item = Gtk::make_managed<Gtk::MenuItem>("Hornear", true);
 	item->signal_activate().connect(sigc::mem_fun(*this, &TableServicies::on_menu_cooked_popup));
 	menu.append(*item);*/
-	
+
 	auto item = Gtk::make_managed<Gtk::MenuItem>("Esperando", true);
 	item->signal_activate().connect(sigc::mem_fun(*this, &TableServicies::on_menu_waiting_popup));
 	menu.append(*item);
-	
+
 	item = Gtk::make_managed<Gtk::MenuItem>("Entregar", true);
 	item->signal_activate().connect(sigc::mem_fun(*this, &TableServicies::on_menu_deliver_popup));
 	menu.append(*item);
-	
+
 	item = Gtk::make_managed<Gtk::MenuItem>("Cencelar", true);
 	item->signal_activate().connect(sigc::mem_fun(*this, &TableServicies::on_menu_cancel_popup));
 	menu.append(*item);
-	
+
 	menu.accelerate(*this);
 	menu.show_all();
 	menu.set(*this);
@@ -281,16 +288,16 @@ TableServicies::ModelColumns::ModelColumns()
 {
 	add(service);
 	add(name);
-	add(progress);	
-	add(step);	
-	add(step_number);	
-	add(updated);	
+	add(progress);
+	add(step);
+	add(step_number);
+	add(updated);
 }
 
 void TableServicies::on_show()
 {
 	Gtk::TreeView::on_show();
-	
+
 	menu.set(*this);
 }
 void TableServicies::load()
@@ -312,7 +319,7 @@ reload :
 	//Gtk::TreeModel::iterator itRow;
     if(lstOprs)
 	{
-		if(tree_model->children().size() != lstOprs->size()) 	
+		if(tree_model->children().size() != lstOprs->size())
 		{
 			tree_model->clear();
 			flcleared = true;
@@ -324,7 +331,7 @@ reload :
 		{
 			if(lstOprs->at(i)->downUpdated(connDB))
 			{
-				if(not flcleared) 
+				if(not flcleared)
 				{
 					auto itRow = *tree_model->children()[i];
 					//std::cout << "TableServicies::load : Service " << itRow[columns.service] << "\n";
@@ -332,7 +339,7 @@ reload :
 				}
 			}
 			lstOprs->at(i)->downStep(connDB);
-			
+
 			//std::cout << "TableServicies::load : order " << lstOprs->at(i)->getOperation().getOperation().getID() << "\n";
 			std::string whereItem;
 			whereItem = "operation = ";
@@ -340,7 +347,7 @@ reload :
 			//std::cout << "\tTableServicies::load : " << whereItem << "\n";
 			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(connDB,whereItem,0,'A');
 			//std::cout << "\tTableServicies::load : query done.\n";
-			
+
 			float percen_order;
 			//finalized = 0;
 			working = 0;
@@ -356,27 +363,27 @@ reload :
 					{
 						//std::cout << "\t\titem : " << progress_item->getStocking().getItem().getItem().getID() << "\n";
 					}
-					
+
 					if(progress_item->downStep(connDB))
 					{
 						//std::cout << "\t\tstep : " << (int)progress_item->getStep() << "\n";
 					}
-					
-					if(progress_item->getStep() < (int)steping::Eat::created or progress_item->getStep() > (int)steping::Eat::finalized) 
+
+					if(progress_item->getStep() < (int)steping::Eat::created or progress_item->getStep() > (int)steping::Eat::finalized)
 					{
 						//std::cout << "\t\tstep : jumping item\n";
 						continue;
 					}
-					
+
 					if(progress_item->getStocking().getItem().downStation(connDB))
 					{
 						/*if((Station)progress_item->getStocking().getItem().getStation() == Station::pizza) std::cout << "\t\tStation : pizza\n";
 						else std::cout << "\t\tStation : unknow\n";*/
 					}
-					
+
 					if((steping::Eat)progress_item->getStep() < steping::Eat::finalized and (steping::Eat)progress_item->getStep() >  steping::Eat::accepted ) working++;
 					//if((steping::Eat)progress_item->getStep() == steping::Eat::finalized) finalized++;
-					
+
 					int precen_total = (int)steping::Eat::finalized - (int)steping::Eat::created;
 					if(precen_total > 0)
 					{
@@ -389,13 +396,13 @@ reload :
 							//std::cout << "\t\tpercen_item = " << percen_item << "\n";
 							percen_order += percen_item;
 					}
-					
+
 				}
 			}
 			//std::cout << "\tpercen_order : " << percen_order <<  "\n";
 			percen_order /= float(totals_items);
 			//std::cout << "\tpercen_order : " << percen_order <<  "\n";
-			
+
 			if(working > 0)
 			{
 				lstOprs->at(i)->upStep(connDB,(short)ServiceStep::working);
@@ -406,9 +413,9 @@ reload :
 				lstOprs->at(i)->upStep(connDB,(short)ServiceStep::waiting);
 				flreload = true;
 			}
-			
+
 			lstOprs->at(i)->downName(connDB);
-			Gtk::TreeModel::Row row;	
+			Gtk::TreeModel::Row row;
 			row = *(tree_model->append());
 			row[columns.service] = lstOprs->at(i)->getOperation().getOperation().getID();
 			//std::cout << "columns.service : " << p->getOperation().getOperation().getID() << "\n";
@@ -421,8 +428,8 @@ reload :
 		}
 	}
 	connDB.commit();
-	
-	Gtk::TreeModel::Row row;	
+
+	Gtk::TreeModel::Row row;
 	for(const Gtk::TreeModel::iterator& it : tree_model->children())
 	{
 		row = *it;
@@ -453,9 +460,9 @@ bool TableServicies::is_reloadable()
     if(lstOprs)
 	{
 		int maxItOprs;
-		if(this->lstOprs) 
+		if(this->lstOprs)
 		{
-			if(this->lstOprs->size() != lstOprs->size()) 
+			if(this->lstOprs->size() != lstOprs->size())
 			{
 				flret = true;//reload
 				//std::cout << "is_reloadable : true devido a las listas de ordenes son de diferente tamaño\n";
@@ -472,15 +479,15 @@ bool TableServicies::is_reloadable()
 			p->downStep(connDB);
 			p->downName(connDB);
 		}
-		
+
 		for(int i = 0; i < maxItOprs; i++)
 		{
-			if(this->lstOprs) if(this->lstOprs->at(i)->getOperation().getOperation().getID() != lstOprs->at(i)->getOperation().getOperation().getID()) 
+			if(this->lstOprs) if(this->lstOprs->at(i)->getOperation().getOperation().getID() != lstOprs->at(i)->getOperation().getOperation().getID())
 			{
 				flret = true;//reload
 				//std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde\n";
 			}
-			
+
 			if(this->lstOprs) if(this->lstOprs->at(i)->getStep() != lstOprs->at(i)->getStep())
 			{
 				flret = true;//reload
@@ -505,9 +512,9 @@ bool TableServicies::is_reloadable()
 			if(lstProgress)
 			{
 				int maxItProgress;
-				if(this->lstProgress) 
+				if(this->lstProgress)
 				{
-					if(this->lstProgress->size() != lstProgress->size()) 
+					if(this->lstProgress->size() != lstProgress->size())
 					{
 						//std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista de progreso no corrresponde en el tamaño\n";
 						//std::cout << "this->lstProgress->size() = " << this->lstProgress->size() << ", lstProgress->size() = " <<  lstProgress->size() << "\n";
@@ -526,7 +533,7 @@ bool TableServicies::is_reloadable()
 					p->getStocking().downItem(connDB);
 					p->getStocking().getItem().downStation(connDB);
 				}
-				
+
 				for(int i = 0; i < maxItProgress; i++)
 				{
 					if(this->lstProgress) if(this->lstProgress->at(i)->getStep() != lstProgress->at(i)->getStep())
@@ -570,7 +577,7 @@ bool TableServicies::is_reloadable()
 		flret = true;
 		//std::cout << "is_reloadable : true devido a que no hay registros cargados\n";
 	}
-	
+
 	connDB.commit();
 	//std::cout << "is_reloadable : " << (flret? "true" : "false")<< "\n";
 	return flret;
@@ -579,7 +586,7 @@ bool TableServicies::is_reloadable()
 void TableServicies::load()
 {
 	tree_model->clear();
-	Gtk::TreeModel::Row row;	
+	Gtk::TreeModel::Row row;
 	std::string whereOrder = "step >= ";
 	whereOrder += std::to_string((int)ServiceStep::created);
 	whereOrder += " and step <= ";
@@ -593,13 +600,13 @@ void TableServicies::load()
 		{
 			progress_service = 0;
 			p->downName(connDB);
-			
-			//>>>			
+
+			//>>>
 			row = *(tree_model->append());
 			row[columns.service] = p->getOperation().getOperation().getID();
 			if(not p->getName().empty()) 	row[columns.name] = p->getName();
 			else row[columns.name] = "Desconocido";
-			
+
 			std::string whereItem;
 			whereItem = "operation = ";
 			whereItem += std::to_string(p->getOperation().getOperation().getID());
@@ -613,7 +620,7 @@ void TableServicies::load()
 				for(auto progress_item : *lstProgress)
 				{
 					progress_item->getStocking().downItem(connDB);
-					
+
 					if(progress_item->downStep(connDB))
 					{
 						//std::cout << "\tStep download\n";
@@ -649,20 +656,20 @@ void TableServicies::load()
 					}
 					//std::cout << "\n";
 				}
-				
+
 				for(auto s : *lstProgress)
 				{
 					delete s;
 				}
-				delete lstProgress;	
+				delete lstProgress;
 			}
-			
+
 			//progress_service /= float(lstProgress->size());
 			progress_service *= float(100);
 			//std::cout << " : progress_service = " << progress_service << "\n";
 			row[columns.progress] = progress_service;
 		}
-		
+
 		for(auto p : *lstOprs)
 		{
 				delete p;
@@ -704,7 +711,7 @@ TableServicies::Menu::Menu(TableServicies& p) : parent(&p)
 bool 	TableServicies::Menu::on_enter_notify_event (GdkEventCrossing* crossing_event)
 {
 	if(parent->is_runnig) parent->on_stop_services();
-		
+
 	//std::cout << "Showing menu\n";
 	return false;
 }
@@ -713,7 +720,7 @@ bool 	TableServicies::Menu::on_enter_notify_event (GdkEventCrossing* crossing_ev
 	std::cout << "Hiding menu\n";
 	Gtk::Menu::on_hide();
 	//if(parent->is_stop) parent->on_start_services();
-	
+
 }*/
 void 	TableServicies::Menu::set(TableServicies& p)
 {
@@ -917,7 +924,7 @@ void TableServicies::on_menu_deliver_popup()
 		}
 	}
 	connDB.commit();
-	if(flag) reload();	
+	if(flag) reload();
 }
 void TableServicies::on_menu_cancel_popup()
 {
@@ -1005,13 +1012,13 @@ void TableServicies::Updater::do_work(TableServicies* caller)
 		//caller->notify();
 	}
 
-	
+
 	{
 		std::lock_guard<std::mutex> lock(mutex);
 		m_shall_stop = false;
 		m_has_stopped = true;
 	}
-	
+
 	/*std::cout << "Updating ending\n";
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	std::cout << "notify\n";
@@ -1023,7 +1030,7 @@ bool TableServicies::on_button_press_event(GdkEventButton* button_event)
 {
 	bool return_value = false;
 	if(is_runnig) on_stop_services();
-	
+
 	//Call base class, to allow normal handling,
 	//such as allowing the row to be selected by the right-click:
 	return_value = TreeView::on_button_press_event(button_event);
@@ -1038,19 +1045,19 @@ bool TableServicies::on_button_press_event(GdkEventButton* button_event)
 		serviceSelected = rowSelected[columns.service];
 		menu.popup_at_pointer((GdkEvent*)button_event);
 	}
-	
+
 	return return_value;
 }
 bool TableServicies::on_enter_notify_event (GdkEventCrossing* crossing_event)
 {
 	if(is_runnig) on_stop_services();
-	
+
 	return false;
 }
 bool TableServicies::on_leave_notify_event (GdkEventCrossing* crossing_event)
 {
 	if(is_stop) on_start_services();
-	
+
 	return false;
 }
 
@@ -1075,7 +1082,7 @@ TableSaling::TableSaling() : user(NULL)
 void TableSaling::init()
 {
 	btSave.signal_clicked().connect( sigc::mem_fun(*this,&TableSaling::on_save_clicked));
-		
+
 	boxAditional.pack_start(boxName);
 	{
 		boxName.pack_start(lbName);
@@ -1098,13 +1105,13 @@ void TableSaling::save()
 	{
 		Gtk::MessageDialog dlg("Validacion de datos",true,Gtk::MESSAGE_ERROR);
 		dlg.set_secondary_text("Capture el nombre del cliente, por favor.");
-		dlg.run();	
+		dlg.run();
 	}
 	if(tree_model->children().size() == 0)
 	{
 		Gtk::MessageDialog dlg("Validacion de datos",true,Gtk::MESSAGE_ERROR);
 		dlg.set_secondary_text("Capture los productos que seran vendidos, por favor.");
-		dlg.run();	
+		dlg.run();
 	}
 	//std::cout << "saving :step 2\n";
 	Gtk::TreeModel::Row row;
@@ -1114,7 +1121,7 @@ void TableSaling::save()
 	muposysdb::CatalogItem* cat_item;
 	muposysdb::Operation* operation;
 	muposysdb::Progress* operationProgress;
-	const Gtk::TreeModel::iterator& last = (tree_model->children().end());	
+	const Gtk::TreeModel::iterator& last = (tree_model->children().end());
 	int quantity,item;
 	ente_service = new muposysdb::Ente;
 	//std::cout << "saving :step 3\n";
@@ -1131,16 +1138,16 @@ void TableSaling::save()
 			Gtk::MessageDialog dlg("Error detectado en acceso a BD",true,Gtk::MESSAGE_ERROR);
 			dlg.set_secondary_text("Durante la escritura de Stoking Production.");
 			dlg.run();
-			return;			
+			return;
 	}
 	/*if(not operation->upStep(connDB,(short)ServiceProgress::created))
 	{
 			Gtk::MessageDialog dlg("Error detectado en acceso a BD",true,Gtk::MESSAGE_ERROR);
 			dlg.set_secondary_text("Durante la escritura de Stoking Production para step.");
 			dlg.run();
-			return;		
+			return;
 	}*/
-	
+
 	//std::cout << "saving :step 4\n";
 	ente_operation = new muposysdb::Ente;
 	if(not ente_operation->insert(connDB))
@@ -1156,16 +1163,16 @@ void TableSaling::save()
 		//std::cout << "saving :step 5.1\n";
 		if(last == it) break;
 		row = *it;
-		
+
 		//std::cout << "saving :step 5.2\n";
 		quantity = row[columns.quantity];
 		if(quantity == 0) break;
-		
+
 		item = row[columns.item];
-		
+
 		//std::cout << "saving :step 5.3\n";
 		cat_item = new muposysdb::CatalogItem(item);
-		
+
 		//std::cout << "saving :step 5.4\n";
 		cat_item->downType(connDB);
 		//std::cout << "saving :step 5.5\n";
@@ -1186,7 +1193,7 @@ void TableSaling::save()
 				//std::cout << "saving :step 5.5.3\n";
 				operationProgress = new muposysdb::Progress;
 				//std::cout << "saving :step 5.5.4\n";
-				
+
 				//std::cout << "TableSaling user : " << user << "\n";
 				//muposysdb::User user(2);
 				if(not user) throw Exception(Exception::INTERNAL_ERROR,__FILE__,__LINE__);
@@ -1215,28 +1222,28 @@ void TableSaling::save()
 			}
 			delete stocking;
 		}
-		
+
 		delete cat_item;
 		//std::cout << "saving :step 5.6\n";
 	}
 	//std::cout << "saving :step 6\n";
-	
+
 	delete ente_service;
-	delete ente_operation;	
-	
+	delete ente_operation;
+
 	//std::cout << "saving :step 7\n";
 	muposysdb::Sale* sale;
 	for(const Gtk::TreeModel::const_iterator& it : tree_model->children())
 	{
 		if(last == it) break;
 		row = *it;
-		
+
 		quantity = row[columns.quantity];
 		if(quantity == 0) break;
-		
+
 		item = row[columns.item];
 		cat_item = new muposysdb::CatalogItem(item);
-		
+
 		sale = new muposysdb::Sale;
 		if(not sale->insert(connDB,*operation,stock,*cat_item,quantity))
 		{
@@ -1245,11 +1252,11 @@ void TableSaling::save()
 			dlg.run();
 			return;
 		}
-		
+
 		delete cat_item;
 	}
 	//std::cout << "saving :step 8\n";
-	
+
 	muposysdb::MiasService service;
 	if(not service.insert(connDB,*operation,inName.get_text()))
 	{
@@ -1268,16 +1275,16 @@ void TableSaling::save()
 	}
 	//std::cout << "saving :step 10\n";
 	delete operation;
-	
+
 	//std::cout << "saving :step 11\n";
-	connDB.commit();	
+	connDB.commit();
 	clear();
-	
+
 	//std::cout << "saving :step 12\n";
-	
+
 	Gtk::MessageDialog dlg("Operacion completada.",true,Gtk::MESSAGE_INFO);
 	dlg.set_secondary_text("La Venta se realizo satisfactoriamente.");
-	dlg.run();	
+	dlg.run();
 }
 void TableSaling::clear()
 {

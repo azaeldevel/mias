@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="mias-desk" />
+		<Option pch_mode="2" />
+		<Option compiler="msys2_x86_64_gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/mias-desk" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="msys2_x86_64_gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="../core/src" />
+					<Add directory="../../core/src" />
+				</Compiler>
+				<Linker>
+					<Add library="muposys-core" />
+					<Add library="octetos-core" />
+					<Add directory="../core/bin/Debug" />
+					<Add directory="../../core/bin/Debug" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/mias-desk" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="msys2_x86_64_gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="libmias-desk-dbg">
+				<Option output="bin/Debug/mias-desk" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="3" />
+				<Option compiler="msys2_x86_64_gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-DMSYS2" />
+					<Add option="-DOCTETOS_DB_MEDIUMWORD" />
+					<Add option="-DDATABASE_ENGINE_MARIA" />
+					<Add directory="../../../octetos" />
+				</Compiler>
+				<Linker>
+					<Add library="muposys-core" />
+					<Add library="octetos-core" />
+					<Add library="octetos-db-abstract" />
+					<Add library="octetos-db-maria" />
+					<Add library="muposys-desk" />
+					<Add directory="../core/bin/Debug" />
+					<Add directory="../../core/bin/Debug" />
+					<Add directory="../../db-abstract/bin/Debug" />
+					<Add directory="../../db-maria/bin/Debug" />
+					<Add directory="../../muposys/desk/bin/Debug" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="src/desk.cc">
+			<Option target="libmias-desk-dbg" />
+		</Unit>
+		<Unit filename="src/desk.hh">
+			<Option target="libmias-desk-dbg" />
+		</Unit>
+		<Extensions>
+			<lib_finder>
+				<lib name="gtkmm-3.0" />
+			</lib_finder>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
