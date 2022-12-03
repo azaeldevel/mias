@@ -1,7 +1,24 @@
 
+/*
+ * Copyright (C) 2022 Azael R. <azael.devel@gmail.com>
+ *
+ * mias is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * mias is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
 #include <string.h>
 #include <string>
-
 
 #include "core.hh"
 
@@ -14,6 +31,7 @@ namespace mias
 		switch(s)
 		{
 			case steping::Eat::none: return "none";
+			case steping::Eat::created: return "created";
 			case steping::Eat::accept: return "accept";
 			case steping::Eat::accepted: return "accepted";
 			case steping::Eat::prepare: return "prepare";
@@ -22,10 +40,10 @@ namespace mias
 			case steping::Eat::cook: return "cook";
 			case steping::Eat::cooking: return "cooking";
 			case steping::Eat::cooked: return "cooked";
-			case steping::Eat::finalized: return "finalized";		
-			case steping::Eat::cancel: return "cancel";	
+			case steping::Eat::finalized: return "finalized";
+			case steping::Eat::cancel: return "cancel";
 		}
-		
+
 		return "unknow";
 	}
 	const char* to_text(steping::Eat s)
@@ -33,6 +51,7 @@ namespace mias
 		switch(s)
 		{
 			case steping::Eat::none: return "Ninguno";
+			case steping::Eat::created: return "Creado";
 			case steping::Eat::accept: return "Aceptar";
 			case steping::Eat::accepted: return "Aceptado";
 			case steping::Eat::prepare: return "Preparar";
@@ -41,13 +60,13 @@ namespace mias
 			case steping::Eat::cook: return "Cocinar";
 			case steping::Eat::cooking: return "Cocinando";
 			case steping::Eat::cooked: return "Cocinado";
-			case steping::Eat::finalized: return "Finalizado";		
+			case steping::Eat::finalized: return "Finalizado";
 			case steping::Eat::cancel: return "Cancel";
 		}
-		
+
 		return "Unknow";
 	}
-	
+
 	steping::Eat to_step(const char* s)
 	{
 		if(strcmp("none",s) == 0)
@@ -94,13 +113,13 @@ namespace mias
 		{
 			return steping::Eat::cancel;
 		}
-		
+
 		return steping::Eat::none;
 	}
 
 
 
-	
+
 	const char* to_string(steping::Pizza s)
 	{
 		switch(s)
@@ -114,10 +133,10 @@ namespace mias
 			case steping::Pizza::bake: return "bake";
 			case steping::Pizza::baking: return "baking";
 			case steping::Pizza::baked: return "baked";
-			case steping::Pizza::finalized: return "finalized";		
-			case steping::Pizza::cancel: return "cancel";	
+			case steping::Pizza::finalized: return "finalized";
+			case steping::Pizza::cancel: return "cancel";
 		}
-		
+
 		return "unknow";
 	}
 	const char* to_text(steping::Pizza s)
@@ -133,10 +152,10 @@ namespace mias
 			case steping::Pizza::bake: return "Hornear";
 			case steping::Pizza::baking: return "Horneando";
 			case steping::Pizza::baked: return "Horneado";
-			case steping::Pizza::finalized: return "Finalizado";		
+			case steping::Pizza::finalized: return "Finalizado";
 			case steping::Pizza::cancel: return "Cancel";
 		}
-		
+
 		return "Unknow";
 	}
 	const char* to_string(ServiceStep s)
@@ -152,7 +171,7 @@ namespace mias
 			case ServiceStep::delivered: return "delivered";
 			case ServiceStep::cancel: return "cancel";
 		}
-		
+
 		return "unknow";
 	}
 	const char* to_text(ServiceStep s)
@@ -168,31 +187,32 @@ namespace mias
 			case ServiceStep::delivered: return "Entregado";
 			case ServiceStep::cancel: return "Cancelado";
 		}
-		
+
 		return "unknow";
 	}
 	const char* to_string(Station s)
 	{
 		switch(s)
 		{
-			case Station::none: return "none";	
-			case Station::pizza: return "pizza";	
-			case Station::stove: return "stove";	
+			case Station::none: return "none";
+			case Station::pizza: return "pizza";
+			case Station::stove: return "stove";
 			case Station::oven: return "oven";
+			case Station::salad: return "salad";
 		}
-		
+
 		return "unknow";
 	}
 	const char* to_text(Station s)
 	{
 		switch(s)
 		{
-			case Station::none: return "Ninguna";	
-			case Station::pizza: return "Pizza";	
-			case Station::stove: return "Estufa";	
+			case Station::none: return "Ninguna";
+			case Station::pizza: return "Pizza";
+			case Station::stove: return "Estufa";
 			case Station::oven: return "Horno";
 		}
-		
+
 		return "unknow";
 	}
 	Station to_station(const char* s)

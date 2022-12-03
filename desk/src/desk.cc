@@ -1,13 +1,23 @@
 
+/*
+ * Copyright (C) 2022 Azael R. <azael.devel@gmail.com>
+ *
+ * mias is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * mias is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
 #include <gtkmm/application.h>
-#if __linux__
-        #include <muposys/core/muposysdb.hpp>
-#elif MSYS2
-        #include <muposys/core/bin/muposysdb.hpp>
-        #include <muposys/core/src/apidb.hh>
-#else
-        #error "Plataforma desconocida."
-#endif
 
 #include "desk.hh"
 
@@ -302,7 +312,7 @@ void TableServicies::on_show()
 }
 void TableServicies::load()
 {
-reload :
+//reload :
 	bool flcleared = false;
 	bool flreload;
 	flreload = false;
@@ -1196,7 +1206,7 @@ void TableSaling::save()
 
 				//std::cout << "TableSaling user : " << user << "\n";
 				//muposysdb::User user(2);
-				if(not user) throw Exception(Exception::INTERNAL_ERROR,__FILE__,__LINE__);
+				//if(not user) throw Exception(Exception::INTERNAL_ERROR,__FILE__,__LINE__);
 				if(not operationProgress->insert(connDB,*stocking,*operation,(short)steping::Eat::created,*user))
 				{
 					Gtk::MessageDialog dlg("Error detectado en acceso a BD",true,Gtk::MESSAGE_ERROR);

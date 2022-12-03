@@ -45,8 +45,7 @@
 				<Option compiler="msys2_x86_64_gcc" />
 				<Compiler>
 					<Add option="-DMSYS2" />
-					<Add directory="../../muposys/core/src" />
-					<Add directory="../../core/src" />
+					<Add directory="../../../octetos" />
 				</Compiler>
 				<Linker>
 					<Add library="octetos-core" />

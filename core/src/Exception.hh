@@ -10,7 +10,7 @@
  * Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * octetos-cc is distributed in the hope that it will be useful, but
+ * mias is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
@@ -19,25 +19,10 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if EXPORTING_OCTETOS_CC_DLL
-#if _MSC_VER
-#define OCTETOS_CC_DECLSPCE_DLL __declspec(dllexport)
-#elif __GNUG__
-
-#endif
-#elif IMPORTING_OCTETOS_CC_DLL
-#if _MSC_VER
-#define OCTETOS_CC_DECLSPCE_DLL __declspec(dllimport)
-#elif __GNUG__
-
-#endif
-#else
-	#define OCTETOS_CC_DECLSPCE_DLL
-#endif
 
 #if defined(__linux__)
     #include <muposys/core/Exception.hh>
-#elif MSYS2
+#elif defined(MSYS2)
     #include <muposys/core/src/Exception.hh>
 #elif defined(_WIN32) || defined(_WIN64)
     #include <Exception.hh>
