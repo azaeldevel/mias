@@ -76,6 +76,7 @@
 					<Add library="octetos-db-abstract" />
 					<Add library="octetos-db-maria" />
 					<Add library="muposys-core" />
+					<Add library="mias-desk" />
 					<Add library="muposys-desk" />
 					<Add library="mias-core" />
 					<Add directory="../core/bin/Debug" />
@@ -84,12 +85,16 @@
 					<Add directory="../../db-maria/bin/Debug" />
 					<Add directory="../../muposys/desk/bin/Debug" />
 					<Add directory="../../muposys/core/bin/Debug" />
+					<Add directory="bin/Debug" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="src/config-cb.h">
+			<Option target="mias-desk-dbg" />
+		</Unit>
 		<Unit filename="src/desk-main.cc">
 			<Option target="mias-desk-dbg" />
 		</Unit>
