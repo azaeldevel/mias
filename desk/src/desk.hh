@@ -2,35 +2,37 @@
 #ifndef MIAS_CORE_DESK_HH
 #define MIAS_CORE_DESK_HH
 
-/*
- * Copyright (C) 2022 Azael R. <azael.devel@gmail.com>
+/**
+ *  This file is part of mias.
+ *  mias is a muposys's implementation.
+ *  Copyright (C) 2022  Azael Reyes
  *
- * mias is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *
- * mias is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along
- * with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * */
 
 #include <gtkmm.h>
 #include <glibmm/i18n.h>
 
 
-#if __linux__
+#ifdef __linux__
     #include <muposys/desk/desk.hh>
     #include <mias/core/core.hh>
     #include <mias/core/Exception.hh>
-#elif MSYS2
+#elif defined MSYS2
     #include <muposys/desk/src/desk.hh>
     #include <mias/core/src/core.hh>
-    #include <mias/core/src/Exception.hh>
+    //#include <mias/core/src/Exception.hh>
 #else
     #error "Plataforma desconocida."
 #endif

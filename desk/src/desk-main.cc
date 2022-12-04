@@ -4,7 +4,13 @@
 #include <exception>
 
 
-#include "config.h"
+#ifdef __linux__
+	#include "config.h"
+#elif defined MSYS2
+    #include "config-cb.h"
+#else
+	#error "Plataforma desconocida."
+#endif
 
 #ifdef ENABLE_NLS
 #  include <libintl.h>
@@ -20,7 +26,7 @@ int main (int argc, char *argv[])
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 	textdomain(GETTEXT_PACKAGE);
 	*/
-	
+
 	Gtk::Main kit(argc, argv);
 
 	//Load the Glade file and instiate its widgets:
@@ -29,7 +35,7 @@ int main (int argc, char *argv[])
 	{
 		builder = Gtk::Builder::create();
 		std::string fileui;
-		
+
 		fileui = MUPOSYS_DATA_DIR;
 		fileui += "/muposys.ui";
 		builder->add_from_file(fileui);
@@ -51,7 +57,7 @@ int main (int argc, char *argv[])
 		std::cerr << ex.what() << std::endl;
 		return EXIT_FAILURE;
 	}*/
-	
+
 	try
 	{
 		mias::Mias* Main = 0;
@@ -59,7 +65,7 @@ int main (int argc, char *argv[])
 		Main = new mias::Mias(true);
 #else
 		Main = new mias::Mias;
-#endif	
+#endif
 		if (Main) kit.run(*Main);
 	}
 	catch (const std::exception& ex)
@@ -67,6 +73,6 @@ int main (int argc, char *argv[])
 		std::cerr << ex.what() << std::endl;
 		return EXIT_FAILURE;
 	}
-	
+
 	return EXIT_SUCCESS;
 }
