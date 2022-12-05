@@ -7,7 +7,7 @@
 
 #include <mias/core/core.hh>
 
-namespace mps
+/*namespace mps
 {
 	
 class GetParams : public std::map<std::string, std::string>
@@ -22,7 +22,7 @@ private:
 	
 };
 	
-}
+}*/
 namespace mias
 {
 

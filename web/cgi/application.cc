@@ -9,7 +9,7 @@
 #include "application.hh"
 
 
-namespace mps
+/*namespace mps
 {
 	GetParams::GetParams()
 	{
@@ -49,7 +49,7 @@ namespace mps
 		}
 	}
 	
-}
+}*/
 
 
 
