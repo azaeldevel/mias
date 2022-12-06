@@ -52,12 +52,14 @@
 					<Add library="octetos-db-maria" />
 					<Add library="muposys-core" />
 					<Add library="muposys-desk" />
+					<Add library="mias-core" />
 					<Add directory="../core/bin/Debug" />
 					<Add directory="../../core/bin/Debug" />
 					<Add directory="../../db-abstract/bin/Debug" />
 					<Add directory="../../db-maria/bin/Debug" />
 					<Add directory="../../muposys/desk/bin/Debug" />
 					<Add directory="../../muposys/core/bin/Debug" />
+					<Add directory="bin/Debug" />
 				</Linker>
 			</Target>
 			<Target title="mias-desk-dbg">

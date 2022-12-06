@@ -1,10 +1,8 @@
 
 #include <string.h>
-#include <cstring> 
+#include <cstring>
 #include <sstream>
 #include <vector>
-#include <cgicc/CgiEnvironment.h>
-#include <cgicc/Cgicc.h>
 
 #include "application.hh"
 
@@ -12,7 +10,7 @@
 namespace mias
 {
 
-	
+
 
 void BodyApplication::select_order(std::ostream& out)
 {
@@ -57,7 +55,7 @@ void BodyApplication::select_item(std::ostream& out)
 			out << "\t\t\t\t<label ><b>Orden:</b></label><br>" << params.order << "\n";
 		}
 		out << "\t\t\t</div>\n";
-		
+
 		out << "\t\t\t<div id=\"item\">\n";
 		{
 			std::string where = "operation = ";
@@ -123,7 +121,7 @@ void BodyApplication::accepted_item(std::ostream& out)
 					//p->getStocking().getItem().downBrief(*connDB);
 					//out << "\t\t\t\titem : " << p->getStocking().getItem().getItem().getID() << "\n";
 					//out << "\t\t\t\titem : " <<  params.item << "\n";
-					if(p->getStocking().getStocking() == params.item) 
+					if(p->getStocking().getStocking() == params.item)
 					{
 						//out << "\t\t\t\titem : x\n";
 						itemNumber = p->getStocking().getItem().getNumber();
@@ -148,7 +146,7 @@ void BodyApplication::restoring_order(std::ostream& out)
 		{
 			out << "\t\t\t\tOrden : " << params.order << " \n";
 		}
-		out << "\t\t\t</div>\n";	
+		out << "\t\t\t</div>\n";
 }
 void BodyApplication::select_order_restore(std::ostream& out)
 {
@@ -191,15 +189,15 @@ void BodyApplication::select_step_restore(std::ostream& out)
 		{
 			out << "\t\t\t\t<select name=\"restoreStep\" id=\"restoreStepList\" onchange=\"restoreStephref()\">\n";
 			{
-				out << "\t\t\t\t\t<option value=\"next\">next</option>\n";	
+				out << "\t\t\t\t\t<option value=\"next\">next</option>\n";
 				for(short i = (short) steping::Eat::accept; i < (short) steping::Eat::finalized; i++ )
 				{
-					out << "\t\t\t\t\t<option value=\"" << to_string((steping::Eat)i) <<  "\">" << mias::to_text((steping::Eat)i) << "</option>\n";					
+					out << "\t\t\t\t\t<option value=\"" << to_string((steping::Eat)i) <<  "\">" << mias::to_text((steping::Eat)i) << "</option>\n";
 				}
 			}
 			out << "\t\t\t\t</select>\n";
 		}
-		out << "\t\t\t</div>\n";	
+		out << "\t\t\t</div>\n";
 }
 
 void BodyApplication::select_item_restore(std::ostream& out)
@@ -243,7 +241,7 @@ void BodyApplication::select_item_oven(std::ostream& out)
 			out << "\t\t\t\t<label ><b>Orden:</b></label><br>" << params.order << "\n";
 		}
 		out << "\t\t\t</div>\n";
-		
+
 		out << "\t\t\t<div id=\"item\">\n";
 		{
 			std::string where = "operation = ";
@@ -287,6 +285,6 @@ void BodyApplication::select_item_oven(std::ostream& out)
 		}
 		out << "\t\t\t</div>\n";
 }
-	
-	
+
+
 }

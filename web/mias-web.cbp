@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="mias-web" />
+		<Option pch_mode="2" />
+		<Option compiler="msys2_x86_64_gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/mias-web" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="msys2_x86_64_gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/mias-web" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="msys2_x86_64_gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="libmias-web-dbg">
+				<Option output="bin/Debug/mias-web.dll" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj/Debug/" />
+				<Option type="3" />
+				<Option compiler="msys2_x86_64_gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DMSYS2" />
+					<Add option="-DOCTETOS_DB_MEDIUMWORD" />
+					<Add option="-DDATABASE_ENGINE_MARIA" />
+				</Compiler>
+				<Linker>
+					<Add directory="../../core/bin/Debug" />
+					<Add directory="../../muposys/core/bin/Debug" />
+					<Add directory="../../muposys/web/bin/Debug" />
+					<Add directory="../../db-abstract/bin/Debug" />
+					<Add directory="../../db-maria/bin/Debug" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="../../../octetos" />
+		</Compiler>
+		<Linker>
+			<Add library="octetos-core" />
+			<Add library="octetos-db-abstract" />
+			<Add library="octeos-db-maria" />
+			<Add library="muposys-core" />
+			<Add library="muposys-web" />
+			<Add library="mias-web" />
+		</Linker>
+		<Unit filename="cgi/application-making.cc" />
+		<Unit filename="cgi/application-oven.cc" />
+		<Unit filename="cgi/application.cc" />
+		<Unit filename="cgi/application.hh" />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
