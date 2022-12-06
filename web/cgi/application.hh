@@ -17,27 +17,7 @@
 
 #include <map>
 
-/*namespace mps
-{
 
-class GetParams : public std::map<std::string, std::string>
-{
-
-public:
-	GetParams();
-
-	const char* find(const char*)const;
-private:
-	void build();
-
-};
-<<<<<<< Updated upstream
-	
-}*/
-=======
-
-}
->>>>>>> Stashed changes
 namespace mias
 {
 

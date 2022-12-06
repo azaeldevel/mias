@@ -47,12 +47,9 @@
 		}
 	}
 <<<<<<< Updated upstream
-	
-}*/
-=======
 
-}
->>>>>>> Stashed changes
+}*/
+
 
 
 

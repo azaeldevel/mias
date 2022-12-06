@@ -34,9 +34,6 @@
 				<Option compiler="msys2_x86_64_gcc" />
 				<Compiler>
 					<Add option="-g" />
-					<Add option="-DMSYS2" />
-					<Add option="-DOCTETOS_DB_MEDIUMWORD" />
-					<Add option="-DDATABASE_ENGINE_MARIA" />
 				</Compiler>
 				<Linker>
 					<Add directory="../../core/bin/Debug" />
@@ -49,6 +46,9 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-DMSYS2" />
+			<Add option="-DOCTETOS_DB_MEDIUMWORD" />
+			<Add option="-DDATABASE_ENGINE_MARIA" />
 			<Add directory="../../../octetos" />
 		</Compiler>
 		<Linker>
