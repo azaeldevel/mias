@@ -492,9 +492,9 @@ int Application::main(std::ostream& out)
 		{
 			//out << "Procesando solicitud de acceptacion...\n";
 			long order = accepting();
-			cgicc::Cgicc cgi;
+			//cgicc::Cgicc cgi;
 			//cgicc::CgiInput:
-			const cgicc::CgiEnvironment& cgienv = cgi.getEnvironment();
+			//const cgicc::CgiEnvironment& cgienv = cgi.getEnvironment();
 
 			std::string strgets = "station=";
 			strgets += to_string(params.station);

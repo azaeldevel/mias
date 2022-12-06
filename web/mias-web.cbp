@@ -41,6 +41,7 @@
 					<Add directory="../../muposys/web/bin/Debug" />
 					<Add directory="../../db-abstract/bin/Debug" />
 					<Add directory="../../db-maria/bin/Debug" />
+					<Add directory="../core/bin/Debug" />
 				</Linker>
 			</Target>
 		</Build>
@@ -54,10 +55,10 @@
 		<Linker>
 			<Add library="octetos-core" />
 			<Add library="octetos-db-abstract" />
-			<Add library="octeos-db-maria" />
+			<Add library="octetos-db-maria" />
 			<Add library="muposys-core" />
 			<Add library="muposys-web" />
-			<Add library="mias-web" />
+			<Add library="mias-core" />
 		</Linker>
 		<Unit filename="cgi/application-making.cc" />
 		<Unit filename="cgi/application-oven.cc" />

@@ -10,7 +10,7 @@
 namespace mias
 {
 
-void BodyApplication::programs_oven(std::ostream& out)
+/*void BodyApplication::programs_oven(std::ostream& out)
 {
 	if(params.step == steping::Eat::none and params.order == -1)
 	{
@@ -47,6 +47,6 @@ void BodyApplication::panel_pizza(std::ostream& out)
 	{
 		select_item_restore(out);
 	}
-}
+}*/
 
 }
