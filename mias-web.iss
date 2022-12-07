@@ -9,7 +9,7 @@
 #define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
 
 [Setup]
-AppId={{EAA4B4AA-18AA-4405-BFFE-0E2C5FF155E7}
+AppId={{965A7609-FBCC-442D-A17C-59FA92850CB4}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
@@ -20,7 +20,7 @@ DefaultDirName={autopf}\{#MyAppName}
 ChangesAssociations=yes
 DisableProgramGroupPage=yes
 PrivilegesRequiredOverridesAllowed=commandline
-OutputBaseFilename=mias-setup
+OutputBaseFilename=mias-web-setup
 SetupIconFile=C:\Users\Azael\Documents\develop\octetos\mias\mias.ico
 Compression=lzma
 SolidCompression=yes
@@ -30,19 +30,23 @@ WizardStyle=modern
 Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 
-[Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
-
 [Files]
-Source: "desk\bin\Debug\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\core\bin\Debug\octetos-core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\db-abstract\bin\Debug\octetos-db-abstract.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Azael\Documents\develop\octetos\db-maria\bin\Debug\liboctetos-db-maria.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Azael\Documents\develop\octetos\db-maria\bin\Debug\octetos-db-maria.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\muposys\core\bin\Debug\muposys-core.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Azael\Documents\develop\octetos\muposys\desk\bin\Debug\muposys-desk.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\bin\Debug\muposys-web.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\bin\Debug\login.cgi"; DestDir: "{app}"; Flags: ignoreversion   
+Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\html\css\Mkos-Big-Sur\appearance\muposys.css"; DestDir: "{app}\css\Mkos-Big-Sur\appearance\"; Flags: ignoreversion  
+Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\html\css\Mkos-Big-Sur\icons\application.css"; DestDir: "{app}\css\Mkos-Big-Sur\icons\"; Flags: ignoreversion
+Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\html\css\Mkos-Big-Sur\login.css"; DestDir: "{app}\css\Mkos-Big-Sur\"; Flags: ignoreversion
+Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\html\css\Mkos-Big-Sur\theme.css"; DestDir: "{app}\css\Mkos-Big-Sur\"; Flags: ignoreversion
+Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\html\js\*"; DestDir: "{app}\js"; Flags: ignoreversion
+Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\html\index.html"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\html\login.html"; DestDir: "{app}"; Flags: ignoreversion  
 Source: "C:\Users\Azael\Documents\develop\octetos\mias\core\bin\Debug\mias-core.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Azael\Documents\develop\octetos\mias\desk\bin\Debug\mias-desk.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Azael\Documents\develop\octetos\mias\desk\bin\Debug\mias-desk.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Azael\Documents\develop\octetos\mias\web\bin\Debug\mias-web.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Azael\Documents\develop\octetos\mias\web\bin\Debug\application.cgi"; DestDir: "{app}"; Flags: ignoreversion
 
 [Registry]
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
@@ -50,11 +54,3 @@ Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}"; ValueType: string; Value
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
 Root: HKA; Subkey: "Software\Classes\Applications\{#MyAppExeName}\SupportedTypes"; ValueType: string; ValueName: ".myp"; ValueData: ""
-
-[Icons]
-Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
-
-[Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-
