@@ -146,10 +146,12 @@ void Mias::init()
 	set_title("Mia's Pizza & Pasta");
 	set_default_size(800,640);
 	nbMain.append_page(sale);
-
+	btSales
+	tbMain.add(btSales);
 	show_all_children();
 	//std::cout << "MIAS user : " << &get_user() << "\n";
 	sale.set(get_user());
+
 }
 Mias::~Mias()
 {

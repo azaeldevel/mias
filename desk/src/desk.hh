@@ -290,6 +290,7 @@ protected:
 
 private:
 	Sales sale;
+	Gtk::ToolButton btSales;
 };
 
 
