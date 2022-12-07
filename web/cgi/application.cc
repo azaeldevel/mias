@@ -6,55 +6,6 @@
 
 #include "application.hh"
 
-
-/*namespace mps
-{
-	GetParams::GetParams()
-	{
-		build();
-	}
-
-
-	const char* GetParams::find(const char* k) const
-	{
-		const_iterator it = std::map<std::string, std::string>::find(k);
-
-		if(it != end()) return it->second.c_str();
-
-		return NULL;
-	}
-	void GetParams::build()
-	{
-		std::string qs, str,param_pair,param,name,value,param_element;
-		qs = getenv("QUERY_STRING");
-		std::stringstream sqs(qs);
-
-		//std::cout << qs << "\n";
-		if(not std::getline(sqs,str,'?')) return;
-		//std::cout << "GetParams::build str "<< str << "\n<br>";
-		std::stringstream sparam_list(str),sparam_pair;
-		while(std::getline(sparam_list,param_pair,'&'))
-		{
-			sparam_pair.clear();
-			name="";
-			value="";
-			sparam_pair << param_pair;
-			//std::cout << "GetParams::build param_pair "<< param_pair << "\n<br>";
-			if(std::getline(sparam_pair,name,'=')) std::getline(sparam_pair,value,'=');
-			//std::cout << " name : " << name << "\n";
-			//std::cout << " value : " << value << "\n";
-			insert(make_pair(name,value));
-		}
-	}
-<<<<<<< Updated upstream
-
-}*/
-
-
-
-
-
-
 namespace mias
 {
 
