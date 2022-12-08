@@ -66,7 +66,7 @@ namespace mias
 
 
 
-BodyApplication::BodyApplication(const GetParams& p) : params(p)
+BodyApplication::BodyApplication(const GetParams& p) : params(p),mps::BodyApplication(p)
 {
 }
 void BodyApplication::programs(std::ostream& out)
@@ -96,9 +96,9 @@ void BodyApplication::programs(std::ostream& out)
 	}
 	else
 	{
-		out << "\t\t\t<div id=\"pizza\"><a href=\"application.cgi?station=pizza&step=none\">Pizza</a></div>\n";
-		out << "\t\t\t<div id=\"stove\"><a href=\"application.cgi?station=stove&step=none\">Estufa</a></div>\n";
-		out << "\t\t\t<div id=\"oven\"><a href=\"application.cgi?station=oven&step=none\">Horno</a></div>\n";
+		out << "\t\t\t<div id=\"pizza\"><a href=\"application.cgi?station=pizza&step=none&session=" << params.session << "\">Pizza</a></div>\n";
+		out << "\t\t\t<div id=\"stove\"><a href=\"application.cgi?station=stove&step=none&session=" << params.session << "\">Estufa</a></div>\n";
+		out << "\t\t\t<div id=\"oven\"><a href=\"application.cgi?station=oven&step=none&session=" << params.session << "\">Horno</a></div>\n";
 	}
 }
 
@@ -408,12 +408,12 @@ void Application::init()
 	head.addscript("js/mias.js");
 	((BodyApplication&)*body).set(connDB);
 }
-Application::Application(BodyApplication& b,const GetParams& p) : params(p),mps::Application(b)
+Application::Application(BodyApplication& b,const GetParams& p) : params(p),mps::Application(b,p)
 {
 	head.title = "Multi-Porpuse Software System";
 	init();
 }
-Application::Application(BodyApplication& b,const std::string& t,const GetParams& p) : params(p),mps::Application(b,t)
+Application::Application(BodyApplication& b,const std::string& t,const GetParams& p) : params(p),mps::Application(b,t,p)
 {
 	init();
 }
@@ -461,6 +461,8 @@ int Application::main(std::ostream& out)
 			strgets += "&step=accepted";
 			strgets += "&item=";
 			strgets += std::to_string(params.item);
+			strgets += "&session=";
+			strgets += params.session;
 			std::string url = "application.cgi?";
 			url += strgets;
 			head.redirect(0,url.c_str());
@@ -562,13 +564,27 @@ long Application::accepting()
 		{
 			//throw Exception((unsigned int)Exception::DB_READ_FAIL,__FILE__,__LINE__);
 		}
-
+		
 		for(auto s : *lstService)
 		{
 			delete s;
 		}
 		delete lstService;
 	}
+	
+	
+	/*std::string whereProgress = "item = " + std::to_string(params.item);
+	std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,whereProgress);
+	if(lstProgress->size() > 0)
+	{
+		if(lstProgress->front()->upWroker(*connDB,))
+		
+		for(auto p : *lstProgress)
+		{
+			delete p;
+		}
+		delete lstProgress;
+	}*/
 
 	steping(steping::Eat::accept);
 

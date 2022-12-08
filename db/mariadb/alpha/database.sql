@@ -14,10 +14,10 @@ ALTER TABLE MiasService ADD CONSTRAINT fk_MiasService_operation_Operation_operat
 ALTER TABLE MiasService ADD COLUMN step SMALLINT DEFAULT 0 COMMENT 'Progreso actual del Servicio';
 ALTER TABLE MiasService ADD COLUMN updated SMALLINT DEFAULT 0 COMMENT 'Indiucador de actualizacion';
 
-CREATE TABLE ProgressLog(progress BIGINT PRIMARY KEY NOT NULL, FOREIGN KEY(progress) REFERENCES Progress(stocking));
+CREATE TABLE ProgressLog(progress BIGINT PRIMARY KEY DEFAULT 11, FOREIGN KEY(progress) REFERENCES Progress(stocking)) COMMENT = 'Registra el progreso de las opoeracion operaciones';
 ALTER TABLE ProgressLog ADD worker BIGINT NOT NULL COMMENT 'Usuario que realiza la actualización progreso';
-ALTER TABLE ProgressLog ADD CONSTRAINT fk_ProgressLog_user_User_user FOREIGN KEY(worker) REFERENCES User(user);
+ALTER TABLE ProgressLog ADD CONSTRAINT fk_ProgressLog_user_User_user FOREIGN KEY(worker) REFERENCES UserManagement(um);
 
-ALTER TABLE Progress ADD worker BIGINT NOT NULL COMMENT 'Usuario que realiza la actualización progreso';
-ALTER TABLE Progress ADD CONSTRAINT fk_Progress_worker_User_user FOREIGN KEY(worker) REFERENCES User(user);
+ALTER TABLE Progress ADD worker BIGINT DEFAULT 11 COMMENT 'Usuario que realiza la actualización progreso';
+ALTER TABLE Progress ADD CONSTRAINT fk_Progress_worker_User_user FOREIGN KEY(worker) REFERENCES UserManagement(user);
 

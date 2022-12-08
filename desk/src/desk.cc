@@ -145,18 +145,27 @@ void Mias::init()
 	add_events(Gdk::KEY_PRESS_MASK);
 	set_title("Mia's Pizza & Pasta");
 	set_default_size(800,640);
-	nbMain.append_page(sale);
-	btSales
+	btSales.set_icon_name("gtk-add");
 	tbMain.add(btSales);
 	show_all_children();
-	//std::cout << "MIAS user : " << &get_user() << "\n";
+	
+	btSales.signal_clicked().connect(sigc::mem_fun(*this, &Mias::on_click_sales));
+	/*
+	nbMain.append_page(sale);
 	sale.set(get_user());
-
+	*/
 }
 Mias::~Mias()
 {
 }
 
+void Mias::on_click_sales()
+{
+	nbMain.append_page(sale);
+	sale.set(get_user());
+	nbMain.show_all_children();
+	//sale.show_all_children();
+}
 
 
 
@@ -1211,7 +1220,7 @@ void TableSaling::save()
 				//std::cout << "TableSaling user : " << user << "\n";
 				//muposysdb::User user(2);
 				//if(not user) throw Exception(Exception::INTERNAL_ERROR,__FILE__,__LINE__);
-				if(not operationProgress->insert(connDB,*stocking,*operation,(short)steping::Eat::created,*user))
+				if(not operationProgress->insert(connDB,*stocking,*operation,(short)steping::Eat::created))
 				{
 					Gtk::MessageDialog dlg("Error detectado en acceso a BD",true,Gtk::MESSAGE_ERROR);
 					dlg.set_secondary_text("Durante la escritura de Stoking Production.");

@@ -268,7 +268,6 @@ private:
 	Saling saling;
 	PendingServices pending;
 	const muposysdb::User* user;
-
 };
 
 
@@ -277,15 +276,12 @@ class Mias : public mps::Restaurant
 public:
 	Mias();
 	Mias(bool devel);
-	/**
-	*
-	**/
-	//Mias(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade);
-	//Mias(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& refGlade,bool);
+	
 	void init();
 	virtual ~Mias();
 
-
+	void on_click_sales();
+	
 protected:
 
 private:

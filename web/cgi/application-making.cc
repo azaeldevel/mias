@@ -62,6 +62,7 @@ void BodyApplication::select_item(std::ostream& out)
 			where += std::to_string(params.order);
 			where += " and step =";
 			where += std::to_string((short)steping::Eat::created);
+			where += " and worker = 11";
 			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
 			if(lstProgress->size() > 0)
 			{
