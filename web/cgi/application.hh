@@ -32,6 +32,7 @@ struct GetParams : public mps::Params
 	bool restoring;
 
 	GetParams();
+	operator std::string()const;
 };
 
 

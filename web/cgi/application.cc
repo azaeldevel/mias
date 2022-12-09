@@ -43,11 +43,19 @@ namespace mias
 		{
 			step = to_step(param);
 		}
+		else
+		{
+			step = steping::Eat::none;
+		}
 
 		param = find("item");
 		if(param)
 		{
 			item = std::stol(param);
+		}
+		else
+		{
+			item = -1;
 		}
 
 		param = find("restoring");
@@ -60,10 +68,73 @@ namespace mias
 			restoring = false;
 		}
 
+		param = find("session");
+		if(param)
+		{
+			session = param;
+		}
 	}
 
 
+GetParams::operator std::string()const
+{
+	std::string str;
+	
+	if(not session.empty()) str = "session=" + session;
 
+	if(station != Station::none) 
+	{
+		if(not session.empty()) str += "&";
+		std::string strstation = "station=";
+		strstation += to_string(station);
+		str += strstation;
+	}
+
+	if(order > 0) 
+	{
+		if(not session.empty()) str += "&";
+		std::string strorder = "order=";
+		strorder += std::to_string(order);
+		str += strorder;
+	}
+	else if(order == 0) 
+	{
+		if(not session.empty()) str += "&";
+		std::string strorder = "order=next";
+		str += strorder;
+	}
+
+	
+	if(step != steping::Eat::none) 
+	{
+		if(not session.empty()) str += "&";
+		std::string strstep = "step=";
+		strstep += to_string(step);
+		str += strstep;
+	}
+	else
+	{
+		if(not session.empty()) str += "&";
+		std::string strstep = "step=none";
+		str += strstep;
+	}
+		
+	if(item > 0) 
+	{
+		if(not session.empty()) str += "&";
+		std::string stritem = "item=";
+		stritem += std::to_string(item);
+		str += stritem;
+	}
+		
+	if(restoring) 
+	{
+		if(not session.empty()) str += "&";
+		str += "restoring";
+	}
+	
+	return str;
+}
 
 
 BodyApplication::BodyApplication(const GetParams& p) : params(p),mps::BodyApplication(p)
@@ -429,12 +500,13 @@ int Application::main(std::ostream& out)
 
 	if(not has_session())
 	{
-		head.redirect(0,"login.html?failure");
+		//head.redirect(0,"login.html?failure");
+		out << "Params : " << (std::string)params << "\n";
 		head.print(out);
 		return EXIT_SUCCESS;
 	}
 
-	switch((steping::Eat)params.step)
+	switch(params.step)
 	{
 		case steping::Eat::none:
 
@@ -443,9 +515,6 @@ int Application::main(std::ostream& out)
 		{
 			//out << "Procesando solicitud de acceptacion...\n";
 			long order = accepting();
-			//cgicc::Cgicc cgi;
-			//cgicc::CgiInput:
-			//const cgicc::CgiEnvironment& cgienv = cgi.getEnvironment();
 
 			std::string strgets = "station=";
 			strgets += to_string(params.station);

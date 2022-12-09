@@ -14,8 +14,8 @@ namespace mias
 
 void BodyApplication::select_order(std::ostream& out)
 {
-		out << "\t\t\t<div id=\"order\">\n";
-		{
+	out << "\t\t\t<div id=\"order\">\n";
+	{
 			std::string where = "step >= " ;
 			where += std::to_string((int)ServiceStep::created);
 			where += " and step < ";
@@ -45,8 +45,8 @@ void BodyApplication::select_order(std::ostream& out)
 				delete lstService;
 				out << "\t\t\t\t<label ><b>Orden:</b></label><br>Ninguna\n";
 			}
-		}
-		out << "\t\t\t</div>\n";
+	}
+	out << "\t\t\t</div>\n";
 }
 void BodyApplication::select_item(std::ostream& out)
 {
@@ -151,8 +151,8 @@ void BodyApplication::restoring_order(std::ostream& out)
 }
 void BodyApplication::select_order_restore(std::ostream& out)
 {
-		out << "\t\t\t<div id=\"restoreOrder\">\n";
-		{
+	out << "\t\t\t<div id=\"restoreOrder\">\n";
+	{
 			std::string where = "step > ";
 			where += std::to_string((int)ServiceStep::created);
 			where += " and step < ";
@@ -181,8 +181,8 @@ void BodyApplication::select_order_restore(std::ostream& out)
 				}
 				out << "\t\t\t\t</select>\n";
 			}
-		}
-		out << "\t\t\t</div>\n";
+	}
+	out << "\t\t\t</div>\n";
 }
 void BodyApplication::select_step_restore(std::ostream& out)
 {
