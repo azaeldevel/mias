@@ -223,6 +223,7 @@ std::ostream& BodyApplication::print(std::ostream& out)
 		out << "\t\t</div>\n";
 
 	out << "\t</div>\n";
+	//out << application->get_user() << "\n";
 	if(params.station == Station::pizza or params.station == Station::stove)
 	{
 		print_common(out);
@@ -233,10 +234,6 @@ std::ostream& BodyApplication::print(std::ostream& out)
 		print_oven(out);
 	}
 	return out;
-}
-void BodyApplication::set(mps::Connector& c)
-{
-	connDB = &c;
 }
 
 const char* BodyApplication::to_text(steping::Eat s)
@@ -478,6 +475,7 @@ void Application::init()
 	head.css("css/mias.css");
 	head.addscript("js/mias.js");
 	((BodyApplication&)*body).set(connDB);
+	((BodyApplication&)*body).set(*this);
 }
 Application::Application(BodyApplication& b,const GetParams& p) : params(p),mps::Application(b,p)
 {
@@ -500,7 +498,7 @@ int Application::main(std::ostream& out)
 
 	if(not has_session())
 	{
-		//head.redirect(0,"login.html?failure");
+		head.redirect(0,"login.html?failure");
 		out << "Params : " << (std::string)params << "\n";
 		head.print(out);
 		return EXIT_SUCCESS;
@@ -509,7 +507,7 @@ int Application::main(std::ostream& out)
 	switch(params.step)
 	{
 		case steping::Eat::none:
-
+			
 			break;
 		case steping::Eat::accept:
 		{

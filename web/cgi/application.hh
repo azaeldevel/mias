@@ -20,6 +20,7 @@
 
 namespace mias
 {
+class Application;
 
 //void params_get(std::map<std::string, std::string>&);
 
@@ -40,9 +41,8 @@ class BodyApplication : public mps::BodyApplication
 {
 private:
 	const GetParams& params;
-	mps::Connector* connDB;
-
 	const char* to_text(steping::Eat);
+
 
 public:
 	BodyApplication(const GetParams& params);
@@ -61,11 +61,9 @@ public:
 	void select_order_restore(std::ostream& out);
 	void select_step_restore(std::ostream& out);
 	void select_item_restore(std::ostream& out);
-
-	void set(mps::Connector& connDB);
-
+	
 protected:
-
+	
 };
 
 class Application : public mps::Application
