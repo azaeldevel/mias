@@ -5,6 +5,7 @@
 #ifdef __linux__
     #include <muposys/web/application.hh>
     #include <mias/core/core.hh>
+    #include <mias/core/Exception.hh>
 #elif defined MSYS2
     #include <muposys/web/cgi/application.hh>
     #include <muposys/web/cgi/html.hh>

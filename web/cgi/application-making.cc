@@ -30,7 +30,7 @@ void BodyApplication::select_order(std::ostream& out)
 						for(auto p : *lstService)
 						{
 							p->downName(*connDB);
-							out << "\t\t\t\t\t<option value=\"" << p->getOperation().getOperation().getID() << "\">" << p->getOperation().getOperation().getID() << "</option>\n";
+							out << "\t\t\t\t\t<option value=\"" << p->getOperation().getID() << "\">" << p->getOperation().getID() << "</option>\n";
 						}
 						for(auto p : *lstService)
 						{
@@ -62,7 +62,6 @@ void BodyApplication::select_item(std::ostream& out)
 			where += std::to_string(params.order);
 			where += " and step =";
 			where += std::to_string((short)steping::Eat::created);
-			where += " and worker = 11";
 			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
 			if(lstProgress->size() > 0)
 			{
@@ -74,11 +73,12 @@ void BodyApplication::select_item(std::ostream& out)
 						out << "\t\t\t\t\t<option value=\"next\">next</option>\n";
 						for(auto p : *lstProgress)
 						{
+							p->downStocking(*connDB);
 							p->getStocking().downItem(*connDB);
 							p->getStocking().getItem().downNumber(*connDB);
 							p->getStocking().getItem().downBrief(*connDB);
 							p->getStocking().getItem().downStation(*connDB);
-							if((Station)p->getStocking().getItem().getStation() == params.station) out << "\t\t\t\t\t<option value=\"" << p->getStocking().getStocking() << "\">" << p->getStocking().getItem().getBrief() << "</option>\n";
+							if((Station)p->getStocking().getItem().getStation() == params.station) out << "\t\t\t\t\t<option value=\"" << p->getStocking().getID() << "\">" << p->getStocking().getItem().getBrief() << "</option>\n";
 						}
 						for(auto p : *lstProgress)
 						{
@@ -117,12 +117,13 @@ void BodyApplication::accepted_item(std::ostream& out)
 				//if(lstProgress->size() > 1) break;
 				for(auto p : *lstProgress)
 				{
+					p->downStocking(*connDB);
 					p->getStocking().downItem(*connDB);
 					p->getStocking().getItem().downNumber(*connDB);
 					//p->getStocking().getItem().downBrief(*connDB);
 					//out << "\t\t\t\titem : " << p->getStocking().getItem().getItem().getID() << "\n";
 					//out << "\t\t\t\titem : " <<  params.item << "\n";
-					if(p->getStocking().getStocking() == params.item)
+					if(p->getStocking().getID() == params.item)
 					{
 						//out << "\t\t\t\titem : x\n";
 						itemNumber = p->getStocking().getItem().getNumber();
@@ -171,7 +172,7 @@ void BodyApplication::select_order_restore(std::ostream& out)
 						//p->getStocking().getItem().downNumber(*connDB);
 						//p->getStocking().getItem().downBrief(*connDB);
 						//p->getOperation().getStocking().getItem().downStation(*connDB);
-						out << "\t\t\t\t\t<option value=\"" << p->getOperation().getOperation().getID() << "\">" << p->getOperation().getOperation().getID() << "</option>\n";
+						out << "\t\t\t\t\t<option value=\"" << p->getOperation().getID() << "\">" << p->getOperation().getID() << "</option>\n";
 					}
 					for(auto p : *lstService)
 					{
@@ -221,7 +222,7 @@ void BodyApplication::select_item_restore(std::ostream& out)
 							p->getStocking().downItem(*connDB);
 							p->getStocking().getItem().downNumber(*connDB);
 							p->getStocking().getItem().downBrief(*connDB);
-							out << "\t\t\t\t\t<option value=\"" << p->getStocking().getStocking() << "\">" << p->getStocking().getItem().getBrief() << "</option>\n";
+							out << "\t\t\t\t\t<option value=\"" << p->getStocking().getID() << "\">" << p->getStocking().getItem().getBrief() << "</option>\n";
 						}
 						for(auto p : *lstProgress)
 						{
@@ -266,7 +267,7 @@ void BodyApplication::select_item_oven(std::ostream& out)
 							p->getStocking().getItem().downNumber(*connDB);
 							p->getStocking().getItem().downBrief(*connDB);
 							p->getStocking().getItem().downStation(*connDB);
-							if((Station)p->getStocking().getItem().getStation() == params.station) out << "\t\t\t\t\t<option value=\"" << p->getStocking().getStocking() << "\">" << p->getStocking().getItem().getBrief() << "</option>\n";
+							if((Station)p->getStocking().getItem().getStation() == params.station) out << "\t\t\t\t\t<option value=\"" << p->getStocking().getID() << "\">" << p->getStocking().getItem().getBrief() << "</option>\n";
 						}
 						for(auto p : *lstProgress)
 						{

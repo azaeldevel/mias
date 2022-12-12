@@ -288,10 +288,11 @@ std::ostream& BodyApplication::print_common(std::ostream& out)
 			{
 				for(auto p : *lstProgress)
 				{
+					p->downStocking(*connDB);
 					p->getStocking().downItem(*connDB);
 					p->getStocking().getItem().downNumber(*connDB);
 					p->getStocking().getItem().downBrief(*connDB);
-					if(p->getStocking().getStocking() == params.item)
+					if(p->getStocking().getID() == params.item)
 					{
 						item = new muposysdb::CatalogItem(p->getStocking().getItem());
 						//item->downItem(*connDB);
@@ -402,7 +403,7 @@ std::ostream& BodyApplication::print_oven(std::ostream& out)
 
 				std::string whereProcess;
 				whereProcess = "operation = ";
-				whereProcess += std::to_string(s->getOperation().getOperation().getID());
+				whereProcess += std::to_string(s->getOperation().getID());
 				whereProcess += " and step >= ";
 				whereProcess += std::to_string((short)steping::Eat::cook);
 				whereProcess += " and step < ";
@@ -412,6 +413,7 @@ std::ostream& BodyApplication::print_oven(std::ostream& out)
 				{
 					for(auto p : *lstProgress)
 					{
+						p->downStocking(*connDB);
 						p->getStocking().downItem(*connDB);
 						p->getStocking().getItem().downNumber(*connDB);
 						p->getStocking().getItem().downBrief(*connDB);
@@ -419,16 +421,16 @@ std::ostream& BodyApplication::print_oven(std::ostream& out)
 
 						if((Station)p->getStocking().getItem().getStation() != Station::pizza) continue;
 
-						out << "\t\t\t<div id=\"item_" << p->getStocking().getStocking() << "\" class=\"oven_item\">\n";
+						out << "\t\t\t<div id=\"item_" << p->getStocking().getID() << "\" class=\"oven_item\">\n";
 						{
 							out << "\t\t\t\t<div class=\"oven_item_name\">\n";
 							{
-								out << "\t\t\t\t\t" << p->getStocking().getItem().getBrief() << " - " << s->getOperation().getOperation().getID() << "\n";
+								out << "\t\t\t\t\t" << p->getStocking().getItem().getBrief() << " - " << s->getOperation().getID() << "\n";
 							}
 							out << "\t\t\t\t</div>\n";
 							out << "\t\t\t\t<div class=\"oven_item_cmd\">\n";
 							{
-								out << "\t\t\t\t\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toOvenFinalized("<< s->getOperation().getOperation().getID() << "," <<  p->getStocking().getStocking() << ")\">" << to_text(steping::Eat::finalized) << "</a>\n";
+								out << "\t\t\t\t\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toOvenFinalized("<< s->getOperation().getID() << "," <<  p->getStocking().getID() << ")\">" << to_text(steping::Eat::finalized) << "</a>\n";
 							}
 							out << "\t\t\t\t</div>\n";
 						}
@@ -624,7 +626,7 @@ long Application::accepting()
 
 		if(lstService->size() == 1)
 		{
-			order = lstService->front()->getOperation().getOperation().getID();
+			order = lstService->front()->getOperation().getID();
 			lstService->front()->upStep(connDB,(short)ServiceStep::working);
 		}
 		else
@@ -704,7 +706,7 @@ void Application::steping(steping::Eat to_step)
 		}
 		else
 		{
-			//throw Exception((unsigned int)Exception::DB_READ_FAIL,__FILE__,__LINE__);
+			throw Exception((unsigned int)Exception::DB_READ_FAIL,__FILE__,__LINE__);
 		}
 
 		for(auto s : *lstService)
@@ -713,8 +715,7 @@ void Application::steping(steping::Eat to_step)
 		}
 		delete lstService;
 	}
-
-
+	
 	std::string whereItem = "operation = ";
 	whereItem += std::to_string(params.order);
 	whereItem += " and stocking = ";

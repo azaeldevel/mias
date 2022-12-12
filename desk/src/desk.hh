@@ -285,7 +285,7 @@ public:
 protected:
 
 private:
-	Sales sale;
+	Sales* sale;
 	Gtk::ToolButton btSales;
 };
 

@@ -122,11 +122,11 @@ namespace mps
 
 namespace mias
 {
-Mias::Mias()
+Mias::Mias() : sale(NULL)
 {
 	init();
 }
-Mias::Mias(bool d) : mps::Restaurant(d)
+Mias::Mias(bool d) : mps::Restaurant(d),sale(NULL)
 {
 	init();
 }
@@ -142,6 +142,7 @@ Mias::Mias(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& b,bool d) 
 */
 void Mias::init()
 {
+	std::cout << " Mias::init step 1\n";
 	add_events(Gdk::KEY_PRESS_MASK);
 	set_title("Mia's Pizza & Pasta");
 	set_default_size(800,640);
@@ -149,22 +150,31 @@ void Mias::init()
 	tbMain.add(btSales);
 	show_all_children();
 	
+	std::cout << " Mias::init step 2\n";
+	
 	btSales.signal_clicked().connect(sigc::mem_fun(*this, &Mias::on_click_sales));
 	/*
 	nbMain.append_page(sale);
 	sale.set(get_user());
 	*/
+	std::cout << " Mias::init step 3\n";
 }
 Mias::~Mias()
 {
+	if(sale) delete sale;
 }
 
 void Mias::on_click_sales()
 {
-	nbMain.append_page(sale);
-	sale.set(get_user());
+	sale = new Sales;
+	std::cout << " Mias::on_click_sales step 1\n";
+	nbMain.append_page(*sale);
+	sale->set(get_user());
+	std::cout << " Mias::on_click_sales step 2\n";
+	btSales.set_sensitive(false);
 	nbMain.show_all_children();
 	//sale.show_all_children();
+	std::cout << " Mias::on_click_sales step 3\n";
 }
 
 
@@ -242,12 +252,16 @@ PendingServices::~PendingServices()
 
 
 
-TableServicies::TableServicies() : connDB_flag(false),updaterThread(NULL),lstOprs(NULL),lstProgress(NULL)
+TableServicies::TableServicies() : connDB_flag(false),updaterThread(NULL),lstOprs(NULL),lstProgress(NULL) ,serviceSelected(0)
 {
+	
+	std::cout << "TableServicies::TableServicies step 1\n";
 	init();
+	std::cout << "TableServicies::TableServicies step 2\n";
 }
 void TableServicies::init()
 {
+	std::cout << "TableServicies::init step 1\n";
 	try
 	{
 		connDB_flag = connDB.connect(muposysdb::datconex);
@@ -276,6 +290,8 @@ void TableServicies::init()
 	//Gtk::CellRenderer* step_reder = static_cast<Gtk::CellRenderer*>(get_column_cell_renderer(get_n_columns() - 1));
 	//Gtk::TreeViewColumn* step_column = get_column(get_n_columns() - 1);
 	//step_column->set_cell_data_func(*step_reder,sigc::mem_fun(*this,&TableServicies::step_data));
+	
+	std::cout << "TableServicies::init step 2\n";
 
 	//load();
 	dispatcher.connect(sigc::mem_fun(*this, &TableServicies::on_notification_from_worker_thread));
@@ -301,6 +317,7 @@ void TableServicies::init()
 	menu.accelerate(*this);
 	menu.show_all();
 	menu.set(*this);
+	std::cout << "TableServicies::init step 3\n";
 }
 TableServicies::~TableServicies()
 {
@@ -329,16 +346,16 @@ void TableServicies::load()
 	bool flcleared = false;
 	bool flreload;
 	flreload = false;
-	//std::cout << "TableServicies::load\n";
+	std::cout << "TableServicies::load step 1\n";
 	//std::cout << "TableServicies::load : cleaned model\n";
 	std::string whereOrder;
 	whereOrder = "step >= ";
 	whereOrder += std::to_string((int)ServiceStep::created);
 	whereOrder += " and step < ";
 	whereOrder += std::to_string((int)ServiceStep::delivered);
-	//std::cout << "TableServicies::load : where :  " << whereOrder << "\n";
+	std::cout << "TableServicies::load : where :  " << whereOrder << "\n";
 	std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
-	//std::cout << "TableServicies::load : query done.\n";
+	std::cout << "TableServicies::load : query done step 2.\n";
 	//Gtk::TreeModel::iterator itRow;
     if(lstOprs)
 	{
@@ -349,27 +366,30 @@ void TableServicies::load()
 		}
 		int working;
 		float percen;
-		//std::cout << "\torder count : " << lstOprs->size() << "\n";
+		std::cout << "\torder count : " << lstOprs->size() << "\n";
 		for(int i = 0; i < lstOprs->size(); i++)
 		{
+			std::cout << "\ti : " << i << "\n";
 			if(lstOprs->at(i)->downUpdated(connDB))
 			{
 				if(not flcleared)
 				{
 					auto itRow = *tree_model->children()[i];
 					//std::cout << "TableServicies::load : Service " << itRow[columns.service] << "\n";
-					if(lstOprs->at(i)->getUpdated() == itRow[columns.updated] and lstOprs->at(i)->getOperation().getOperation().getID() ==  itRow[columns.service]) continue;
+					if(lstOprs->at(i)->getUpdated() == itRow[columns.updated] and lstOprs->at(i)->getOperation().getID() ==  itRow[columns.service]) continue;
 				}
 			}
+			std::cout << "\ti : "  << i << "\n";
 			lstOprs->at(i)->downStep(connDB);
+			std::cout << "\ti : "  << i << "\n";
 
-			//std::cout << "TableServicies::load : order " << lstOprs->at(i)->getOperation().getOperation().getID() << "\n";
+			std::cout << "\tTableServicies::load : order " << lstOprs->at(i)->getOperation().getID() << "\n";
 			std::string whereItem;
 			whereItem = "operation = ";
-			whereItem += std::to_string(lstOprs->at(i)->getOperation().getOperation().getID());
-			//std::cout << "\tTableServicies::load : " << whereItem << "\n";
+			whereItem += std::to_string(lstOprs->at(i)->getOperation().getID());
+			std::cout << "\tTableServicies::load : " << whereItem << "\n";
 			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(connDB,whereItem,0,'A');
-			//std::cout << "\tTableServicies::load : query done.\n";
+			std::cout << "\tTableServicies::load : query done.\n";
 
 			float percen_order;
 			//finalized = 0;
@@ -381,32 +401,41 @@ void TableServicies::load()
 				totals_items = lstProgress->size();
 				for(auto progress_item : *lstProgress)
 				{
-					//std::cout << "\n";
+					std::cout << "\tTableServicies::load Step 1\n";
+					if(progress_item->downStocking(connDB))
+					{
+						//std::cout << "\t\titem : " << progress_item->getStocking().getItem().getItem().getID() << "\n";
+					}
 					if(progress_item->getStocking().downItem(connDB))
 					{
 						//std::cout << "\t\titem : " << progress_item->getStocking().getItem().getItem().getID() << "\n";
 					}
 
+					std::cout << "\tTableServicies::load Step 2\n";
 					if(progress_item->downStep(connDB))
 					{
 						//std::cout << "\t\tstep : " << (int)progress_item->getStep() << "\n";
 					}
 
+					std::cout << "\tTableServicies::load Step 3\n";
 					if(progress_item->getStep() < (int)steping::Eat::created or progress_item->getStep() > (int)steping::Eat::finalized)
 					{
 						//std::cout << "\t\tstep : jumping item\n";
 						continue;
 					}
 
+					std::cout << "\tStep 4\n";
 					if(progress_item->getStocking().getItem().downStation(connDB))
 					{
 						/*if((Station)progress_item->getStocking().getItem().getStation() == Station::pizza) std::cout << "\t\tStation : pizza\n";
 						else std::cout << "\t\tStation : unknow\n";*/
 					}
 
+					std::cout << "\tStep 5\n";
 					if((steping::Eat)progress_item->getStep() < steping::Eat::finalized and (steping::Eat)progress_item->getStep() >  steping::Eat::accepted ) working++;
 					//if((steping::Eat)progress_item->getStep() == steping::Eat::finalized) finalized++;
 
+					std::cout << "\tStep 6\n";
 					int precen_total = (int)steping::Eat::finalized - (int)steping::Eat::created;
 					if(precen_total > 0)
 					{
@@ -422,7 +451,7 @@ void TableServicies::load()
 
 				}
 			}
-			//std::cout << "\tpercen_order : " << percen_order <<  "\n";
+			std::cout << "\tpercen_order : " << percen_order <<  "\n";
 			percen_order /= float(totals_items);
 			//std::cout << "\tpercen_order : " << percen_order <<  "\n";
 
@@ -440,7 +469,7 @@ void TableServicies::load()
 			lstOprs->at(i)->downName(connDB);
 			Gtk::TreeModel::Row row;
 			row = *(tree_model->append());
-			row[columns.service] = lstOprs->at(i)->getOperation().getOperation().getID();
+			row[columns.service] = lstOprs->at(i)->getOperation().getID();
 			//std::cout << "columns.service : " << p->getOperation().getOperation().getID() << "\n";
 			if(not lstOprs->at(i)->getName().empty()) 	row[columns.name] = lstOprs->at(i)->getName();
 			else row[columns.name] = "Desconocido";
@@ -449,8 +478,8 @@ void TableServicies::load()
 			row[columns.step_number] = (ServiceStep)lstOprs->at(i)->getStep();
 			row[columns.updated] = lstOprs->at(i)->getUpdated();
 		}
+		connDB.commit();
 	}
-	connDB.commit();
 
 	Gtk::TreeModel::Row row;
 	for(const Gtk::TreeModel::iterator& it : tree_model->children())
@@ -459,6 +488,7 @@ void TableServicies::load()
 		row[columns.step] = to_text(row[columns.step_number]);
 	}
 	//if(flreload) goto reload;
+	std::cout << "\t reload done step 3 \n";
 }
 
 void TableServicies::reload()
@@ -505,7 +535,7 @@ bool TableServicies::is_reloadable()
 
 		for(int i = 0; i < maxItOprs; i++)
 		{
-			if(this->lstOprs) if(this->lstOprs->at(i)->getOperation().getOperation().getID() != lstOprs->at(i)->getOperation().getOperation().getID())
+			if(this->lstOprs) if(this->lstOprs->at(i)->getOperation().getID() != lstOprs->at(i)->getOperation().getID())
 			{
 				flret = true;//reload
 				//std::cout << "is_reloadable : true devido a que el i-esmo elemento de cada lista no corrresponde\n";
@@ -522,7 +552,7 @@ bool TableServicies::is_reloadable()
 		{
 			std::string whereItem;
 			whereItem = "operation = ";
-			whereItem += std::to_string(p->getOperation().getOperation().getID());
+			whereItem += std::to_string(p->getOperation().getID());
 			whereItem += " and step >= ";
 			whereItem += std::to_string((int)steping::Eat::accept);
 			whereItem += " and step <=  ";
@@ -987,9 +1017,6 @@ TableServicies::Updater::Updater() : m_shall_stop(false), m_has_stopped(false)
 	}
 	catch(const std::exception& e)
 	{
-		/*Gtk::MessageDialog dlg("Error detectado durante conexion a BD",true,Gtk::MESSAGE_ERROR);
-		dlg.set_secondary_text(e.what());
-		dlg.run();*/
 		std::cerr << e.what() << "\n";
 		return;
 	}
@@ -1123,7 +1150,7 @@ void TableSaling::on_save_clicked()
 }
 void TableSaling::save()
 {
-	//std::cout << "saving :step 1\n";
+	std::cout << "saving :step 1\n";
 	if(inName.get_text().size() == 0)
 	{
 		Gtk::MessageDialog dlg("Validacion de datos",true,Gtk::MESSAGE_ERROR);
@@ -1138,25 +1165,25 @@ void TableSaling::save()
 	}
 	//std::cout << "saving :step 2\n";
 	Gtk::TreeModel::Row row;
-	muposysdb::Ente *ente_service,*ente_operation;
-	muposysdb::Stock stock(9);
+	//muposysdb::Ente *ente_service,*ente_operation;
+	muposysdb::Stock stock(2);
 	muposysdb::Stocking* stocking;
 	muposysdb::CatalogItem* cat_item;
 	muposysdb::Operation* operation;
 	muposysdb::Progress* operationProgress;
 	const Gtk::TreeModel::iterator& last = (tree_model->children().end());
 	int quantity,item;
-	ente_service = new muposysdb::Ente;
+	//ente_service = new muposysdb::Ente;
 	//std::cout << "saving :step 3\n";
-	if(not ente_service->insert(connDB))
+	/*if(not ente_service->insert(connDB))
 	{
 			Gtk::MessageDialog dlg("Error detectado en acces a BD",true,Gtk::MESSAGE_ERROR);
 			dlg.set_secondary_text("Durante la escritura del ID Stoking.");
 			dlg.run();
 			return;
-	}
+	}*/
 	operation = new muposysdb::Operation;
-	if(not operation->insert(connDB,*ente_service))
+	if(not operation->insert(connDB))
 	{
 			Gtk::MessageDialog dlg("Error detectado en acceso a BD",true,Gtk::MESSAGE_ERROR);
 			dlg.set_secondary_text("Durante la escritura de Stoking Production.");
@@ -1172,14 +1199,14 @@ void TableSaling::save()
 	}*/
 
 	//std::cout << "saving :step 4\n";
-	ente_operation = new muposysdb::Ente;
+	/*ente_operation = new muposysdb::Ente;
 	if(not ente_operation->insert(connDB))
 	{
 			Gtk::MessageDialog dlg("Error detectado en acces a BD",true,Gtk::MESSAGE_ERROR);
 			dlg.set_secondary_text("Durante la escritura del ID Stoking.");
 			dlg.run();
 			return;
-	}
+	}*/
 	//std::cout << "saving :step 5\n";
 	for(const Gtk::TreeModel::const_iterator& it : tree_model->children())
 	{
@@ -1249,10 +1276,10 @@ void TableSaling::save()
 		delete cat_item;
 		//std::cout << "saving :step 5.6\n";
 	}
-	//std::cout << "saving :step 6\n";
+	std::cout << "saving :step 6\n";
 
-	delete ente_service;
-	delete ente_operation;
+	//delete ente_service;
+	//delete ente_operation;
 
 	//std::cout << "saving :step 7\n";
 	muposysdb::Sale* sale;
@@ -1303,7 +1330,7 @@ void TableSaling::save()
 	connDB.commit();
 	clear();
 
-	//std::cout << "saving :step 12\n";
+	std::cout << "saving :step 12\n";
 
 	Gtk::MessageDialog dlg("Operacion completada.",true,Gtk::MESSAGE_INFO);
 	dlg.set_secondary_text("La Venta se realizo satisfactoriamente.");
