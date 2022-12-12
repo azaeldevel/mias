@@ -255,13 +255,13 @@ PendingServices::~PendingServices()
 TableServicies::TableServicies() : connDB_flag(false),updaterThread(NULL),lstOprs(NULL),lstProgress(NULL) ,serviceSelected(0)
 {
 	
-	std::cout << "TableServicies::TableServicies step 1\n";
+	//std::cout << "TableServicies::TableServicies step 1\n";
 	init();
-	std::cout << "TableServicies::TableServicies step 2\n";
+	//std::cout << "TableServicies::TableServicies step 2\n";
 }
 void TableServicies::init()
 {
-	std::cout << "TableServicies::init step 1\n";
+	//std::cout << "TableServicies::init step 1\n";
 	try
 	{
 		connDB_flag = connDB.connect(muposysdb::datconex);
@@ -291,7 +291,7 @@ void TableServicies::init()
 	//Gtk::TreeViewColumn* step_column = get_column(get_n_columns() - 1);
 	//step_column->set_cell_data_func(*step_reder,sigc::mem_fun(*this,&TableServicies::step_data));
 	
-	std::cout << "TableServicies::init step 2\n";
+	//std::cout << "TableServicies::init step 2\n";
 
 	//load();
 	dispatcher.connect(sigc::mem_fun(*this, &TableServicies::on_notification_from_worker_thread));
@@ -317,7 +317,7 @@ void TableServicies::init()
 	menu.accelerate(*this);
 	menu.show_all();
 	menu.set(*this);
-	std::cout << "TableServicies::init step 3\n";
+	//std::cout << "TableServicies::init step 3\n";
 }
 TableServicies::~TableServicies()
 {
@@ -346,16 +346,16 @@ void TableServicies::load()
 	bool flcleared = false;
 	bool flreload;
 	flreload = false;
-	std::cout << "TableServicies::load step 1\n";
+	//std::cout << "TableServicies::load step 1\n";
 	//std::cout << "TableServicies::load : cleaned model\n";
 	std::string whereOrder;
 	whereOrder = "step >= ";
 	whereOrder += std::to_string((int)ServiceStep::created);
 	whereOrder += " and step < ";
 	whereOrder += std::to_string((int)ServiceStep::delivered);
-	std::cout << "TableServicies::load : where :  " << whereOrder << "\n";
+	//std::cout << "TableServicies::load : where :  " << whereOrder << "\n";
 	std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
-	std::cout << "TableServicies::load : query done step 2.\n";
+	//std::cout << "TableServicies::load : query done step 2.\n";
 	//Gtk::TreeModel::iterator itRow;
     if(lstOprs)
 	{
@@ -366,7 +366,7 @@ void TableServicies::load()
 		}
 		int working;
 		float percen;
-		std::cout << "\torder count : " << lstOprs->size() << "\n";
+		//std::cout << "\torder count : " << lstOprs->size() << "\n";
 		for(int i = 0; i < lstOprs->size(); i++)
 		{
 			std::cout << "\ti : " << i << "\n";
@@ -379,17 +379,17 @@ void TableServicies::load()
 					if(lstOprs->at(i)->getUpdated() == itRow[columns.updated] and lstOprs->at(i)->getOperation().getID() ==  itRow[columns.service]) continue;
 				}
 			}
-			std::cout << "\ti : "  << i << "\n";
+			//std::cout << "\ti : "  << i << "\n";
 			lstOprs->at(i)->downStep(connDB);
-			std::cout << "\ti : "  << i << "\n";
+			//std::cout << "\ti : "  << i << "\n";
 
-			std::cout << "\tTableServicies::load : order " << lstOprs->at(i)->getOperation().getID() << "\n";
+			//std::cout << "\tTableServicies::load : order " << lstOprs->at(i)->getOperation().getID() << "\n";
 			std::string whereItem;
 			whereItem = "operation = ";
 			whereItem += std::to_string(lstOprs->at(i)->getOperation().getID());
-			std::cout << "\tTableServicies::load : " << whereItem << "\n";
+			//std::cout << "\tTableServicies::load : " << whereItem << "\n";
 			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(connDB,whereItem,0,'A');
-			std::cout << "\tTableServicies::load : query done.\n";
+			//std::cout << "\tTableServicies::load : query done.\n";
 
 			float percen_order;
 			//finalized = 0;
@@ -401,7 +401,7 @@ void TableServicies::load()
 				totals_items = lstProgress->size();
 				for(auto progress_item : *lstProgress)
 				{
-					std::cout << "\tTableServicies::load Step 1\n";
+					//std::cout << "\tTableServicies::load Step 1\n";
 					if(progress_item->downStocking(connDB))
 					{
 						//std::cout << "\t\titem : " << progress_item->getStocking().getItem().getItem().getID() << "\n";
@@ -411,31 +411,31 @@ void TableServicies::load()
 						//std::cout << "\t\titem : " << progress_item->getStocking().getItem().getItem().getID() << "\n";
 					}
 
-					std::cout << "\tTableServicies::load Step 2\n";
+					//std::cout << "\tTableServicies::load Step 2\n";
 					if(progress_item->downStep(connDB))
 					{
 						//std::cout << "\t\tstep : " << (int)progress_item->getStep() << "\n";
 					}
 
-					std::cout << "\tTableServicies::load Step 3\n";
+					//std::cout << "\tTableServicies::load Step 3\n";
 					if(progress_item->getStep() < (int)steping::Eat::created or progress_item->getStep() > (int)steping::Eat::finalized)
 					{
 						//std::cout << "\t\tstep : jumping item\n";
 						continue;
 					}
 
-					std::cout << "\tStep 4\n";
+					//std::cout << "\tStep 4\n";
 					if(progress_item->getStocking().getItem().downStation(connDB))
 					{
 						/*if((Station)progress_item->getStocking().getItem().getStation() == Station::pizza) std::cout << "\t\tStation : pizza\n";
 						else std::cout << "\t\tStation : unknow\n";*/
 					}
 
-					std::cout << "\tStep 5\n";
+					//std::cout << "\tStep 5\n";
 					if((steping::Eat)progress_item->getStep() < steping::Eat::finalized and (steping::Eat)progress_item->getStep() >  steping::Eat::accepted ) working++;
 					//if((steping::Eat)progress_item->getStep() == steping::Eat::finalized) finalized++;
 
-					std::cout << "\tStep 6\n";
+					//std::cout << "\tStep 6\n";
 					int precen_total = (int)steping::Eat::finalized - (int)steping::Eat::created;
 					if(precen_total > 0)
 					{
@@ -451,7 +451,7 @@ void TableServicies::load()
 
 				}
 			}
-			std::cout << "\tpercen_order : " << percen_order <<  "\n";
+			//std::cout << "\tpercen_order : " << percen_order <<  "\n";
 			percen_order /= float(totals_items);
 			//std::cout << "\tpercen_order : " << percen_order <<  "\n";
 
@@ -488,7 +488,7 @@ void TableServicies::load()
 		row[columns.step] = to_text(row[columns.step_number]);
 	}
 	//if(flreload) goto reload;
-	std::cout << "\t reload done step 3 \n";
+	//std::cout << "\t reload done step 3 \n";
 }
 
 void TableServicies::reload()
