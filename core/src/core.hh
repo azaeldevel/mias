@@ -45,24 +45,31 @@ namespace mias
 		salad,
 	};
 
+	enum class Eating
+	{
+		none,
+		created,
+		accept,
+		accepted,
+		prepare,
+		preparing,
+		prepared,
+		cook,
+		cooking,//en el horno
+		cooked,
+		finalized,
+		cancel,
+	};
+
+	enum class ItemType
+	{
+		none,
+		service,
+		matter,
+	};
+
 	namespace steping
 	{
-		enum class Eat
-		{
-			none,
-			created,
-			accept,
-			accepted,
-			prepare,
-			preparing,
-			prepared,
-			cook,
-			cooking,//en el horno
-			cooked,
-			finalized,
-			cancel,
-		};
-
 		enum class Pizza
 		{
 			none,
@@ -78,7 +85,7 @@ namespace mias
 			finalized,
 			cancel,
 		};
-
+		
 		enum class Stove
 		{
 			none,
@@ -94,14 +101,12 @@ namespace mias
 			finalized,
 			cancel,
 		};
-
-
 	}
 
 
-const char* to_string(steping::Eat);
-const char* to_text(steping::Eat);
-steping::Eat to_step(const char*);
+const char* to_string(Eating);
+const char* to_text(Eating);
+Eating to_step(const char*);
 const char* to_string(steping::Pizza);
 const char* to_text(steping::Pizza);
 const char* to_string(Station s);

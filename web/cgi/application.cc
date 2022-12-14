@@ -45,7 +45,7 @@ namespace mias
 		}
 		else
 		{
-			step = steping::Eat::none;
+			step = Eating::none;
 		}
 
 		param = find("item");
@@ -105,7 +105,7 @@ GetParams::operator std::string()const
 	}
 
 	
-	if(step != steping::Eat::none) 
+	if(step != Eating::none) 
 	{
 		if(not session.empty()) str += "&";
 		std::string strstep = "step=";
@@ -144,15 +144,15 @@ void BodyApplication::programs(std::ostream& out)
 {
 	if(params.station == Station::pizza or params.station == Station::stove)
 	{
-		if(params.step == steping::Eat::none and params.order == -1)
+		if(params.step == Eating::none and params.order == -1)
 		{
 			select_order(out);
 		}
-		else if(params.step == steping::Eat::none and params.order > 0 and not params.restoring)
+		else if(params.step == Eating::none and params.order > 0 and not params.restoring)
 		{
 			select_item(out);
 		}
-		else if(params.step == steping::Eat::accepted and params.order > 0 and not params.restoring)
+		else if(params.step == Eating::accepted and params.order > 0 and not params.restoring)
 		{
 			accepted_item(out);
 		}
@@ -179,15 +179,15 @@ void BodyApplication::panel(std::ostream& out)
 	{
 		out << "\t\t\t<div id=\"logout\"><a href=\"logout.cgi\"></a></div>\n";
 		out << "\t\t\t<div class=\"space\"></div>\n";
-		if(params.step == steping::Eat::none and params.order == -1)
+		if(params.step == Eating::none and params.order == -1)
 		{
 			select_order_restore(out);
 		}
-		else if(params.restoring and params.step == steping::Eat::none and params.order > 0)
+		else if(params.restoring and params.step == Eating::none and params.order > 0)
 		{
 			select_step_restore(out);
 		}
-		else if(params.restoring and params.step > steping::Eat::none and params.step < steping::Eat::finalized and params.order > 0)
+		else if(params.restoring and params.step > Eating::none and params.step < Eating::finalized and params.order > 0)
 		{
 			select_item_restore(out);
 		}
@@ -236,11 +236,11 @@ std::ostream& BodyApplication::print(std::ostream& out)
 	return out;
 }
 
-const char* BodyApplication::to_text(steping::Eat s)
+const char* BodyApplication::to_text(Eating s)
 {
 		switch(s)
 		{
-			case steping::Eat::cook:
+			case Eating::cook:
 				if(params.station == Station::pizza)
 				{
 					return "Hornear";
@@ -250,7 +250,7 @@ const char* BodyApplication::to_text(steping::Eat s)
 					return "Freir";
 				}
 				break;
-			case steping::Eat::cooking:
+			case Eating::cooking:
 				if(params.station == Station::pizza)
 				{
 					return "Horneando";
@@ -260,7 +260,7 @@ const char* BodyApplication::to_text(steping::Eat s)
 					return "Friendo";
 				}
 				break;
-			case steping::Eat::cooked:
+			case Eating::cooked:
 				if(params.station == Station::pizza)
 				{
 					return "Horneado";
@@ -337,44 +337,45 @@ std::ostream& BodyApplication::print_common_commands(std::ostream& out)
 			{
 				switch(params.step)
 				{
-					case steping::Eat::none:
+					case Eating::none:
 						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
 						break;
-					case steping::Eat::accept:
+					case Eating::accept:
 						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
 						break;
-					case steping::Eat::accepted:
+					case Eating::accepted:
 						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
-						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(steping::Eat::cooking) << "</a>";
-						//out << "\t<a id=\"cmdCooked\" class=\"cmd\" onclick=\"toCooked()\">" << to_text(steping::Eat::cooked) << "</a>";
-						//out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPreparing()\">" << to_text(steping::Eat::preparing) << "</a>";
+						out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPreparing()\">" << to_text(Eating::preparing) << "</a>";
+						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(Eating::cooking) << "</a>";
+						//out << "\t<a id=\"cmdCooked\" class=\"cmd\" onclick=\"toCooked()\">" << to_text(Eating::cooked) << "</a>";
+						//out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPreparing()\">" << to_text(Eating::preparing) << "</a>";
 						break;
-					case steping::Eat::prepare:
-						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(steping::Eat::cooking) << "</a>";
-						out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPreparing()\">" << to_text(steping::Eat::preparing) << "</a>";
+					case Eating::prepare:
+						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(Eating::cooking) << "</a>";
+						out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPreparing()\">" << to_text(Eating::preparing) << "</a>";
 						break;
-					case steping::Eat::preparing:
-						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(steping::Eat::cooking) << "</a>";
+					case Eating::preparing:
+						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(Eating::cooking) << "</a>";
 						out << "\t<a id=\"cmdPrepared\" class=\"cmd\" onclick=\"toPrepared()\">Preparada</a>";
 						break;
-					case steping::Eat::prepared:
+					case Eating::prepared:
 						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
-						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(steping::Eat::cooking) << "</a>";
+						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(Eating::cooking) << "</a>";
 						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";
 						break;
-					case steping::Eat::cooking:
+					case Eating::cooking:
 						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
-						//out << "\t<a id=\"cmdCooked\" class=\"cmd\" onclick=\"toCooked()\">" << to_text(steping::Eat::cooked) << "</a>";
+						//out << "\t<a id=\"cmdCooked\" class=\"cmd\" onclick=\"toCooked()\">" << to_text(Eating::cooked) << "</a>";
 						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";
 						break;
-					case steping::Eat::cooked:
+					case Eating::cooked:
 						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
 						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";
 						break;
-					case steping::Eat::finalized:
+					case Eating::finalized:
 						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
 						break;
-					case steping::Eat::cancel:
+					case Eating::cancel:
 
 						break;
 				}
@@ -405,9 +406,9 @@ std::ostream& BodyApplication::print_oven(std::ostream& out)
 				whereProcess = "operation = ";
 				whereProcess += std::to_string(s->getOperation().getID());
 				whereProcess += " and step >= ";
-				whereProcess += std::to_string((short)steping::Eat::cook);
+				whereProcess += std::to_string((short)Eating::cook);
 				whereProcess += " and step < ";
-				whereProcess += std::to_string((short)steping::Eat::finalized);
+				whereProcess += std::to_string((short)Eating::finalized);
 				std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,whereProcess,0,'A');
 				if(lstProgress->size() > 0)
 				{
@@ -430,7 +431,7 @@ std::ostream& BodyApplication::print_oven(std::ostream& out)
 							out << "\t\t\t\t</div>\n";
 							out << "\t\t\t\t<div class=\"oven_item_cmd\">\n";
 							{
-								out << "\t\t\t\t\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toOvenFinalized("<< s->getOperation().getID() << "," <<  p->getStocking().getID() << ")\">" << to_text(steping::Eat::finalized) << "</a>\n";
+								out << "\t\t\t\t\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toOvenFinalized("<< s->getOperation().getID() << "," <<  p->getStocking().getID() << ")\">" << to_text(Eating::finalized) << "</a>\n";
 							}
 							out << "\t\t\t\t</div>\n";
 						}
@@ -508,10 +509,10 @@ int Application::main(std::ostream& out)
 
 	switch(params.step)
 	{
-		case steping::Eat::none:
+		case Eating::none:
 			
 			break;
-		case steping::Eat::accept:
+		case Eating::accept:
 		{
 			//out << "Procesando solicitud de acceptacion...\n";
 			long order = accepting();
@@ -541,38 +542,38 @@ int Application::main(std::ostream& out)
 			connDB.commit();
 			return EXIT_SUCCESS;
 		}
-		case steping::Eat::accepted:
-			steping(steping::Eat::accepted);
+		case Eating::accepted:
+			steping(Eating::accepted);
 			break;
-		case steping::Eat::prepare:
-			steping(steping::Eat::prepare);
+		case Eating::prepare:
+			steping(Eating::prepare);
 			break;
-		case steping::Eat::preparing:
-			steping(steping::Eat::prepared);
+		case Eating::preparing:
+			steping(Eating::prepared);
 			connDB.commit();
 			break;
-		case steping::Eat::prepared:
-			steping(steping::Eat::prepared);
+		case Eating::prepared:
+			steping(Eating::prepared);
 			connDB.commit();
 			break;
-		case steping::Eat::cook:
-			steping(steping::Eat::cook);
+		case Eating::cook:
+			steping(Eating::cook);
 			connDB.commit();
 			break;
-		case steping::Eat::cooking:
-			steping(steping::Eat::cooking);
+		case Eating::cooking:
+			steping(Eating::cooking);
 			connDB.commit();
 			break;
-		case steping::Eat::cooked:
-			steping(steping::Eat::cooked);
+		case Eating::cooked:
+			steping(Eating::cooked);
 			connDB.commit();
 			break;
-		case steping::Eat::finalized:
-			steping(steping::Eat::finalized);
+		case Eating::finalized:
+			steping(Eating::finalized);
 			connDB.commit();
 			break;
-		case steping::Eat::cancel:
-			steping(steping::Eat::cancel);
+		case Eating::cancel:
+			steping(Eating::cancel);
 			connDB.commit();
 			break;
 	}
@@ -655,7 +656,7 @@ long Application::accepting()
 		delete lstProgress;
 	}*/
 
-	steping(steping::Eat::accept);
+	steping(Eating::accept);
 
 	return order;
 }
@@ -670,7 +671,7 @@ long Application::accepting()
 	{
 		if(lstItem->size() == 1)
 		{
-			lstItem->front()->upStep(connDB,(short)steping::Eat::preparing);
+			lstItem->front()->upStep(connDB,(short)Eating::preparing);
 		}
 		else
 		{
@@ -685,7 +686,7 @@ long Application::accepting()
 	}
 	connDB.commit();
 }*/
-void Application::steping(steping::Eat to_step)
+void Application::steping(Eating to_step)
 {
 	short updated;
 	long order = params.order;

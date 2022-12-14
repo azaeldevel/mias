@@ -61,7 +61,7 @@ void BodyApplication::select_item(std::ostream& out)
 			std::string where = "operation = ";
 			where += std::to_string(params.order);
 			where += " and step =";
-			where += std::to_string((short)steping::Eat::created);
+			where += std::to_string((short)Eating::created);
 			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
 			if(lstProgress->size() > 0)
 			{
@@ -192,9 +192,9 @@ void BodyApplication::select_step_restore(std::ostream& out)
 			out << "\t\t\t\t<select name=\"restoreStep\" id=\"restoreStepList\" onchange=\"restoreStephref()\">\n";
 			{
 				out << "\t\t\t\t\t<option value=\"next\">next</option>\n";
-				for(short i = (short) steping::Eat::accept; i < (short) steping::Eat::finalized; i++ )
+				for(short i = (short) Eating::accept; i < (short) Eating::finalized; i++ )
 				{
-					out << "\t\t\t\t\t<option value=\"" << to_string((steping::Eat)i) <<  "\">" << mias::to_text((steping::Eat)i) << "</option>\n";
+					out << "\t\t\t\t\t<option value=\"" << to_string((Eating)i) <<  "\">" << mias::to_text((Eating)i) << "</option>\n";
 				}
 			}
 			out << "\t\t\t\t</select>\n";
@@ -249,9 +249,9 @@ void BodyApplication::select_item_oven(std::ostream& out)
 			std::string where = "operation = ";
 			where += std::to_string(params.order);
 			where += " and step >=";
-			where += std::to_string((short)steping::Eat::cook);
+			where += std::to_string((short)Eating::cook);
 			where += " and step <= ";
-			where += std::to_string((short)steping::Eat::cooked);
+			where += std::to_string((short)Eating::cooked);
 			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
 			if(lstProgress->size() > 0)
 			{

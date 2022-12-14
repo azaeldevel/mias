@@ -29,7 +29,7 @@ struct GetParams : public mps::Params
 {
 	Station station;
 	long order;
-	steping::Eat step;
+	Eating step;
 	long item;
 	bool restoring;
 
@@ -42,7 +42,7 @@ class BodyApplication : public mps::BodyApplication
 {
 private:
 	const GetParams& params;
-	const char* to_text(steping::Eat);
+	const char* to_text(Eating);
 
 
 public:
@@ -82,7 +82,7 @@ private:
 
 	long accepting();
 	void preparing();
-	void steping(steping::Eat);
+	void steping(Eating);
 
 protected:
 

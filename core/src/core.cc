@@ -28,95 +28,95 @@ namespace mias
 {
 
 
-	const char* to_string(steping::Eat s)
+	const char* to_string(Eating s)
 	{
 		switch(s)
 		{
-			case steping::Eat::none: return "none";
-			case steping::Eat::created: return "created";
-			case steping::Eat::accept: return "accept";
-			case steping::Eat::accepted: return "accepted";
-			case steping::Eat::prepare: return "prepare";
-			case steping::Eat::preparing: return "preparing";
-			case steping::Eat::prepared: return "prepared";
-			case steping::Eat::cook: return "cook";
-			case steping::Eat::cooking: return "cooking";
-			case steping::Eat::cooked: return "cooked";
-			case steping::Eat::finalized: return "finalized";
-			case steping::Eat::cancel: return "cancel";
+			case Eating::none: return "none";
+			case Eating::created: return "created";
+			case Eating::accept: return "accept";
+			case Eating::accepted: return "accepted";
+			case Eating::prepare: return "prepare";
+			case Eating::preparing: return "preparing";
+			case Eating::prepared: return "prepared";
+			case Eating::cook: return "cook";
+			case Eating::cooking: return "cooking";
+			case Eating::cooked: return "cooked";
+			case Eating::finalized: return "finalized";
+			case Eating::cancel: return "cancel";
 		}
 
 		return "unknow";
 	}
-	const char* to_text(steping::Eat s)
+	const char* to_text(Eating s)
 	{
 		switch(s)
 		{
-			case steping::Eat::none: return "Ninguno";
-			case steping::Eat::created: return "Creado";
-			case steping::Eat::accept: return "Aceptar";
-			case steping::Eat::accepted: return "Aceptado";
-			case steping::Eat::prepare: return "Preparar";
-			case steping::Eat::preparing: return "Preparando";
-			case steping::Eat::prepared: return "Preparado";
-			case steping::Eat::cook: return "Cocinar";
-			case steping::Eat::cooking: return "Cocinando";
-			case steping::Eat::cooked: return "Cocinado";
-			case steping::Eat::finalized: return "Finalizado";
-			case steping::Eat::cancel: return "Cancel";
+			case Eating::none: return "Ninguno";
+			case Eating::created: return "Creado";
+			case Eating::accept: return "Aceptar";
+			case Eating::accepted: return "Aceptado";
+			case Eating::prepare: return "Preparar";
+			case Eating::preparing: return "Preparando";
+			case Eating::prepared: return "Preparado";
+			case Eating::cook: return "Cocinar";
+			case Eating::cooking: return "Cocinando";
+			case Eating::cooked: return "Cocinado";
+			case Eating::finalized: return "Finalizado";
+			case Eating::cancel: return "Cancel";
 		}
 
 		return "Unknow";
 	}
 
-	steping::Eat to_step(const char* s)
+	Eating to_step(const char* s)
 	{
 		if(strcmp("none",s) == 0)
 		{
-			return steping::Eat::none;
+			return Eating::none;
 		}
 		else if(strcmp("accept",s) == 0)
 		{
-			return steping::Eat::accept;
+			return Eating::accept;
 		}
 		else if(strcmp("accepted",s) == 0)
 		{
-			return steping::Eat::accepted;
+			return Eating::accepted;
 		}
 		else if(strcmp("prepare",s) == 0)
 		{
-			return steping::Eat::prepare;
+			return Eating::prepare;
 		}
 		else if(strcmp("preparing",s) == 0)
 		{
-			return steping::Eat::preparing;
+			return Eating::preparing;
 		}
 		else if(strcmp("prepared",s) == 0)
 		{
-			return steping::Eat::prepared;
+			return Eating::prepared;
 		}
 		else if(strcmp("cook",s) == 0)
 		{
-			return steping::Eat::cook;
+			return Eating::cook;
 		}
 		else if(strcmp("cooking",s) == 0)
 		{
-			return steping::Eat::cooking;
+			return Eating::cooking;
 		}
 		else if(strcmp("cooked",s) == 0)
 		{
-			return steping::Eat::cooked;
+			return Eating::cooked;
 		}
 		else if(strcmp("finalized",s) == 0)
 		{
-			return steping::Eat::finalized;
+			return Eating::finalized;
 		}
 		else if(strcmp("cancel",s) == 0)
 		{
-			return steping::Eat::cancel;
+			return Eating::cancel;
 		}
 
-		return steping::Eat::none;
+		return Eating::none;
 	}
 
 
