@@ -90,12 +90,20 @@ body > #menu > #programs > #order, body > #menu > #programs > #item
 	{
 		width : 90%;
 	}
+	body > #menu > #programs > #pizza
+	{
+		background-image: url(../../../theme/Mkos-Big-Sur/22x22/actions/eat-pizza.svg);
+	}
 }
 @media screen and (min-width: 300px) and (max-width : 599px)
 {
 	.oven_item
 	{
 		width : 80%;
+	}	
+	body > #menu > #programs > #pizza
+	{
+		background-image: url(../../../theme/Mkos-Big-Sur/22x22/actions/eat-pizza.svg);
 	}
 }
 @media screen and (min-width: 600px) and (max-width : 899px)
@@ -104,6 +112,10 @@ body > #menu > #programs > #order, body > #menu > #programs > #item
 	{
 		width : 70%;
 	}
+	body > #menu > #programs > #pizza
+	{
+		background-image: url(../../../theme/Mkos-Big-Sur/22x22/actions/eat-pizza.svg);
+	}
 }
 @media screen and (min-width: 900px) and (max-width : 1199px)
 {
@@ -111,12 +123,20 @@ body > #menu > #programs > #order, body > #menu > #programs > #item
 	{
 		width : 40%;
 	}	
+	body > #menu > #programs > #pizza
+	{
+		background-image: url(../../../theme/Mkos-Big-Sur/22x22/actions/eat-pizza.svg);
+	}
 }
 @media screen and (min-width: 1200px)
 {
 	.oven_item
 	{
 		width : 20%;
+	}
+	body > #menu > #programs > #pizza
+	{
+		background-image: url(../../../theme/Mkos-Big-Sur/22x22/actions/eat-pizza.svg);
 	}
 }
 

@@ -99,6 +99,7 @@ protected:
 	virtual void save();
 	void on_save_clicked();
 	bool on_key_press_event(GdkEventKey* key_event) override;
+	void cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& new_text);
 
 
 	Gtk::Label lbName;

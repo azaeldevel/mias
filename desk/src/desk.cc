@@ -1012,6 +1012,11 @@ void TableSaling::init()
 {
 	btSave.signal_clicked().connect( sigc::mem_fun(*this,&TableSaling::on_save_clicked));
 
+	Gtk::CellRendererText* cell_number = static_cast<Gtk::CellRendererText*>(table.get_column_cell_renderer(2));
+	Gtk::TreeViewColumn* col_number = table.get_column(2);
+	cell_number->property_editable() = true;
+	cell_number->signal_edited().connect(sigc::mem_fun(*this, &TableSaling::cellrenderer_validated_on_edited_number));
+	
 	boxAditional.pack_start(boxName);
 	{
 		boxName.pack_start(lbName);
@@ -1202,6 +1207,40 @@ void TableSaling::clear()
 void TableSaling::set(const muposysdb::User& u)
 {
 	user = &u;
+}
+void TableSaling::cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& new_text)
+{
+	Gtk::TreePath path(path_string);
+
+	std::string where = "number = '" + new_text + "'";
+	std::vector<muposysdb::CatalogItem*>* lstCatItems = muposysdb::CatalogItem::select(connDB,where);
+	//std::cout << "where : " << where << "\n";
+
+	if(not lstCatItems) return;
+
+	if(lstCatItems->size() == 1)
+	{
+		lstCatItems->front()->downBrief(connDB);
+		lstCatItems->front()->downValue(connDB);
+		lstCatItems->front()->downPresentation(connDB);
+
+			Gtk::TreeModel::iterator iter = tree_model->get_iter(path);
+			if(iter)
+			{
+				Gtk::TreeModel::Row row = *iter;
+				row[columns.item] = lstCatItems->front()->getID();
+				row[columns.number] = new_text;
+				row[columns.name] = lstCatItems->front()->getBrief();
+				row[columns.presentation] = lstCatItems->front()->getPresentation();
+				row[columns.cost_unit] = lstCatItems->front()->getValue();
+				row[columns.amount] = row[columns.quantity] * row[columns.cost_unit];
+			}
+	}
+	for(muposysdb::CatalogItem* p : *lstCatItems)
+	{
+		delete p;
+	}
+	delete lstCatItems;
 }
 
 

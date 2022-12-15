@@ -43,7 +43,7 @@ css_icons_DATA=
 jsdir=$(bindir)/js
 js_DATA=html/js/mias.js
 
-themedir=$(bindir)/js
+themedir=$(bindir)/theme/Mkos-Big-Sur
 theme_DATA=
 
 if MIAS_WEB_ENABLE_RUNNABLE
@@ -51,7 +51,8 @@ if MIAS_WEB_ENABLE_RUNNABLE
 install-data-hook:
 	chown $(USER_GROUP) -R $(bindir)/css
 	chown $(USER_GROUP) -R $(bindir)/js
-
+	cp $(top_srcdir)/icons/eat-pizza.svg $(bindir)/theme/Mkos-Big-Sur/24x24/actions
+	
 install-exec-hook:
 	
 

@@ -167,9 +167,9 @@ void BodyApplication::programs(std::ostream& out)
 	}
 	else
 	{
-		out << "\t\t\t<div id=\"pizza\"><a href=\"application.cgi?station=pizza&step=none&session=" << params.session << "\">Pizza</a></div>\n";
-		out << "\t\t\t<div id=\"stove\"><a href=\"application.cgi?station=stove&step=none&session=" << params.session << "\">Estufa</a></div>\n";
-		out << "\t\t\t<div id=\"oven\"><a href=\"application.cgi?station=oven&step=none&session=" << params.session << "\">Horno</a></div>\n";
+		out << "\t\t\t<div id=\"pizza\"><a href=\"application.cgi?station=pizza&step=none&session=" << params.session << "\"></a></div>\n";
+		out << "\t\t\t<div id=\"stove\"><a href=\"application.cgi?station=stove&step=none&session=" << params.session << "\"></a></div>\n";
+		out << "\t\t\t<div id=\"oven\"><a href=\"application.cgi?station=oven&step=none&session=" << params.session << "\"></a></div>\n";
 	}
 }
 
@@ -177,8 +177,8 @@ void BodyApplication::panel(std::ostream& out)
 {
 	if(params.station == Station::pizza or params.station == Station::stove)
 	{
-		out << "\t\t\t<div id=\"logout\"><a href=\"logout.cgi\"></a></div>\n";
-		out << "\t\t\t<div class=\"space\"></div>\n";
+		out << "\t\t\t<div id=\"logout\"><a href=\"logout.cgi?session=" << params.session << "\"></a></div>\n";
+		//out << "\t\t\t<div class=\"space\"></div>\n";
 		if(params.step == Eating::none and params.order == -1)
 		{
 			select_order_restore(out);
@@ -198,9 +198,9 @@ void BodyApplication::panel(std::ostream& out)
 	}
 	else
 	{
-		out << "\t\t\t<div id=\"logout\"><a href=\"logout.cgi\"></a></div>\n";
-		out << "\t\t\t<div class=\"space\"></div>\n";
-		out << "\t\t\t<div id=\"system\"><a href=\"system.html\"></a></div>\n";
+		out << "\t\t\t<div id=\"logout\"><a href=\"logout.cgi?session=" << params.session << "\"></a></div>\n";
+		//out << "\t\t\t<div class=\"space\"></div>\n";
+		out << "\t\t\t<div id=\"system\"><a href=\"system.html?session=" << params.session << "\"></a></div>\n";
 	}
 }
 std::ostream& BodyApplication::print(std::ostream& out)
