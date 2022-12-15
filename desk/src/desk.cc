@@ -464,7 +464,7 @@ void TableServicies::load()
 			//std::cout << "\tpercen : " << percen_order <<  "\n";
 			row[columns.progress] = (int)percen_order;
 			row[columns.step_number] = (ServiceStep)lstOprs->at(i)->getStep();
-			row[columns.updated] = lstOprs->at(i)->getUpdated();
+			//row[columns.updated] = lstOprs->at(i)->getUpdated();
 		}
 		connDB.commit();
 	}
@@ -1056,6 +1056,7 @@ void TableSaling::save()
 	muposysdb::CatalogItem* cat_item;
 	muposysdb::Operation* operation;
 	muposysdb::Progress* operationProgress;
+	muposysdb::StockingCombined* combined;
 	const Gtk::TreeModel::iterator& last = (tree_model->children().end());
 	int quantity,item;
 	
@@ -1115,9 +1116,18 @@ void TableSaling::save()
 					dlg.run();
 					return;
 				}
+				
+				std::vector<muposysdb::CatalogItem> items = get_items(row[columns.number]);
+				if(items.size() == 2)
+				{
+					combined = new muposysdb::StockingCombined;
+					combined->insert(connDB,*stocking,items[0],items[1]);
+				}
+				
 				//std::cout << "saving :step 5.5.5\n";
 				delete operationProgress;
 				delete stocking;
+				delete combined;
 				//std::cout << "saving :step 5.5.6\n";
 			}
 		}
@@ -1208,42 +1218,217 @@ void TableSaling::set(const muposysdb::User& u)
 {
 	user = &u;
 }
-void TableSaling::cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& new_text)
+void TableSaling::cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& strnumb)
 {
 	Gtk::TreePath path(path_string);
-
-	std::string where = "number = '" + new_text + "'";
+	Glib::ustring number,combinedstr;
+	bool combined = false;
+	const std::vector<Glib::ustring> numbers = split(strnumb);
+	if(numbers.size() == 2)
+	{
+		combined = true;
+		//std::cout << "firts : '" << numbers[0] << "'\n";
+		//std::cout << "second : '" << numbers[1] << "'\n";
+		if(numbers[0][0] != numbers[1][0])
+		{
+			Gtk::MessageDialog dlg("Error de entrada",true,Gtk::MESSAGE_ERROR);
+			dlg.set_secondary_text("Ambos numero de Pizzas deben referirse a pizzas de las mismas medias");
+			dlg.run();
+		}
+		std::vector<muposysdb::CatalogItem> items(2);
+		items[0] = get_item(numbers[0]);
+		items[1] = get_item(numbers[1]);
+		if(items[0].getID() == items[1].getID())
+		{
+			Gtk::MessageDialog dlg("Error de entrada",true,Gtk::MESSAGE_ERROR);
+			dlg.set_secondary_text("Ambos numero de Pizzas deben referirse a pizzas distintas");
+			dlg.run();
+		}
+		
+		combinedstr = strnumb.substr(0,1);
+		combinedstr += "cb";
+		//std::cout << "combined : " << combined << "\n";
+		number = combinedstr;
+	}
+	else
+	{
+		number = strnumb;
+	}
+	
+	std::string where = "number = '" + number + "'";
 	std::vector<muposysdb::CatalogItem*>* lstCatItems = muposysdb::CatalogItem::select(connDB,where);
-	//std::cout << "where : " << where << "\n";
-
-	if(not lstCatItems) return;
-
 	if(lstCatItems->size() == 1)
 	{
 		lstCatItems->front()->downBrief(connDB);
 		lstCatItems->front()->downValue(connDB);
 		lstCatItems->front()->downPresentation(connDB);
 
-			Gtk::TreeModel::iterator iter = tree_model->get_iter(path);
-			if(iter)
+		Gtk::TreeModel::iterator iter = tree_model->get_iter(path);
+		if(iter)
+		{
+			Gtk::TreeModel::Row row = *iter;
+			row[columns.item] = lstCatItems->front()->getID();
+			row[columns.number] = strnumb;
+			if(combined)
 			{
-				Gtk::TreeModel::Row row = *iter;
-				row[columns.item] = lstCatItems->front()->getID();
-				row[columns.number] = new_text;
-				row[columns.name] = lstCatItems->front()->getBrief();
-				row[columns.presentation] = lstCatItems->front()->getPresentation();
-				row[columns.cost_unit] = lstCatItems->front()->getValue();
-				row[columns.amount] = row[columns.quantity] * row[columns.cost_unit];
+				row[columns.name] = get_brief(strnumb);
+				row[columns.cost_unit] = get_price(strnumb);
 			}
+			else
+			{
+				row[columns.name] = lstCatItems->front()->getBrief();
+				row[columns.cost_unit] = lstCatItems->front()->getValue();
+			}
+			
+			row[columns.presentation] = lstCatItems->front()->getPresentation();
+			row[columns.amount] = row[columns.quantity] * row[columns.cost_unit];
+		}
+		
+		for(muposysdb::CatalogItem* p : *lstCatItems)
+		{
+			delete p;
+		}
+		delete lstCatItems;
 	}
+}
+
+
+
+std::vector<Glib::ustring> TableSaling::split(const Glib::ustring& number)
+{
+	Glib::ustring::size_type found = std::string(number).find("/");
+	//std::cout << "TableSaling::split : found " << found << "\n";
+	if(found != Glib::ustring::npos)
+	{
+		std::vector<Glib::ustring> numbers(2);
+		numbers[0] = number.substr(0,found);
+		numbers[1] = number.substr(found + 1, number.length() - 1);
+		return numbers;
+	}
+	else
+	{
+		std::vector<Glib::ustring> numbers(1);
+		numbers[0] = number;
+		return numbers;
+	}
+}
+muposysdb::CatalogItem TableSaling::get_item(const Glib::ustring& number)
+{
+	muposysdb::CatalogItem item(-1);
+	std::string where = "number = '" + number + "'";
+	std::vector<muposysdb::CatalogItem*>* lstCatItems = muposysdb::CatalogItem::select(connDB,where);
+	
+	if(lstCatItems->size() == 1) item = *lstCatItems->front();
+	
 	for(muposysdb::CatalogItem* p : *lstCatItems)
 	{
 		delete p;
 	}
 	delete lstCatItems;
+	
+	return item;
 }
-
-
+std::vector<muposysdb::CatalogItem> TableSaling::get_items(const Glib::ustring& str)
+{
+	const std::vector<Glib::ustring> numbers = split(str);
+	if(numbers.size() == 2)
+	{
+		std::vector<muposysdb::CatalogItem> items(2);
+		items[0] = get_item(numbers[0]);
+		items[1] = get_item(numbers[1]);
+		return items;
+	}
+	else
+	{
+		std::vector<muposysdb::CatalogItem> items(1);
+		items[0] = get_item(numbers[0]);
+		return items;		
+	}
+}
+Glib::ustring TableSaling::get_brief(const Glib::ustring& str)
+{
+	const std::vector<Glib::ustring> numbers = split(str);
+	Glib::ustring combined,brief ,number;
+	
+	if(numbers.size() == 2)
+	{
+		if(numbers[0][0] != numbers[1][0])
+		{
+			//std::cout << "'"<< numbers[0] << "' != '" <<  numbers[1] << "'\n";
+			return "";
+		}
+		std::vector<muposysdb::CatalogItem> items(2);
+		items[0] = get_item(numbers[0]);
+		items[1] = get_item(numbers[1]);
+		if(items[0].getID() == items[1].getID()) return "";
+		
+		combined = str.substr(0,1);
+		combined += "cb";
+		//std::cout << "combined : " << combined << "\n";
+		number = combined;
+	}
+	else
+	{
+		//std::cout << "TableSaling::get_brief : " << numbers.size() << "\n";
+	}
+	
+	std::string where = "number = '" + number + "'";
+	std::vector<muposysdb::CatalogItem*>* lstCatItems = muposysdb::CatalogItem::select(connDB,where);
+	//std::cout << "where : " << where << "\n";
+	if(lstCatItems->size() == 1)
+	{
+		lstCatItems->front()->downBrief(connDB);
+		brief = lstCatItems->front()->getBrief();
+		
+		for(muposysdb::CatalogItem* p : *lstCatItems)
+		{
+			delete p;
+		}
+		delete lstCatItems;
+	}
+	
+	return brief;
+}
+float TableSaling::get_price(const Glib::ustring& str)
+{
+	float price1,price2;
+	
+	const std::vector<Glib::ustring> numbers = split(str);	
+	std::vector<muposysdb::CatalogItem> items(2);
+	items[0] = get_item(numbers[0]);
+	items[1] = get_item(numbers[1]);
+	
+	std::string where = "number = '" + numbers[0] + "'";
+	std::vector<muposysdb::CatalogItem*>* lstCatItems = muposysdb::CatalogItem::select(connDB,where);
+	//std::cout << "where : " << where << "\n";
+	if(lstCatItems->size() == 1)
+	{
+		lstCatItems->front()->downValue(connDB);
+		price1 = lstCatItems->front()->getValue();
+		
+		for(muposysdb::CatalogItem* p : *lstCatItems)
+		{
+			delete p;
+		}
+		delete lstCatItems;
+	}
+	
+	where = "number = '" + numbers[1] + "'";
+	lstCatItems = muposysdb::CatalogItem::select(connDB,where);
+	if(lstCatItems->size() == 1)
+	{
+		lstCatItems->front()->downValue(connDB);
+		price2 = lstCatItems->front()->getValue();
+		
+		for(muposysdb::CatalogItem* p : *lstCatItems)
+		{
+			delete p;
+		}
+		delete lstCatItems;
+	}
+	
+	return std::max(price1,price2) + 20.0;
+}
 
 
 }

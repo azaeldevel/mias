@@ -108,6 +108,13 @@ protected:
 
 private:
 	const muposysdb::User* user;
+		
+	std::vector<Glib::ustring> split(const Glib::ustring&);
+	muposysdb::CatalogItem get_item(const Glib::ustring&);
+	std::vector<muposysdb::CatalogItem> get_items(const Glib::ustring&);
+	Glib::ustring get_brief(const Glib::ustring&);
+	float get_price(const Glib::ustring&);
+	
 };
 
 class TableServicies : public Gtk::TreeView

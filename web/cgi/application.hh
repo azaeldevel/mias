@@ -43,7 +43,8 @@ class BodyApplication : public mps::BodyApplication
 private:
 	const GetParams& params;
 	const char* to_text(Eating);
-
+	
+	bool is_combined(long);
 
 public:
 	BodyApplication(const GetParams& params);

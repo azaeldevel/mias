@@ -274,53 +274,83 @@ const char* BodyApplication::to_text(Eating s)
 
 		return mias::to_text(s);
 }
-
+bool BodyApplication::is_combined(long item)
+{
+	if(item >=1026 and item <= 1030) return true;
+	
+	return false;
+}
 std::ostream& BodyApplication::print_common(std::ostream& out)
 {
-		out << "\t<div id=\"work\">\n";
+		if(params.step >= Eating::accepted)
 		{
+			out << "\t<div id=\"work\">\n";
+			std::string number;
+			long stocking;
 			muposysdb::CatalogItem* item = NULL;
-			std::string where = "operation = ";
-			where += std::to_string(params.order);
+			std::string where = " id = ";
+			where += std::to_string(params.item);
 			//out << " where : " << where << "\n";
-			std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
-			if(lstProgress) if(lstProgress->size() > 0)
+			std::vector<muposysdb::Stocking*>* lstStocking = muposysdb::Stocking::select(*connDB,where,0,'A');
+			//out << " lstProgress->size() : " << lstProgress->size() << "\n";
+			if(lstStocking->size() == 1)
 			{
-				for(auto p : *lstProgress)
+				for(auto p : *lstStocking)
 				{
-					p->downStocking(*connDB);
-					p->getStocking().downItem(*connDB);
-					p->getStocking().getItem().downNumber(*connDB);
-					p->getStocking().getItem().downBrief(*connDB);
-					if(p->getStocking().getID() == params.item)
-					{
-						item = new muposysdb::CatalogItem(p->getStocking().getItem());
-						//item->downItem(*connDB);
-						//item->downNumber(*connDB);
-						item->downBrief(*connDB);
-					}
+					p->downItem(*connDB);
+					//number = p->getStocking().getItem().getNumber();
+					//p->getStocking().getItem().downBrief(*connDB);
+					item = new muposysdb::CatalogItem(p->getItem());
+					item->downNumber(*connDB);
+					item->downBrief(*connDB);
 				}
-				for(auto p : *lstProgress)
+				for(auto p : *lstStocking)
 				{
 					delete p;
 				}
-				delete lstProgress;
+				delete lstStocking;
 			}
-			out << "\t<div id=\"brief\">\n";
+			else
 			{
-				out << "\t<div id=\"itemBrief\">\n";
+				return out;
+			}
+			out << "\t\t<div id=\"brief\">\n";
+			{
+				out << "\t\t\t<div id=\"itemBrief\">\n";
 				{
 					if(item)
 					{
-						out << "\t" << mias::to_text(params.station) << " : "<< item->getBrief() << "<br>\n";
+						out << "\t\t\t" << mias::to_text(params.station) << " : "<< item->getBrief() << "<br>\n";
 					}
 				}
-				out << "\t</div>\n";
+				out << "\t\t\t</div>\n";
+				if(is_combined(item->getID()))
+				{
+					out << "\t\t<ul><br>\n";
+					//out << " stocking : " << stocking << "<br>\n";
+					std::string where = "stocking = ";
+					where += std::to_string(params.item);
+					std::vector<muposysdb::StockingCombined*>* lstCombined = muposysdb::StockingCombined::select(*connDB,where,0,'A');
+					if(lstCombined->size() > 0)
+					{
+						if(lstCombined->front()->downPizza1(*connDB)) if(lstCombined->front()->getPizza1().downBrief(*connDB)) out << "\t\t\t<li>" << lstCombined->front()->getPizza1().getBrief()<< "</li><br>\n";
+						if(lstCombined->front()->downPizza2(*connDB)) if(lstCombined->front()->getPizza2().downBrief(*connDB)) out << "\t\t\t<li>" << lstCombined->front()->getPizza2().getBrief()<< "</li><br>\n";
+					}
+					if(lstCombined)
+					{
+						for(auto p : *lstCombined)
+						{
+							delete p;
+						}
+						delete lstCombined;
+					}
+					out << "\t\t</ul><br>\n";
+				}
 			}
-			out << "\t</div>\n";
-			delete item;
-		}
+			out << "\t\t</div>\n";
+			//delete item;
 		out << "\t</div>\n";
+		}
 
 	return out;
 }
@@ -696,14 +726,14 @@ void Application::steping(Eating to_step)
 	std::vector<muposysdb::MiasService*>* lstService = muposysdb::MiasService::select(connDB,where,1,'A');
 	if(lstService)
 	{
-		for(auto s : *lstService)
+		/*for(auto s : *lstService)
 		{
 			s->downUpdated(connDB);
-		}
+		}*/
 		if(lstService->size() == 1)
 		{
-			updated = lstService->front()->getUpdated();
-			lstService->front()->upUpdated(connDB,updated + 1);
+			//updated = lstService->front()->getUpdated();
+			//lstService->front()->upUpdated(connDB,updated + 1);
 		}
 		else
 		{
