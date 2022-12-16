@@ -3,17 +3,17 @@
 
 
 --MIAS
-INSERT INTO CatalogItem(id,catalog,number,brief) VALUES(1001,3,'ppp','Peperoni - Personal');
-INSERT INTO CatalogItem(id,catalog,number,brief) VALUES(1002,3,'cpp','Peperoni - Chica');
-INSERT INTO CatalogItem(id,catalog,number,brief) VALUES(1003,3,'mpp','Peperoni - Mediana');
-INSERT INTO CatalogItem(id,catalog,number,brief) VALUES(1004,3,'gpp','Peperoni - Grandes');
-INSERT INTO CatalogItem(id,catalog,number,brief) VALUES(1005,3,'fpp','Peperoni - Familiar');
+INSERT INTO CatalogItem(id,catalog,number,brief,name,size) VALUES(1001,3,'ppp','Peperoni - Personal','Peperoni','Personal');
+INSERT INTO CatalogItem(id,catalog,number,brief,name,size) VALUES(1002,3,'cpp','Peperoni - Chica','Peperoni','Chica');
+INSERT INTO CatalogItem(id,catalog,number,brief,name,size) VALUES(1003,3,'mpp','Peperoni - Mediana','Peperoni','Mediana');
+INSERT INTO CatalogItem(id,catalog,number,brief,name,size) VALUES(1004,3,'gpp','Peperoni - Grandes','Peperoni','Grande');
+INSERT INTO CatalogItem(id,catalog,number,brief,name,size) VALUES(1005,3,'fpp','Peperoni - Familiar','Peperoni','Familiar');
 
-INSERT INTO CatalogItem(id,catalog,number,brief) VALUES(1006,3,'phw','Hawaina - Personal');
-INSERT INTO CatalogItem(id,catalog,number,brief) VALUES(1007,3,'chw','Hawaina - Chica');
-INSERT INTO CatalogItem(id,catalog,number,brief) VALUES(1008,3,'mhw','Hawaina - Mediana');
-INSERT INTO CatalogItem(id,catalog,number,brief) VALUES(1009,3,'ghw','Hawaina - Grande');
-INSERT INTO CatalogItem(id,catalog,number,brief) VALUES(1010,3,'fhw','Hawaina - Familiar');
+INSERT INTO CatalogItem(id,catalog,number,brief,name,size) VALUES(1006,3,'phw','Hawaina - Personal','Hawaina','Personal');
+INSERT INTO CatalogItem(id,catalog,number,brief,name,size) VALUES(1007,3,'chw','Hawaina - Chica','Hawaina','Chica');
+INSERT INTO CatalogItem(id,catalog,number,brief,name,size) VALUES(1008,3,'mhw','Hawaina - Mediana','Hawaina','Mediana');
+INSERT INTO CatalogItem(id,catalog,number,brief,name,size) VALUES(1009,3,'ghw','Hawaina - Grande','Hawaina','Grande');
+INSERT INTO CatalogItem(id,catalog,number,brief,name,size) VALUES(1010,3,'fhw','Hawaina - Familiar','Hawaina','Familiar');
 
 UPDATE CatalogItem SET active = 'Y'  WHERE id = 1001;
 UPDATE CatalogItem SET value = 75 WHERE id = 1001;

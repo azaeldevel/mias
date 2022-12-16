@@ -167,9 +167,9 @@ void BodyApplication::programs(std::ostream& out)
 	}
 	else
 	{
-		out << "\t\t\t<div id=\"pizza\"><a href=\"application.cgi?station=pizza&step=none&session=" << params.session << "\"></a></div>\n";
-		out << "\t\t\t<div id=\"stove\"><a href=\"application.cgi?station=stove&step=none&session=" << params.session << "\"></a></div>\n";
-		out << "\t\t\t<div id=\"oven\"><a href=\"application.cgi?station=oven&step=none&session=" << params.session << "\"></a></div>\n";
+		out << "\t\t\t<div id=\"pizza\"><a href=\"application.cgi?station=pizza&step=none&session=" << params.session << "\">Pizza</a></div>\n";
+		out << "\t\t\t<div id=\"stove\"><a href=\"application.cgi?station=stove&step=none&session=" << params.session << "\"></a>Estufa</div>\n";
+		out << "\t\t\t<div id=\"oven\"><a href=\"application.cgi?station=oven&step=none&session=" << params.session << "\"></a>Horno</div>\n";
 	}
 }
 
@@ -209,7 +209,6 @@ std::ostream& BodyApplication::print(std::ostream& out)
 	{
 		return out;
 	}*/
-
 	out << "\t<div id=\"menu\">\n";
 
 		out << "\t\t<div id=\"panel\">\n";
