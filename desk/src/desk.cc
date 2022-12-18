@@ -346,19 +346,18 @@ void TableServicies::load()
 	tree_model->clear();
     if(lstOprs)
 	{
-		/*
 		if(tree_model->children().size() != lstOprs->size())
 		{
 			flcleared = true;
 		}
-		*/
+		
 		int working;
 		float percen;
 		//std::cout << "\torder count : " << lstOprs->size() << "\n";
 		for(int i = 0; i < lstOprs->size(); i++)
 		{
 			//std::cout << "\ti : " << i << "\n";
-			/*if(lstOprs->at(i)->downUpdated(connDB))
+			if(lstOprs->at(i)->downUpdated(connDB))
 			{
 				if(not flcleared)
 				{
@@ -366,7 +365,7 @@ void TableServicies::load()
 					//std::cout << "TableServicies::load : Service " << itRow[columns.service] << "\n";
 					if(lstOprs->at(i)->getUpdated() == itRow[columns.updated] and lstOprs->at(i)->getOperation().getID() ==  itRow[columns.service]) continue;
 				}
-			}*/
+			}
 			//std::cout << "\ti : "  << i << "\n";
 			lstOprs->at(i)->downStep(connDB);
 			//std::cout << "\ti : "  << i << "\n";
@@ -464,7 +463,7 @@ void TableServicies::load()
 			//std::cout << "\tpercen : " << percen_order <<  "\n";
 			row[columns.progress] = (int)percen_order;
 			row[columns.step_number] = (ServiceStep)lstOprs->at(i)->getStep();
-			//row[columns.updated] = lstOprs->at(i)->getUpdated();
+			row[columns.updated] = lstOprs->at(i)->getUpdated();
 		}
 		connDB.commit();
 	}

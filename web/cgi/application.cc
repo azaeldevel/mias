@@ -725,14 +725,14 @@ void Application::steping(Eating to_step)
 	std::vector<muposysdb::MiasService*>* lstService = muposysdb::MiasService::select(connDB,where,1,'A');
 	if(lstService)
 	{
-		/*for(auto s : *lstService)
+		for(auto s : *lstService)
 		{
 			s->downUpdated(connDB);
-		}*/
+		}
 		if(lstService->size() == 1)
 		{
-			//updated = lstService->front()->getUpdated();
-			//lstService->front()->upUpdated(connDB,updated + 1);
+			updated = lstService->front()->getUpdated();
+			lstService->front()->upUpdated(connDB,updated + 1);
 		}
 		else
 		{
