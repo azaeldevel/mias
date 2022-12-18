@@ -20,7 +20,7 @@ DefaultDirName={autopf}\{#MyAppName}
 ChangesAssociations=yes
 DisableProgramGroupPage=yes
 PrivilegesRequiredOverridesAllowed=commandline
-OutputBaseFilename=mias-setup
+OutputBaseFilename=mias-desk-setup
 SetupIconFile=C:\Users\Azael\Documents\develop\octetos\mias\mias.ico
 Compression=lzma
 SolidCompression=yes
@@ -37,7 +37,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "desk\bin\Debug\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\core\bin\Debug\octetos-core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\db-abstract\bin\Debug\octetos-db-abstract.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Azael\Documents\develop\octetos\db-maria\bin\Debug\liboctetos-db-maria.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Azael\Documents\develop\octetos\db-maria\bin\Debug\octetos-db-maria.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\muposys\core\bin\Debug\muposys-core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\muposys\desk\bin\Debug\muposys-desk.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\mias\core\bin\Debug\mias-core.dll"; DestDir: "{app}"; Flags: ignoreversion

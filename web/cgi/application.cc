@@ -79,10 +79,10 @@ namespace mias
 GetParams::operator std::string()const
 {
 	std::string str;
-	
+
 	if(not session.empty()) str = "session=" + session;
 
-	if(station != Station::none) 
+	if(station != Station::none)
 	{
 		if(not session.empty()) str += "&";
 		std::string strstation = "station=";
@@ -90,22 +90,22 @@ GetParams::operator std::string()const
 		str += strstation;
 	}
 
-	if(order > 0) 
+	if(order > 0)
 	{
 		if(not session.empty()) str += "&";
 		std::string strorder = "order=";
 		strorder += std::to_string(order);
 		str += strorder;
 	}
-	else if(order == 0) 
+	else if(order == 0)
 	{
 		if(not session.empty()) str += "&";
 		std::string strorder = "order=next";
 		str += strorder;
 	}
 
-	
-	if(step != Eating::none) 
+
+	if(step != Eating::none)
 	{
 		if(not session.empty()) str += "&";
 		std::string strstep = "step=";
@@ -118,21 +118,21 @@ GetParams::operator std::string()const
 		std::string strstep = "step=none";
 		str += strstep;
 	}
-		
-	if(item > 0) 
+
+	if(item > 0)
 	{
 		if(not session.empty()) str += "&";
 		std::string stritem = "item=";
 		stritem += std::to_string(item);
 		str += stritem;
 	}
-		
-	if(restoring) 
+
+	if(restoring)
 	{
 		if(not session.empty()) str += "&";
 		str += "restoring";
 	}
-	
+
 	return str;
 }
 
@@ -276,7 +276,7 @@ const char* BodyApplication::to_text(Eating s)
 bool BodyApplication::is_combined(long item)
 {
 	if(item >=1026 and item <= 1030) return true;
-	
+
 	return false;
 }
 std::ostream& BodyApplication::print_common(std::ostream& out)
@@ -539,7 +539,7 @@ int Application::main(std::ostream& out)
 	switch(params.step)
 	{
 		case Eating::none:
-			
+
 			break;
 		case Eating::accept:
 		{
@@ -663,21 +663,21 @@ long Application::accepting()
 		{
 			//throw Exception((unsigned int)Exception::DB_READ_FAIL,__FILE__,__LINE__);
 		}
-		
+
 		for(auto s : *lstService)
 		{
 			delete s;
 		}
 		delete lstService;
 	}
-	
-	
+
+
 	/*std::string whereProgress = "item = " + std::to_string(params.item);
 	std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,whereProgress);
 	if(lstProgress->size() > 0)
 	{
 		if(lstProgress->front()->upWroker(*connDB,))
-		
+
 		for(auto p : *lstProgress)
 		{
 			delete p;
@@ -736,7 +736,7 @@ void Application::steping(Eating to_step)
 		}
 		else
 		{
-			throw Exception((unsigned int)Exception::DB_READ_FAIL,__FILE__,__LINE__);
+			//throw Exception((unsigned int)Exception::DB_READ_FAIL,__FILE__,__LINE__);
 		}
 
 		for(auto s : *lstService)
@@ -745,7 +745,7 @@ void Application::steping(Eating to_step)
 		}
 		delete lstService;
 	}
-	
+
 	std::string whereItem = "operation = ";
 	whereItem += std::to_string(params.order);
 	whereItem += " and stocking = ";
