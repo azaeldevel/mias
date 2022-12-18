@@ -8,8 +8,8 @@
     #include <mias/core/Exception.hh>
 #elif defined MSYS2
     #include <muposys/web/cgi/application.hh>
-    #include <muposys/web/cgi/html.hh>
     #include <mias/core/src/core.hh>
+    //#include <mias/core/src/Exception.hh>
 #elif defined(_WIN32) || defined(_WIN64)
 
 #else
@@ -43,7 +43,7 @@ class BodyApplication : public mps::BodyApplication
 private:
 	const GetParams& params;
 	const char* to_text(Eating);
-	
+
 	bool is_combined(long);
 
 public:
@@ -63,9 +63,9 @@ public:
 	void select_order_restore(std::ostream& out);
 	void select_step_restore(std::ostream& out);
 	void select_item_restore(std::ostream& out);
-	
+
 protected:
-	
+
 };
 
 class Application : public mps::Application

@@ -13,6 +13,7 @@
 				<Option compiler="msys2_x86_64_gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="../../../octetos" />
 				</Compiler>
 				<Linker>
 					<Add directory="../../core/bin/Debug" />
