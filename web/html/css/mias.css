@@ -92,7 +92,7 @@ body > #menu > #programs > #order, body > #menu > #programs > #item
 	}
 	body > #menu > #programs > #pizza > a
 	{
-		background-image: url(../../../theme/Mkos-Big-Sur/22x22/actions/eat-pizza.svg);
+		background-image: url(../../../theme/Mkos-Big-Sur/24x24/actions/eat-pizza.svg);
 	}
 }
 @media screen and (min-width: 300px) and (max-width : 599px)
@@ -103,7 +103,7 @@ body > #menu > #programs > #order, body > #menu > #programs > #item
 	}	
 	body > #menu > #programs > #pizza > a
 	{
-		background-image: url(../../../theme/Mkos-Big-Sur/22x22/actions/eat-pizza.svg);
+		background-image: url(../../../theme/Mkos-Big-Sur/24x24/actions/eat-pizza.svg);
 	}
 }
 @media screen and (min-width: 600px) and (max-width : 899px)
@@ -114,7 +114,7 @@ body > #menu > #programs > #order, body > #menu > #programs > #item
 	}
 	body > #menu > #programs > #pizza > a
 	{
-		background-image: url(../../../theme/Mkos-Big-Sur/22x22/actions/eat-pizza.svg);
+		background-image: url(../../../theme/Mkos-Big-Sur/24x24/actions/eat-pizza.svg);
 	}
 }
 @media screen and (min-width: 900px) and (max-width : 1199px)
@@ -125,7 +125,7 @@ body > #menu > #programs > #order, body > #menu > #programs > #item
 	}	
 	body > #menu > #programs > #pizza > a
 	{
-		background-image: url(../../../theme/Mkos-Big-Sur/22x22/actions/eat-pizza.svg);
+		background-image: url(../../../theme/Mkos-Big-Sur/24x24/actions/eat-pizza.svg);
 	}
 }
 @media screen and (min-width: 1200px)
@@ -136,7 +136,7 @@ body > #menu > #programs > #order, body > #menu > #programs > #item
 	}
 	body > #menu > #programs > #pizza > a
 	{
-		background-image: url(../../../theme/Mkos-Big-Sur/22x22/actions/eat-pizza.svg);
+		background-image: url(../../../theme/Mkos-Big-Sur/24x24/actions/eat-pizza.svg);
 	}
 }
 
