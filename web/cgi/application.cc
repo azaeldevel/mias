@@ -397,8 +397,6 @@ std::ostream& BodyApplication::print_common_commands(std::ostream& out)
 						out << "\t\t\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>\n";
 						out << "\t\t\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPreparing()\">" << to_text(Eating::preparing) << "</a>\n";
 						out << "\t\t\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(Eating::cooking) << "</a\n";
-						//out << "\t<a id=\"cmdCooked\" class=\"cmd\" onclick=\"toCooked()\">" << to_text(Eating::cooked) << "</a>";
-						//out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPreparing()\">" << to_text(Eating::preparing) << "</a>";
 						break;
 					case Eating::prepare:
 						out << "\t\t\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(Eating::cooking) << "</a>\n";
@@ -409,9 +407,9 @@ std::ostream& BodyApplication::print_common_commands(std::ostream& out)
 						out << "\t\t\t<a id=\"cmdPrepared\" class=\"cmd\" onclick=\"toPrepared()\">Preparada</a>";
 						break;
 					case Eating::prepared:
-						out << "\t\t\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
+						out << "\t\t\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>\n";
 						out << "\t\t\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(Eating::cooking) << "</a>\n";
-						out << "\t\t\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";
+						out << "\t\t\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>\n";
 						break;
 					case Eating::cooking:
 						out << "\t\t\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>\n";

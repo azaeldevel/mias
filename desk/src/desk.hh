@@ -225,6 +225,7 @@ private:
 	long serviceSelected;
 	std::vector<muposysdb::MiasService*>* lstOprs;
 	std::vector<muposysdb::Progress*>* lstProgress;
+	long updated;
 };
 
 

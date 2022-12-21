@@ -365,6 +365,7 @@ void TableServicies::load()
 					//std::cout << "TableServicies::load : Service " << itRow[columns.service] << "\n";
 					if(lstOprs->at(i)->getUpdated() == itRow[columns.updated] and lstOprs->at(i)->getOperation().getID() ==  itRow[columns.service]) continue;
 				}
+				//if(lstOprs->at(i)->getUpdated() > updated)
 			}
 			//std::cout << "\ti : "  << i << "\n";
 			lstOprs->at(i)->downStep(connDB);
@@ -1033,7 +1034,7 @@ void TableSaling::on_save_clicked()
 }
 void TableSaling::save()
 {
-	//std::cout << "saving :step 1\n";
+	std::cout << "saving :step 1\n";
 	if(inName.get_text().size() == 0)
 	{
 		Gtk::MessageDialog dlg("Validacion de datos",true,Gtk::MESSAGE_ERROR);
@@ -1047,7 +1048,7 @@ void TableSaling::save()
 		dlg.run();
 	}
 	
-	//std::cout << "saving :step 2\n";
+	std::cout << "saving :step 2\n";
 	Gtk::TreeModel::Row row;
 	//muposysdb::Ente *ente_service,*ente_operation;
 	muposysdb::Stock stock(2);
@@ -1058,7 +1059,7 @@ void TableSaling::save()
 	muposysdb::StockingCombined* combined;
 	const Gtk::TreeModel::iterator& last = (tree_model->children().end());
 	int quantity,item;
-	
+	std::cout << "saving :step 3\n";
 	operation = new muposysdb::Operation;
 	if(not operation->insert(connDB))
 	{
@@ -1067,11 +1068,12 @@ void TableSaling::save()
 			dlg.run();
 			return;
 	}
+	std::cout << "saving :step 4\n";
 	
-	//std::cout << "saving :step 5\n";
+	std::cout << "saving :step 5\n";
 	for(const Gtk::TreeModel::const_iterator& it : tree_model->children())
 	{
-		//std::cout << "saving :step 5.1\n";
+		std::cout << "saving :step 5.1\n";
 		if(last == it) break;
 		row = *it;
 
@@ -1086,14 +1088,14 @@ void TableSaling::save()
 
 		//std::cout << "saving :step 5.4\n";
 		cat_item->downType(connDB);
-		//std::cout << "saving :step 5.5\n";
+		std::cout << "saving :step 5.5\n";
 		if((ItemType)cat_item->getType() == ItemType::service)
 		{
 			for(unsigned int i = 0; i < quantity; i++ )
 			{
-				//std::cout << "saving :step 5.5.1\n";
+				std::cout << "saving :step 5.5.1\n";
 				stocking = new muposysdb::Stocking;
-				//std::cout << "saving :step 5.5.2\n";
+				std::cout << "saving :step 5.5.2\n";
 				if(not stocking->insert(connDB,stock,*cat_item,1))
 				{
 					Gtk::MessageDialog dlg("Error detectado en acces a BD",true,Gtk::MESSAGE_ERROR);
@@ -1101,9 +1103,9 @@ void TableSaling::save()
 					dlg.run();
 					return;
 				}
-				//std::cout << "saving :step 5.5.3\n";
+				std::cout << "saving :step 5.5.3\n";
 				operationProgress = new muposysdb::Progress;
-				//std::cout << "saving :step 5.5.4\n";
+				std::cout << "saving :step 5.5.4\n";
 
 				//std::cout << "TableSaling user : " << user << "\n";
 				//muposysdb::User user(2);
@@ -1121,13 +1123,14 @@ void TableSaling::save()
 				{
 					combined = new muposysdb::StockingCombined;
 					combined->insert(connDB,*stocking,items[0],items[1]);
+					delete combined;
 				}
 				
-				//std::cout << "saving :step 5.5.5\n";
+				std::cout << "saving :step 5.5.5\n";
 				delete operationProgress;
+				std::cout << "saving :step 5.5.6\n";
 				delete stocking;
-				delete combined;
-				//std::cout << "saving :step 5.5.6\n";
+				std::cout << "saving :step 5.5.7\n";
 			}
 		}
 		else
@@ -1144,14 +1147,14 @@ void TableSaling::save()
 		}
 
 		delete cat_item;
-		//std::cout << "saving :step 5.6\n";
+		std::cout << "saving :step 5.6\n";
 	}
-	//std::cout << "saving :step 6\n";
+	std::cout << "saving :step 6\n";
 
 	//delete ente_service;
 	//delete ente_operation;
 
-	//std::cout << "saving :step 7\n";
+	std::cout << "saving :step 7\n";
 	muposysdb::Sale* sale;
 	for(const Gtk::TreeModel::const_iterator& it : tree_model->children())
 	{
@@ -1175,7 +1178,7 @@ void TableSaling::save()
 
 		delete cat_item;
 	}
-	//std::cout << "saving :step 8\n";
+	std::cout << "saving :step 8\n";
 
 	muposysdb::MiasService service;
 	if(not service.insert(connDB,*operation,inName.get_text()))
@@ -1200,7 +1203,7 @@ void TableSaling::save()
 	connDB.commit();
 	clear();
 
-	//std::cout << "saving :step 12\n";
+	std::cout << "saving :step 12\n";
 
 	Gtk::MessageDialog dlg("Operacion completada.",true,Gtk::MESSAGE_INFO);
 	dlg.set_secondary_text("La Venta se realizo satisfactoriamente.");
