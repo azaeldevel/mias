@@ -168,8 +168,8 @@ void BodyApplication::programs(std::ostream& out)
 	else
 	{
 		out << "\t\t\t<div id=\"pizza\"><a href=\"application.cgi?station=pizza&step=none&session=" << params.session << "\">Pizza</a></div>\n";
-		out << "\t\t\t<div id=\"stove\"><a href=\"application.cgi?station=stove&step=none&session=" << params.session << "\"></a>Estufa</div>\n";
-		out << "\t\t\t<div id=\"oven\"><a href=\"application.cgi?station=oven&step=none&session=" << params.session << "\"></a>Horno</div>\n";
+		out << "\t\t\t<div id=\"stove\"><a href=\"application.cgi?station=stove&step=none&session=" << params.session << "\">Estufa</a></div>\n";
+		out << "\t\t\t<div id=\"oven\"><a href=\"application.cgi?station=oven&step=none&session=" << params.session << "\">Horno</a></div>\n";
 	}
 }
 
@@ -231,6 +231,7 @@ std::ostream& BodyApplication::print(std::ostream& out)
 	else if(params.station == Station::oven)
 	{
 		print_oven(out);
+		print_oven_commands(out);
 	}
 	return out;
 }
@@ -353,63 +354,83 @@ std::ostream& BodyApplication::print_common(std::ostream& out)
 
 	return out;
 }
+std::ostream& BodyApplication::print_oven_commands(std::ostream& out)
+{
+		out << "\t<div id=\"commands\">\n";
+		{
+			out << "\t\t<div id=\"left\">\n";
+			{
+
+			}
+			out << "\t\t</div>\n";
+			out << "\t\t<div id=\"right\">\n";
+			{
+				out << "\t\t\t<a id=\"cmdHome\" class=\"cmd\" onclick=\"toHome()\">Home</a>\n";
+			}
+			out << "\t\t</div>\n";
+		}
+		out << "\t</div>\n";
+
+	return out;
+}
 std::ostream& BodyApplication::print_common_commands(std::ostream& out)
 {
 		out << "\t<div id=\"commands\">\n";
 		{
-			out << "\t<div id=\"left\">\n";
+			out << "\t\t<div id=\"left\">\n";
 			{
 
 			}
-			out << "\t</div>\n";
-			out << "\t<div id=\"right\">\n";
+			out << "\t\t</div>\n";
+			out << "\t\t<div id=\"right\">\n";
 			{
 				switch(params.step)
 				{
 					case Eating::none:
-						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
+						out << "\t\t\t<a id=\"cmdHome\" class=\"cmd\" onclick=\"toHome()\">Home</a>\n";
+						out << "\t\t\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>\n";
 						break;
 					case Eating::accept:
-						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
+						out << "\t\t\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>\n";
 						break;
 					case Eating::accepted:
-						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
-						out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPreparing()\">" << to_text(Eating::preparing) << "</a>";
-						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(Eating::cooking) << "</a>";
+						out << "\t\t\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>\n";
+						out << "\t\t\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPreparing()\">" << to_text(Eating::preparing) << "</a>\n";
+						out << "\t\t\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(Eating::cooking) << "</a\n";
 						//out << "\t<a id=\"cmdCooked\" class=\"cmd\" onclick=\"toCooked()\">" << to_text(Eating::cooked) << "</a>";
 						//out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPreparing()\">" << to_text(Eating::preparing) << "</a>";
 						break;
 					case Eating::prepare:
-						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(Eating::cooking) << "</a>";
-						out << "\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPreparing()\">" << to_text(Eating::preparing) << "</a>";
+						out << "\t\t\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(Eating::cooking) << "</a>\n";
+						out << "\t\t\t<a id=\"cmdPreparing\" class=\"cmd\" onclick=\"toPreparing()\">" << to_text(Eating::preparing) << "</a>\n";
 						break;
 					case Eating::preparing:
-						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(Eating::cooking) << "</a>";
-						out << "\t<a id=\"cmdPrepared\" class=\"cmd\" onclick=\"toPrepared()\">Preparada</a>";
+						out << "\t\t\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(Eating::cooking) << "</a>\n";
+						out << "\t\t\t<a id=\"cmdPrepared\" class=\"cmd\" onclick=\"toPrepared()\">Preparada</a>";
 						break;
 					case Eating::prepared:
-						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
-						out << "\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(Eating::cooking) << "</a>";
-						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";
+						out << "\t\t\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
+						out << "\t\t\t<a id=\"cmdCooking\" class=\"cmd\" onclick=\"toCooking()\">" << to_text(Eating::cooking) << "</a>\n";
+						out << "\t\t\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";
 						break;
 					case Eating::cooking:
-						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
+						out << "\t\t\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>\n";
 						//out << "\t<a id=\"cmdCooked\" class=\"cmd\" onclick=\"toCooked()\">" << to_text(Eating::cooked) << "</a>";
-						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";
+						out << "\t\t\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>\n";
 						break;
 					case Eating::cooked:
-						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
-						out << "\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>";
+						out << "\t\t\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>\n";
+						out << "\t\t\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toFinalized()\">Completada</a>\n";
 						break;
 					case Eating::finalized:
-						out << "\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>";
+						out << "\t\t\t<a id=\"cmdBegin\" class=\"cmd\" onclick=\"toBegin()\">Inicio</a>\n";
 						break;
 					case Eating::cancel:
 
 						break;
 				}
-				out << "\t</div>\n";
 			}
+			out << "\t\t</div>\n";
 		}
 		out << "\t</div>\n";
 
@@ -448,6 +469,8 @@ std::ostream& BodyApplication::print_oven(std::ostream& out)
 						p->getStocking().getItem().downNumber(*connDB);
 						p->getStocking().getItem().downBrief(*connDB);
 						p->getStocking().getItem().downStation(*connDB);
+						
+						p->downOperation(*connDB);
 
 						if((Station)p->getStocking().getItem().getStation() != Station::pizza) continue;
 
@@ -460,7 +483,7 @@ std::ostream& BodyApplication::print_oven(std::ostream& out)
 							out << "\t\t\t\t</div>\n";
 							out << "\t\t\t\t<div class=\"oven_item_cmd\">\n";
 							{
-								out << "\t\t\t\t\t<a id=\"cmdFinalized\" class=\"cmd\" onclick=\"toOvenFinalized("<< s->getOperation().getID() << "," <<  p->getStocking().getID() << ")\">" << to_text(Eating::finalized) << "</a>\n";
+								out << "\t\t\t\t\t<a id=\"cmdOvenFinalized\" class=\"cmd\" onclick=\"toOvenFinalized(" << p->getOperation().getID() << "," <<  p->getStocking().getID() << ")\">" << to_text(Eating::finalized) << "</a>\n";
 							}
 							out << "\t\t\t\t</div>\n";
 						}
@@ -480,8 +503,8 @@ std::ostream& BodyApplication::print_oven(std::ostream& out)
 			delete lstService;
 		}
 	}
-	out << "\t\t</div\n";
-	out << "\t</div\n";
+	out << "\t\t</div>\n";
+	out << "\t</div>\n";
 
 	return out;
 }
@@ -531,7 +554,7 @@ int Application::main(std::ostream& out)
 	if(not has_session())
 	{
 		head.redirect(0,"login.html?failure");
-		out << "Params : " << (std::string)params << "\n";
+		//out << "Params : " << (std::string)params << "\n";
 		head.print(out);
 		return EXIT_SUCCESS;
 	}
@@ -599,6 +622,8 @@ int Application::main(std::ostream& out)
 			break;
 		case Eating::finalized:
 			steping(Eating::finalized);
+			
+			
 			connDB.commit();
 			break;
 		case Eating::cancel:

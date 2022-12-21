@@ -50,6 +50,7 @@ public:
 	BodyApplication(const GetParams& params);
 	virtual std::ostream& print (std::ostream& out);
 	virtual std::ostream& print_common(std::ostream& out);
+	virtual std::ostream& print_oven_commands(std::ostream& out);
 	virtual std::ostream& print_common_commands(std::ostream& out);
 	virtual std::ostream& print_oven(std::ostream& out);
 	virtual void programs(std::ostream& out);

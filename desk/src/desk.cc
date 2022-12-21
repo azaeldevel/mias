@@ -331,7 +331,7 @@ void TableServicies::on_show()
 	
 void TableServicies::load()
 {
-	//bool flcleared = false;
+	bool flcleared = false;
 	/*bool flreload;
 	flreload = false;*/
 	std::string whereOrder;

@@ -168,10 +168,20 @@ function toCooked()
 }
 function toOvenFinalized(order,item) 
 {
-	var cmdFinalized = document.getElementById("cmdFinalized");
-  	var session = urlParams.get("session");
+	var cmdOvenFinalized = document.getElementById("cmdOvenFinalized");
+    const urlParams = new URLSearchParams(window.location.search);
+    var session = urlParams.get("session");
 	
     var ref = "application.cgi?station=oven&order=" + order + "&step=finalized&item="+ item + "&session=" + session; 
     
-    cmdFinalized.href = ref;
+    cmdOvenFinalized.href = ref;
+}
+
+function toHome() 
+{  
+  const urlParams = new URLSearchParams(window.location.search);
+  var session = urlParams.get("session");
+  var ref = "application.cgi?session=" + session;
+  
+  window.location.href = ref;
 }

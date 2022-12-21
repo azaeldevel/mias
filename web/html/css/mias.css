@@ -3,7 +3,7 @@ body > #working
 {
 	display: block;
 }
-body > #commands
+#commands
 {
 	position: absolute;
 	bottom: 0;
@@ -12,18 +12,18 @@ body > #commands
 	padding-top : 0.2em;
 	background-color: royalblue;	
 }
-body > #commands > #left
+#commands > #left
 {
 	float : left;
 	min-width: 50%;
 }
-body > #commands > #right
+#commands > #right
 {
 	float : right;
 	min-width: 50%;
 	height : 100%;
 }
-body > #commands > #right > *
+#commands > #right > *
 {
 	float : right;
 }
@@ -38,9 +38,9 @@ body > #commands > #right > *
   padding-left : 0.3em;
   padding-right : 0.3em;
 }
-body > #menu > #programs > div
+body > #menu > #programs > div > a
 {
-	color : inherit;
+	color : white;
 }
 #itemBrief
 {
