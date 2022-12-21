@@ -44,9 +44,15 @@ Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\html\css\Mkos-Big-
 Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\html\js\*"; DestDir: "{app}\js"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\html\index.html"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\html\login.html"; DestDir: "{app}"; Flags: ignoreversion  
+Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\icons\exit.svg"; DestDir: "{app}\theme\Mkos-Big-Sur\24x24\actions"; Flags: ignoreversion
+Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\icons\configure.svg"; DestDir: "{app}\theme\Mkos-Big-Sur\24x24\actions"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\mias\core\bin\Debug\mias-core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\mias\web\bin\Debug\mias-web.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Azael\Documents\develop\octetos\mias\web\bin\Debug\application.cgi"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Azael\Documents\develop\octetos\mias\web\bin\Debug\application.cgi"; DestDir: "{app}"; Flags: ignoreversion  
+Source: "C:\Users\Azael\Documents\develop\octetos\mias\web\html\css\mias.css"; DestDir: "{app}\css"; Flags: ignoreversion
+Source: "C:\Users\Azael\Documents\develop\octetos\mias\web\html\js\mias.js"; DestDir: "{app}\js"; Flags: ignoreversion    
+Source: "C:\Users\Azael\Documents\develop\octetos\mias\web\icons\eat-pizza.svg"; DestDir: "{app}\theme\Mkos-Big-Sur\24x24\actions"; Flags: ignoreversion
+
 
 [Registry]
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
