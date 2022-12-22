@@ -89,6 +89,7 @@ class TableSaling : public mps::TableSaling
 {
 public:
 	TableSaling();
+	TableSaling(long order);
 	void init();
 	virtual ~TableSaling();
 
@@ -100,7 +101,7 @@ protected:
 	void on_save_clicked();
 	bool on_key_press_event(GdkEventKey* key_event) override;
 	void cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& new_text);
-
+    virtual void download(long order);
 
 	Gtk::Label lbName;
 	Gtk::Entry inName;
@@ -108,13 +109,13 @@ protected:
 
 private:
 	const muposysdb::User* user;
-		
+
 	std::vector<Glib::ustring> split(const Glib::ustring&);
 	muposysdb::CatalogItem get_item(const Glib::ustring&);
 	std::vector<muposysdb::CatalogItem> get_items(const Glib::ustring&);
 	Glib::ustring get_brief(const Glib::ustring&);
 	float get_price(const Glib::ustring&);
-	
+
 };
 
 class TableServicies : public Gtk::TreeView
@@ -285,12 +286,12 @@ class Mias : public mps::Restaurant
 public:
 	Mias();
 	Mias(bool devel);
-	
+
 	void init();
 	virtual ~Mias();
 
 	void on_click_sales();
-	
+
 protected:
 
 private:

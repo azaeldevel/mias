@@ -1008,14 +1008,25 @@ TableSaling::TableSaling() : user(NULL)
 {
 	init();
 }
+TableSaling::TableSaling(long o) : mps::TableSaling(o), user(NULL)
+{
+	init();
+}
 void TableSaling::init()
 {
-	btSave.signal_clicked().connect( sigc::mem_fun(*this,&TableSaling::on_save_clicked));
+	if(mode == Mode::capture)
+    {
+        btSave.signal_clicked().connect( sigc::mem_fun(*this,&TableSaling::on_save_clicked));
+    }
+    else
+    {
+        btSave.set_sensitive(false);
+    }
 
 	Gtk::CellRendererText* cell_number = static_cast<Gtk::CellRendererText*>(table.get_column_cell_renderer(2));
 	Gtk::TreeViewColumn* col_number = table.get_column(2);
-	cell_number->property_editable() = true;
-	cell_number->signal_edited().connect(sigc::mem_fun(*this, &TableSaling::cellrenderer_validated_on_edited_number));
+	if(mode == Mode::capture) cell_number->property_editable() = true;
+	if(mode == Mode::capture) cell_number->signal_edited().connect(sigc::mem_fun(*this, &TableSaling::cellrenderer_validated_on_edited_number));
 
 	boxAditional.pack_start(boxName);
 	{
@@ -1432,6 +1443,24 @@ float TableSaling::get_price(const Glib::ustring& str)
 	return std::max(price1,price2) + 20.0;
 }
 
+void TableSaling::download(long order)
+{
+    std::string whereOrder;
+    whereOrder = "operation = ";
+    whereOrder += std::to_string(order);
+    std::vector<muposysdb::Sale*>* lstSales = muposysdb::Sale::select(connDB,whereOrder,0,'A');
+    if(lstSales)
+    {
+
+
+        for(auto s : *lstSales)
+        {
+            delete s;
+        }
+        delete lstSales;
+    }
+
+}
 
 }
 
