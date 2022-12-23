@@ -1,9 +1,9 @@
 
-#define MyAppName "mias"
+#define MyAppName "Mia's Web"
 #define MyAppVersion "0.1.0-alpha"
 #define MyAppPublisher "Octetos, Inc."
 #define MyAppURL "https://github.com/azaeldevel"
-#define MyAppExeName "mias-desk.exe"
+#define MyAppExeName "mias-web.exe"
 #define MyAppAssocName MyAppName + " File"
 #define MyAppAssocExt ".mdc"
 #define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
@@ -36,7 +36,8 @@ Source: "C:\Users\Azael\Documents\develop\octetos\db-abstract\bin\Debug\octetos-
 Source: "C:\Users\Azael\Documents\develop\octetos\db-maria\bin\Debug\octetos-db-maria.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\muposys\core\bin\Debug\muposys-core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\bin\Debug\muposys-web.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\bin\Debug\login.cgi"; DestDir: "{app}"; Flags: ignoreversion   
+Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\bin\Debug\login.cgi"; DestDir: "{app}"; Flags: ignoreversion        
+Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\bin\Debug\logout.cgi"; DestDir: "{app}"; Flags: ignoreversion   
 Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\html\css\Mkos-Big-Sur\appearance\muposys.css"; DestDir: "{app}\css\Mkos-Big-Sur\appearance\"; Flags: ignoreversion  
 Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\html\css\Mkos-Big-Sur\icons\application.css"; DestDir: "{app}\css\Mkos-Big-Sur\icons\"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\muposys\web\html\css\Mkos-Big-Sur\login.css"; DestDir: "{app}\css\Mkos-Big-Sur\"; Flags: ignoreversion
