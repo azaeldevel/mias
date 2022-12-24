@@ -178,7 +178,7 @@ private:
 		Gtk::TreeModelColumn<Glib::ustring> name;
 		Gtk::TreeModelColumn<int> progress;
 		Gtk::TreeModelColumn<short> updated;
-		Gtk::TreeModelColumn<Glib::ustring> step;
+		Gtk::TreeModelColumn<Glib::ustring> step_str;
 		Gtk::TreeModelColumn<ServiceStep> step_number;
 	};
 	class Updater
@@ -224,9 +224,9 @@ private:
 	std::thread* updaterThread;
 	Menu menu;
 	long serviceSelected;
-	std::vector<muposysdb::MiasService*>* lstOprs;
+	/*std::vector<muposysdb::MiasService*>* lstOprs;
 	std::vector<muposysdb::Progress*>* lstProgress;
-	long updated;
+	long updated;*/
 };
 
 

@@ -122,7 +122,7 @@ namespace mias
 
 
 
-	const char* to_string(steping::Pizza s)
+	/*const char* to_string(steping::Pizza s)
 	{
 		switch(s)
 		{
@@ -159,7 +159,7 @@ namespace mias
 		}
 
 		return "Unknow";
-	}
+	}*/
 	const char* to_string(ServiceStep s)
 	{
 		switch(s)
@@ -238,7 +238,7 @@ namespace mias
 
 		return Station::none;
 	}
-	void to_step(const char* str, steping::Pizza& step)
+	/*void to_step(const char* str, steping::Pizza& step)
 	{
 		if(strcmp(str,"none") == 0)
 		{
@@ -284,6 +284,6 @@ namespace mias
 		{
 			step = steping::Pizza::cancel;
 		}
-	}
+	}*/
 
 }

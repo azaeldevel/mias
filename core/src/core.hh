@@ -68,7 +68,7 @@ namespace mias
 		matter,
 	};
 
-	namespace steping
+	/*namespace steping
 	{
 		enum class Pizza
 		{
@@ -85,7 +85,7 @@ namespace mias
 			finalized,
 			cancel,
 		};
-		
+
 		enum class Stove
 		{
 			none,
@@ -101,20 +101,20 @@ namespace mias
 			finalized,
 			cancel,
 		};
-	}
+	}*/
 
 
 const char* to_string(Eating);
 const char* to_text(Eating);
 Eating to_step(const char*);
-const char* to_string(steping::Pizza);
-const char* to_text(steping::Pizza);
+//const char* to_string(steping::Pizza);
+//const char* to_text(steping::Pizza);
 const char* to_string(Station s);
 const char* to_text(Station s);
 Station to_station(const char*);
 const char* to_string(ServiceStep s);
 const char* to_text(ServiceStep s);
-void to_step(const char* str, steping::Pizza& step);
+//void to_step(const char* str, steping::Pizza& step);
 
 }
 
