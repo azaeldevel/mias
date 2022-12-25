@@ -105,7 +105,9 @@ protected:
 
 	Gtk::Label lbName;
 	Gtk::Entry inName;
-	Gtk::HBox boxName;
+	Gtk::HBox boxName,boxFrame;
+	Gtk::RadioButton rdllevar, rdaqui;
+	Gtk::Frame frame;
 
 private:
 	const muposysdb::User* user;

@@ -68,41 +68,12 @@ namespace mias
 		matter,
 	};
 
-	/*namespace steping
+	enum class Location
 	{
-		enum class Pizza
-		{
-			none,
-			created,
-			accept,
-			accepted,
-			prepare,
-			preparing,
-			prepared,
-			bake,
-			baking,//en el horno
-			baked,
-			finalized,
-			cancel,
-		};
-
-		enum class Stove
-		{
-			none,
-			created,
-			accept,
-			accepted,
-			prepare,
-			preparing,
-			prepared,
-			fry,
-			fring,//en el horno
-			fryed,
-			finalized,
-			cancel,
-		};
-	}*/
-
+		none,
+		deliver,
+		here,
+	};
 
 const char* to_string(Eating);
 const char* to_text(Eating);

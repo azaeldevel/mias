@@ -865,11 +865,11 @@ bool TableServicies::on_leave_notify_event (GdkEventCrossing* crossing_event)
 
 
 
-TableSaling::TableSaling() : user(NULL)
+TableSaling::TableSaling() : user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
 {
 	init();
 }
-TableSaling::TableSaling(long o) : mps::TableSaling(o), user(NULL)
+TableSaling::TableSaling(long o) : mps::TableSaling(o), user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
 {
 	init();
 }
@@ -893,7 +893,16 @@ void TableSaling::init()
 	{
 		boxName.pack_start(lbName);
 		boxName.pack_start(inName);
-		lbName.set_text("Nombre : ");
+		lbName.set_text("Nombre : ");		
+	}	
+		
+	boxFloor.pack_end(frame);
+	{
+		frame.add(boxFrame);
+		boxFrame.pack_start(rdllevar);
+		boxFrame.pack_start(rdaqui);
+		rdllevar.join_group(rdaqui);
+		rdllevar.set_active(true);
 	}
 }
 TableSaling::~TableSaling()
@@ -1067,6 +1076,26 @@ void TableSaling::save()
 		dlg.set_secondary_text("Durante la escritura de Stoking.");
 		dlg.run();
 		return;
+	}
+	if(rdllevar.get_active())
+	{
+		if(not service.upLocation(connDB,(short)Location::deliver))
+		{
+			Gtk::MessageDialog dlg("Error detectado en acces a BD",true,Gtk::MESSAGE_ERROR);
+			dlg.set_secondary_text("Durante la escritura de Stoking.");
+			dlg.run();
+			return;
+		}
+	}
+	else if(rdaqui.get_active())
+	{
+		if(not service.upLocation(connDB,(short)Location::here))
+		{
+			Gtk::MessageDialog dlg("Error detectado en acces a BD",true,Gtk::MESSAGE_ERROR);
+			dlg.set_secondary_text("Durante la escritura de Stoking.");
+			dlg.run();
+			return;
+		}
 	}
 	//std::cout << "saving :step 10\n";
 	delete operation;
