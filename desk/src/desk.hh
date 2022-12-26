@@ -84,6 +84,7 @@ private:
 
 namespace mias
 {
+class Mias;
 
 class TableSaling : public mps::TableSaling
 {
@@ -105,7 +106,9 @@ protected:
 
 	Gtk::Label lbName;
 	Gtk::Entry inName;
-	Gtk::HBox boxName;
+	Gtk::HBox boxName,boxFrame;
+	Gtk::RadioButton rdllevar, rdaqui;
+	Gtk::Frame frame;
 
 private:
 	const muposysdb::User* user;
@@ -123,7 +126,7 @@ class TableServicies : public Gtk::TreeView
 public:
 
 public:
-	TableServicies();
+	TableServicies(Mias*);
 	void init();
 	virtual ~TableServicies();
 
@@ -227,6 +230,7 @@ private:
 	/*std::vector<muposysdb::MiasService*>* lstOprs;
 	std::vector<muposysdb::Progress*>* lstProgress;
 	long updated;*/
+	Mias* mias;
 };
 
 
@@ -250,7 +254,7 @@ class PendingServices : public Gtk::Box
 {
 
 public:
-	PendingServices();
+	PendingServices(Mias*);
 	void init();
 	virtual ~PendingServices();
 
@@ -258,13 +262,14 @@ private:
 	Gtk::Label lbTitle;
 
 	TableServicies servicies;
+	Mias* mias;
 };
 
 
 class Sales : public Gtk::Paned
 {
 public:
-	Sales();
+	Sales(Mias*);
 	void init();
 	virtual ~Sales();
 
@@ -295,7 +300,7 @@ public:
 protected:
 
 private:
-	Sales* sale;
+	std::vector<Sales*> sale;
 	Gtk::ToolButton btSales;
 };
 
