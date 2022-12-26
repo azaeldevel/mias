@@ -122,11 +122,11 @@ namespace mps
 
 namespace mias
 {
-Mias::Mias() : sale(NULL)
+Mias::Mias()
 {
 	init();
 }
-Mias::Mias(bool d) : mps::Restaurant(d),sale(NULL)
+Mias::Mias(bool d) : mps::Restaurant(d)
 {
 	init();
 }
@@ -161,15 +161,19 @@ void Mias::init()
 }
 Mias::~Mias()
 {
-	if(sale) delete sale;
+	for(Sales* s : sale)
+	{
+		delete s;
+	}
 }
 
 void Mias::on_click_sales()
 {
-	sale = new Sales;
+	Sales* snow = new Sales(this);
+	sale.push_back(snow);
 	//std::cout << " Mias::on_click_sales step 1\n";
-	nbMain.append_page(*sale);
-	sale->set(get_user());
+	nbMain.append_page(*snow);
+	snow->set(get_user());
 	//std::cout << " Mias::on_click_sales step 2\n";
 	btSales.set_sensitive(false);
 	nbMain.show_all_children();
@@ -180,7 +184,7 @@ void Mias::on_click_sales()
 
 
 
-Sales::Sales() : user(NULL)
+Sales::Sales(Mias* m) : user(NULL),pending(m)
 {
 	init();
 }
@@ -231,7 +235,7 @@ void Saling::set(const muposysdb::User& u)
 
 
 
-PendingServices::PendingServices() : Gtk::Box(Gtk::ORIENTATION_VERTICAL)
+PendingServices::PendingServices(Mias* m) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),mias(m),servicies(m)
 {
 	init();
 }
@@ -252,7 +256,7 @@ PendingServices::~PendingServices()
 
 
 
-TableServicies::TableServicies() : connDB_flag(false),updaterThread(NULL),serviceSelected(0)
+TableServicies::TableServicies(Mias* m) : connDB_flag(false),updaterThread(NULL),serviceSelected(0),mias(m)
 {
 	//std::cout << "TableServicies::TableServicies step 1\n";
 	init();
@@ -842,6 +846,17 @@ bool TableServicies::on_button_press_event(GdkEventButton* button_event)
 		serviceSelected = rowSelected[columns.service];
 		menu.popup_at_pointer((GdkEvent*)button_event);
 	}
+	else if( (button_event->type == GDK_DOUBLE_BUTTON_PRESS))
+	{
+		Glib::RefPtr<Gtk::TreeSelection> refTreeSelection = get_selection();
+		Gtk::TreeModel::iterator itSelected = refTreeSelection->get_selected();
+		Gtk::TreeModel::Row rowSelected = *itSelected;
+		//std::cout << "Selected service : " << rowSelected[columns.service] << " \n";
+		serviceSelected = rowSelected[columns.service];
+		
+		Sales* snow = new Sales(mias);
+		mias->add_activity(*snow);
+	}
 
 	return return_value;
 }
@@ -1341,7 +1356,7 @@ void TableSaling::download(long order)
     std::vector<muposysdb::Sale*>* lstSales = muposysdb::Sale::select(connDB,whereOrder,0,'A');
     if(lstSales)
     {
-
+		
 
         for(auto s : *lstSales)
         {
