@@ -15,11 +15,12 @@ ALTER TABLE MiasService ADD CONSTRAINT pk_MiasService PRIMARY KEY(operation);
 ALTER TABLE MiasService ADD CONSTRAINT fk_MiasService_operation_Operation_operation FOREIGN KEY(operation) REFERENCES Operation(id);
 ALTER TABLE MiasService ADD COLUMN step SMALLINT DEFAULT 0 COMMENT 'Progreso actual del Servicio';
 ALTER TABLE MiasService ADD COLUMN updated SMALLINT DEFAULT 0 COMMENT 'Indicador de actualizacion';
+ALTER TABLE MiasService ADD COLUMN location SMALLINT DEFAULT 0 COMMENT 'Llevar o comer aqui';
+ALTER TABLE MiasService ADD COLUMN note VARCHAR(256) COMMENT 'Comentarios adicionales';
 
 CREATE TABLE ProgressLog(progress BIGINT PRIMARY KEY DEFAULT 11, FOREIGN KEY(progress) REFERENCES Progress(id)) COMMENT = 'Registra el progreso de las opoeracion operaciones';
 ALTER TABLE ProgressLog ADD worker BIGINT NOT NULL COMMENT 'Usuario que realiza la actualización progreso';
 ALTER TABLE ProgressLog ADD CONSTRAINT fk_ProgressLog_user_User_user FOREIGN KEY(worker) REFERENCES User(id);
-
 
 CREATE TABLE StockingCombined(id BIGINT NOT NULL, stocking BIGINT NOT NULL, pizza1 BIGINT NOT NULL, pizza2 BIGINT NOT NULL);
 ALTER TABLE StockingCombined MODIFY id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY;
