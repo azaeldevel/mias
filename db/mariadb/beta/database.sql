@@ -20,8 +20,6 @@ CREATE TABLE ProgressLog(progress BIGINT PRIMARY KEY DEFAULT 11, FOREIGN KEY(pro
 ALTER TABLE ProgressLog ADD worker BIGINT NOT NULL COMMENT 'Usuario que realiza la actualización progreso';
 ALTER TABLE ProgressLog ADD CONSTRAINT fk_ProgressLog_user_User_user FOREIGN KEY(worker) REFERENCES User(id);
 
---ALTER TABLE Progress ADD worker BIGINT DEFAULT 11 COMMENT 'Usuario que realiza la actualización progreso';
---ALTER TABLE Progress ADD CONSTRAINT fk_Progress_worker_User_user FOREIGN KEY(worker) REFERENCES User(id);
 
 CREATE TABLE StockingCombined(id BIGINT NOT NULL, stocking BIGINT NOT NULL, pizza1 BIGINT NOT NULL, pizza2 BIGINT NOT NULL);
 ALTER TABLE StockingCombined MODIFY id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY;

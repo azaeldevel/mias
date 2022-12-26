@@ -1,8 +1,4 @@
 
--- MUPOSYS
-
-
---MIAS
 INSERT INTO CatalogItem(id,catalog,number,brief,name,size) VALUES(1001,3,'ppp','Peperoni - Personal','Peperoni','Personal');
 INSERT INTO CatalogItem(id,catalog,number,brief,name,size) VALUES(1002,3,'cpp','Peperoni - Chica','Peperoni','Chica');
 INSERT INTO CatalogItem(id,catalog,number,brief,name,size) VALUES(1003,3,'mpp','Peperoni - Mediana','Peperoni','Mediana');
@@ -152,7 +148,10 @@ UPDATE User SET pwdtxt = 'azael' WHERE id = 7;
 UPDATE User SET status = 3 WHERE id = 7;
 INSERT INTO UserPermission(user,permission) VALUES(7,1);
 
-INSERT INTO CatalogItem(id,catalog,number,brief,active,value,presentation,station) VALUES(1057,3,'be-600','Bebida 600mL','Y',22,'Pz',0);
---INSERT INTO CatalogItem(id,catalog,number,brief,active,value,presentation) VALUES(1058,3,'co-la-255','Coca de lata 255mL','Y',22,'Pz');
-
---INSERT INTO Ente(id) VALUES(2000);
+INSERT INTO CatalogItem(id,catalog,number,brief,active,value,presentation,station,name,size) VALUES(1057,3,'be-600','Bebida 600mL','Y',22,'Pz',0,'Bebida','600mL');
+INSERT INTO CatalogItem(id,catalog,number,brief,active,value,presentation,station,name,size) VALUES(1058,3,'be-2l','Bebida 600mL','Y',50,'Pz',0,'Soda','2L');
+INSERT INTO CatalogItem(id,catalog,number,brief,active,value,presentation,station,name,size) VALUES(1059,3,'be-255','Bebida 255mL','Y',15,'Pz',0,'Soda','255mL');
+INSERT INTO CatalogItem(id,catalog,number,brief,active,value,presentation,station,name,size) VALUES(1060,3,'be-c','Bebida chica','Y',15,'Pz',0,'Bebiida','Chica');
+INSERT INTO CatalogItem(id,catalog,number,brief,active,value,presentation,station,name,size) VALUES(1061,3,'be-m','Bebida Mediana','Y',20,'Pz',0,'Bebida','Mediana');
+INSERT INTO CatalogItem(id,catalog,number,brief,active,value,presentation,station,name,size) VALUES(1062,3,'be-g','Bebida Grande','Y',0,'Pz',0,'Bebida','Grande');
+INSERT INTO CatalogItem(id,catalog,number,brief,active,value,presentation,station,name,size) VALUES(1063,3,'be-s','Bebida Super','Y',50,'Pz',0,'Bebida','Super');
