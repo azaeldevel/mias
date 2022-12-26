@@ -336,9 +336,9 @@ void TableServicies::load()
 	flreload = false;*/
 	std::string whereOrder;
 	whereOrder = "step >= ";
-	whereOrder += std::to_string((int)ServiceStep::created);
+	whereOrder += std::to_string((short)ServiceStep::created);
 	whereOrder += " and step < ";
-	whereOrder += std::to_string((int)ServiceStep::delivered);
+	whereOrder += std::to_string((short)ServiceStep::delivered);
 
 	std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
 
