@@ -286,9 +286,9 @@ public:
 
 	void on_click_sales();
     Sales& create_activity_sale();
+    Sales& create_activity_sale(long);
 
 protected:
-
 
 private:
 	std::vector<Sales*> sale;

@@ -182,10 +182,7 @@ void Mias::init()
 	//std::cout << " Mias::init step 2\n";
 
 	btSales.signal_clicked().connect(sigc::mem_fun(*this, &Mias::on_click_sales));
-	/*
-	nbMain.append_page(sale);
-	sale.set(get_user());
-	*/
+
 	//std::cout << " Mias::init step 3\n";
 }
 Mias::~Mias()
@@ -212,6 +209,17 @@ void Mias::on_click_sales()
 Sales& Mias::create_activity_sale()
 {
     Sales* snow = new Sales(this);
+	sale.push_back(snow);
+	//std::cout << " Mias::on_click_sales step 1\n";
+	nbMain.append_page(*snow);
+	snow->set(get_user());
+	snow->show_all();
+
+	return *snow;
+}
+Sales& Mias::create_activity_sale(long o)
+{
+    Sales* snow = new Sales(this,o);
 	sale.push_back(snow);
 	//std::cout << " Mias::on_click_sales step 1\n";
 	nbMain.append_page(*snow);
@@ -891,14 +899,18 @@ bool TableServicies::on_leave_notify_event (GdkEventCrossing* crossing_event)
 
 TableSaling::TableSaling() : user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
 {
+    std::cout << "mias::TableSaling::TableSaling()\n";
 	init();
 }
-TableSaling::TableSaling(long o) : mps::TableSaling(o), user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
+TableSaling::TableSaling(long o) : mps::TableSaling(o),user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
 {
+    std::cout << "mias::TableSaling::TableSaling(long)\n";
 	init();
 }
 void TableSaling::init()
 {
+    std::cout << "mias::TableSaling::init mode : " << (short)mode << "\n";
+
 	if(mode == Mode::capture)
     {
         btSave.signal_clicked().connect( sigc::mem_fun(*this,&TableSaling::on_save_clicked));
