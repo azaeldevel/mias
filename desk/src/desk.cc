@@ -122,6 +122,38 @@ namespace mps
 
 namespace mias
 {
+
+
+bool stepping(mps::Connector& connDB, long order,ServiceStep step)
+{
+	bool flret = false;
+    std::string whereOrder;
+    whereOrder = "operation = ";
+    whereOrder += std::to_string(order);
+    std::cout << "stepping - Order : " << order << "\n";
+    std::cout << "stepping - whereOrder : " << whereOrder << "\n";
+    std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder);
+    if(lstOprs)
+    {
+        if(lstOprs->size() == 1)
+        {
+            if(lstOprs->front()->upStep(connDB,(short)step)) flret = true;
+        }
+        else
+        {
+            flret = false;
+            std::cout << " stepping lstOprs->size : " << lstOprs->size() << "\n";
+        }
+        for(auto p : *lstOprs)
+        {
+            delete p;
+        }
+        delete lstOprs;
+    }
+
+    return flret;
+}
+
 Mias::Mias()
 {
 	init();
@@ -256,7 +288,7 @@ PendingServices::~PendingServices()
 
 
 
-TableServicies::TableServicies(Mias* m) : connDB_flag(false),updaterThread(NULL),serviceSelected(0),mias(m)
+TableServicies::TableServicies(Mias* m) : updaterThread(NULL),serviceSelected(0),mias(m)
 {
 	//std::cout << "TableServicies::TableServicies step 1\n";
 	init();
@@ -265,17 +297,6 @@ TableServicies::TableServicies(Mias* m) : connDB_flag(false),updaterThread(NULL)
 void TableServicies::init()
 {
 	//std::cout << "TableServicies::init step 1\n";
-	try
-	{
-		connDB_flag = connDB.connect(muposysdb::datconex);
-	}
-	catch(const std::exception& e)
-	{
-		Gtk::MessageDialog dlg("Error detectado durante conexion a BD",true,Gtk::MESSAGE_ERROR);
-		dlg.set_secondary_text(e.what());
-		dlg.run();
-		return;
-	}
 
 	tree_model = Gtk::ListStore::create(columns);
 	set_model(tree_model);
@@ -338,6 +359,21 @@ void TableServicies::load()
 	bool flcleared = false;
 	/*bool flreload;
 	flreload = false;*/
+
+    mps::Connector connDB;
+	bool connDB_flag;
+	try
+	{
+		connDB_flag = connDB.connect(muposysdb::datconex);
+	}
+	catch(const std::exception& e)
+	{
+		Gtk::MessageDialog dlg("Error detectado durante conexion a BD",true,Gtk::MESSAGE_ERROR);
+		dlg.set_secondary_text(e.what());
+		dlg.run();
+		return;
+	}
+
 	std::string whereOrder;
 	whereOrder = "step >= ";
 	whereOrder += std::to_string((short)ServiceStep::created);
@@ -480,6 +516,7 @@ void TableServicies::load()
 		}
 		connDB.commit();
 	}
+	connDB.close();
 }
 
 void TableServicies::reload()
@@ -518,7 +555,7 @@ TableServicies::Menu::Menu(TableServicies& p) : parent(&p)
 	if(parent->is_runnig) parent->on_stop_services();
 }*/
 
-bool 	TableServicies::Menu::on_enter_notify_event (GdkEventCrossing* crossing_event)
+bool TableServicies::Menu::on_enter_notify_event (GdkEventCrossing* crossing_event)
 {
 	if(parent->is_runnig) parent->on_stop_services();
 
@@ -532,7 +569,7 @@ bool 	TableServicies::Menu::on_enter_notify_event (GdkEventCrossing* crossing_ev
 	//if(parent->is_stop) parent->on_start_services();
 
 }*/
-void 	TableServicies::Menu::set(TableServicies& p)
+void TableServicies::Menu::set(TableServicies& p)
 {
 	parent = &p;
 }
@@ -649,121 +686,118 @@ void TableServicies::on_notification_from_worker_thread()
 }
 void TableServicies::on_menu_cooked_popup()
 {
-	//std::cerr << "TableServicies::on_menu_cooked_popup\n";
-	bool flag = false;
-	if(serviceSelected > 0) //If anything is selected
+    std::cout << "on_menu_cooked_popup - serviceSelected : " << serviceSelected << " \n";
+	if(serviceSelected < 0) return;
+
+	bool connDB_flag;
+	mps::Connector connDB;
+	try
 	{
-		std::string whereOrder;
-		whereOrder = "operation = ";
-		whereOrder += std::to_string(serviceSelected);
-		//std::cerr << "whereOrder : " << whereOrder << "\n";
-		std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
-		if(lstOprs)
-		{
-			if(lstOprs->size() != 1)
-			{
-				//std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
-				//std::cerr << "Filtro  " << whereOrder << "\n";
-				lstOprs->front()->upStep(connDB,(short)ServiceStep::cooked);
-				flag = true;
-			}
-			for(auto p : *lstOprs)
-			{
-				delete p;
-			}
-			delete lstOprs;
-		}
+		connDB_flag = connDB.connect(muposysdb::datconex);
 	}
-	connDB.commit();
-	if(flag) reload();
+	catch(const std::exception& e)
+	{
+		Gtk::MessageDialog dlg("Error detectado durante conexion a BD",true,Gtk::MESSAGE_ERROR);
+		dlg.set_secondary_text(e.what());
+		dlg.run();
+		return;
+	}
+
+	bool flag = stepping(connDB,serviceSelected,ServiceStep::cooked);
+
+	if(flag)
+    {
+        connDB.commit();
+        reload();
+	}
+	connDB.close();
 }
 void TableServicies::on_menu_waiting_popup()
 {
+    std::cout << "on_menu_waiting_popup - serviceSelected : " << serviceSelected << " \n";
+	if(serviceSelected < 0) return;
+
 	//std::cerr << "TableServicies::on_menu_cooked_popup\n";
-	bool flag = false;
-	if(serviceSelected > 0) //If anything is selected
+    bool connDB_flag;
+	mps::Connector connDB;
+	try
 	{
-		std::string whereOrder;
-		whereOrder = "operation = ";
-		whereOrder += std::to_string(serviceSelected);
-		//std::cerr << "whereOrder : " << whereOrder << "\n";
-		std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
-		if(lstOprs)
-		{
-			if(lstOprs->size() == 1)
-			{
-				//std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
-				//std::cerr << "Filtro  " << whereOrder << "\n";
-				lstOprs->front()->upStep(connDB,(short)ServiceStep::waiting);
-				flag = true;
-			}
-			for(auto p : *lstOprs)
-			{
-				delete p;
-			}
-			delete lstOprs;
-		}
+		connDB_flag = connDB.connect(muposysdb::datconex);
 	}
-	connDB.commit();
-	if(flag) reload();
+	catch(const std::exception& e)
+	{
+		Gtk::MessageDialog dlg("Error detectado durante conexion a BD",true,Gtk::MESSAGE_ERROR);
+		dlg.set_secondary_text(e.what());
+		dlg.run();
+		return;
+	}
+
+	bool flag = stepping(connDB,serviceSelected,ServiceStep::waiting);
+
+	if(flag)
+    {
+        connDB.commit();
+        reload();
+	}
+	connDB.close();
 }
 void TableServicies::on_menu_deliver_popup()
 {
+    std::cout << "on_menu_deliver_popup - serviceSelected : " << serviceSelected << " \n";
+	if(serviceSelected < 0) return;
+
 	//std::cerr << "TableServicies::on_menu_deliver_popup\n";
-	bool flag = false;
-	if(serviceSelected > 0) //If anything is selected
+	bool connDB_flag;
+	mps::Connector connDB;
+	try
 	{
-		std::string whereOrder;
-		whereOrder = "operation = ";
-		whereOrder += std::to_string(serviceSelected);
-		std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
-		if(lstOprs)
-		{
-			if(lstOprs->size() == 1)
-			{
-				//std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
-				//std::cerr << "Filtro  " << whereOrder << "\n";
-				lstOprs->front()->upStep(connDB,(short)ServiceStep::delivered);
-				flag = true;
-			}
-			for(auto p : *lstOprs)
-			{
-				delete p;
-			}
-			delete lstOprs;
-		}
+		connDB_flag = connDB.connect(muposysdb::datconex);
 	}
-	connDB.commit();
-	if(flag) reload();
+	catch(const std::exception& e)
+	{
+		Gtk::MessageDialog dlg("Error detectado durante conexion a BD",true,Gtk::MESSAGE_ERROR);
+		dlg.set_secondary_text(e.what());
+		dlg.run();
+		return;
+	}
+
+	bool flag = stepping(connDB,serviceSelected,ServiceStep::delivered);
+
+	if(flag)
+    {
+        connDB.commit();
+        reload();
+	}
+	connDB.close();
 }
 void TableServicies::on_menu_cancel_popup()
 {
+    std::cout << "on_menu_cancel_popup - serviceSelected : " << serviceSelected << " \n";
+	if(serviceSelected < 0) return;
+
 	//std::cerr << "TableServicies::on_menu_deliver_popup\n";
-	bool flag = false;
-	if(serviceSelected > 0) //If anything is selected
+	bool connDB_flag;
+	mps::Connector connDB;
+	try
 	{
-		std::string whereOrder;
-		whereOrder = "operation = ";
-		whereOrder += std::to_string(serviceSelected);
-		std::vector<muposysdb::MiasService*>* lstOprs = muposysdb::MiasService::select(connDB,whereOrder,0,'A');
-		if(lstOprs)
-		{
-			if(lstOprs->size() == 1)
-			{
-				//std::cerr << "Falo consulta hace MiasService, hay " << lstOprs->size() << ", respuestas cuabndo deve de haber una\n";
-				//std::cerr << "Filtro  " << whereOrder << "\n";
-				lstOprs->front()->upStep(connDB,(short)ServiceStep::cancel);
-				flag = true;
-			}
-			for(auto p : *lstOprs)
-			{
-				delete p;
-			}
-			delete lstOprs;
-		}
+		connDB_flag = connDB.connect(muposysdb::datconex);
 	}
-	connDB.commit();
-	if(flag)reload();
+	catch(const std::exception& e)
+	{
+		Gtk::MessageDialog dlg("Error detectado durante conexion a BD",true,Gtk::MESSAGE_ERROR);
+		dlg.set_secondary_text(e.what());
+		dlg.run();
+		return;
+	}
+
+	bool flag = stepping(connDB,serviceSelected,ServiceStep::cancel);
+
+	if(flag)
+    {
+        connDB.commit();
+        reload();
+	}
+	connDB.close();
 }
 
 TableServicies::Updater::Updater() : m_shall_stop(false), m_has_stopped(false)
@@ -837,25 +871,27 @@ bool TableServicies::on_button_press_event(GdkEventButton* button_event)
 	return_value = TreeView::on_button_press_event(button_event);
 
 	//Then do our custom stuff:
-	if( (button_event->type == GDK_BUTTON_PRESS) && (button_event->button == 3) )
+	if((button_event->type == GDK_BUTTON_PRESS) && (button_event->button == 3))
 	{
 		Glib::RefPtr<Gtk::TreeSelection> refTreeSelection = get_selection();
 		Gtk::TreeModel::iterator itSelected = refTreeSelection->get_selected();
 		Gtk::TreeModel::Row rowSelected = *itSelected;
 		//std::cout << "Selected service : " << rowSelected[columns.service] << " \n";
 		serviceSelected = rowSelected[columns.service];
+		std::cout << "serviceSelected : " << serviceSelected << " \n";
 		menu.popup_at_pointer((GdkEvent*)button_event);
 	}
-	else if( (button_event->type == GDK_DOUBLE_BUTTON_PRESS))
+	else if((button_event->type == GDK_DOUBLE_BUTTON_PRESS))
 	{
 		Glib::RefPtr<Gtk::TreeSelection> refTreeSelection = get_selection();
 		Gtk::TreeModel::iterator itSelected = refTreeSelection->get_selected();
 		Gtk::TreeModel::Row rowSelected = *itSelected;
 		//std::cout << "Selected service : " << rowSelected[columns.service] << " \n";
 		serviceSelected = rowSelected[columns.service];
-		
+
 		Sales* snow = new Sales(mias);
 		mias->add_activity(*snow);
+		std::cout << "Doble-click detected\n";
 	}
 
 	return return_value;
@@ -908,9 +944,9 @@ void TableSaling::init()
 	{
 		boxName.pack_start(lbName);
 		boxName.pack_start(inName);
-		lbName.set_text("Nombre : ");		
-	}	
-		
+		lbName.set_text("Nombre : ");
+	}
+
 	boxFloor.pack_end(frame);
 	{
 		frame.add(boxFrame);
@@ -1356,7 +1392,7 @@ void TableSaling::download(long order)
     std::vector<muposysdb::Sale*>* lstSales = muposysdb::Sale::select(connDB,whereOrder,0,'A');
     if(lstSales)
     {
-		
+
 
         for(auto s : *lstSales)
         {

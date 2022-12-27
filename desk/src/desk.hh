@@ -86,6 +86,8 @@ namespace mias
 {
 class Mias;
 
+bool stepping(mps::Connector&, long order,ServiceStep);
+
 class TableSaling : public mps::TableSaling
 {
 public:
@@ -218,8 +220,8 @@ private:
 	ModelColumns columns;
 	Gtk::ScrolledWindow scrolled;
 	Glib::RefPtr<Gtk::ListStore> tree_model;
-	mps::Connector connDB;
-	bool connDB_flag;
+	//mps::Connector connDB;
+	//bool connDB_flag;
 	bool is_runnig;
 	bool is_stop;
 	Glib::Dispatcher dispatcher;
