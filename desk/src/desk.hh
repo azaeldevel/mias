@@ -205,23 +205,10 @@ private:
 		mps::Connector connDB;
 		bool connDB_flag;
 	};
-	/*struct Row
-	{
-
-	};
-	struct Data
-	{
-		std::vector<muposysdb::MiasService*>* lstOprs;
-		std::vector<muposysdb::Progress*>* lstProgress;
-		bool reload;
-
-	};*/
 
 	ModelColumns columns;
 	Gtk::ScrolledWindow scrolled;
 	Glib::RefPtr<Gtk::ListStore> tree_model;
-	//mps::Connector connDB;
-	//bool connDB_flag;
 	bool is_runnig;
 	bool is_stop;
 	Glib::Dispatcher dispatcher;
@@ -229,10 +216,8 @@ private:
 	std::thread* updaterThread;
 	Menu menu;
 	long serviceSelected;
-	/*std::vector<muposysdb::MiasService*>* lstOprs;
-	std::vector<muposysdb::Progress*>* lstProgress;
-	long updated;*/
 	Mias* mias;
+	long order_view;
 };
 
 
@@ -241,6 +226,7 @@ class Saling : public Gtk::Box
 
 public:
 	Saling();
+	Saling(long o);
 	void init();
 	virtual ~Saling();
 
@@ -272,6 +258,7 @@ class Sales : public Gtk::Paned
 {
 public:
 	Sales(Mias*);
+	Sales(Mias*,long);
 	void init();
 	virtual ~Sales();
 
@@ -298,8 +285,10 @@ public:
 	virtual ~Mias();
 
 	void on_click_sales();
+    Sales& create_activity_sale();
 
 protected:
+
 
 private:
 	std::vector<Sales*> sale;
