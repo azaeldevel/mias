@@ -30,6 +30,8 @@
 
 namespace mps
 {
+	const Glib::ustring SearchItem::search_label = "Buscar...";
+	
 	SearchItem::SearchItem(Glib::ustring& n) : number(n)
 	{
 		init();
@@ -48,25 +50,35 @@ namespace mps
 			return;
 		}
 
-		set_title("Buscar...");
+		set_title(search_label);
+		
+		//
+		//get_vbox()->pack_start(boxSearch,false,true);
+		//boxSearch.pack_start(lbSearch,false,true);
+		//lbSearch.set_text("Buscar : ");
+		//boxSearch.pack_start(inSearch,false,true);
+		//get_vbox()->pack_start(data,false,true);
+		
+		treemodel = Gtk::ListStore::create(colums);
+		tree.set_model(treemodel);
+		tree.append_column("Número", colums.number);
+		tree.append_column("Nombre", colums.name);
+		tree.append_column("Descripcción", colums.brief);
+		scrolled.add(tree);
+		scrolled.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+		get_vbox()->pack_start(scrolled);
 
 		btCancel.signal_clicked().connect(sigc::mem_fun(*this,&SearchItem::on_bt_cancel_clicked));
 		btOK.signal_clicked().connect(sigc::mem_fun(*this,&SearchItem::on_bt_ok_clicked));
 		signal_response().connect(sigc::mem_fun(*this, &SearchItem::on_response));
 		btOK.set_image_from_icon_name("gtk-ok");
 		btCancel.set_image_from_icon_name("gtk-cancel");
-
-		//
-		get_vbox()->pack_start(bar,false,true);
-		bar.connect_entry(entry);
-		get_vbox()->pack_start(panel,false,true);
+		
 		get_vbox()->pack_start(boxButtons,false,true);
 		boxButtons.pack_start(btOK,false,true);
 		boxButtons.pack_start(btCancel,false,true);
 
 		set_default_size(340,200);
-		entry.show();
-		bar.show();
 		show_all_children();
 	}
 
@@ -98,20 +110,116 @@ namespace mps
 		}
 	}
 
-	muposysdb::CatalogItem* SearchItem::searching(const Glib::ustring& s)
+	bool SearchItem::on_key_press_event(GdkEventKey* event)
 	{
-
-
-		return NULL;
+		if (event->keyval >= 97 and event->keyval <= 122)//letras minisculas
+		{
+			//std::cout << "key : " << (char)event->keyval << "\n";
+			text.push_back((char)event->keyval);
+			searching(text);
+		}
+		else if (event->keyval >= 65 and event->keyval <= 90)//letras mayusculas
+		{
+			//std::cout << "key : " << (char)event->keyval << "\n";
+			text.push_back((char)event->keyval);
+			searching(text);
+		}
+		else if (event->keyval == 32)//space
+		{
+			//std::cout << "key : " << (char)event->keyval << "\n";
+			text.push_back((char)event->keyval);
+			searching(text);
+		}
+		else if (event->keyval == 45)//gion
+		{
+			//std::cout << "key : " << (char)event->keyval << "\n";
+			text.push_back((char)event->keyval);
+			searching(text);
+		}
+		else if (event->keyval == GDK_KEY_Return)
+		{
+			//std::cout << "key : Enter\n";
+		}
+		else if (event->keyval == GDK_KEY_Escape)
+		{
+			//std::cout << "key : Enter\n";
+			text = "";
+			set_title(search_label);
+			treemodel->clear();
+		}
+		else if (event->keyval == GDK_KEY_BackSpace)
+		{
+			//std::cout << "key : Enter\n";
+			Glib::ustring::iterator it = text.end();
+			if(text.size() > 0) 
+			{
+				--it;
+				text.erase(it);
+				set_title(search_label + " " + text);
+				searching(text);
+			}
+			else if(text.size() == 0)
+			{
+				treemodel->clear();
+			}
+				
+		}
+		else
+		{
+			//std::cout << "key : " << event->keyval << "\n";
+		}
+		
+		return false;
 	}
-	void SearchItem::on_search_text_changed()
+
+SearchItem::ModelColumns::ModelColumns()
+{
+	add(id);
+	add(number);
+	add(name);
+	add(brief);
+}
+
+void SearchItem::searching(const Glib::ustring& s)
+{
+	//std::cout << "key : " << text << "\n";
+	Glib::ustring where;
+	where += "number LIKE '%";
+	where += text + "%'";
+	where += " or brief LIKE '%";
+	where += text + "%'";
+	where += " or name LIKE '%";
+	where += text + "%'";
+	where += " or size LIKE '%";
+	where += text + "%'";
+	//std::cout << "where : " << where << "\n";	
+	set_title(search_label + " " + text);
+	std::vector<muposysdb::CatalogItem*>* lstItem = muposysdb::CatalogItem::select(connDB,where);
+	if(lstItem)
 	{
-		std::cout << "searching : " << entry.get_text() << "\n";
+		Gtk::TreeModel::Row row;
+		treemodel->clear();
+		//std::cout << "i : " << lstItem->size() << "\n";
+		for(size_t i = 0; i < lstItem->size(); i++)
+		{
+			lstItem->at(i)->downNumber(connDB);
+			lstItem->at(i)->downName(connDB);
+			lstItem->at(i)->downBrief(connDB);
+			
+			row = *(treemodel->append());
+			row[colums.id] = lstItem->at(i)->getID();
+			row[colums.number] = lstItem->at(i)->getNumber();
+			row[colums.name] = lstItem->at(i)->getName();
+			row[colums.brief] = lstItem->at(i)->getBrief();
+		}
+		
+		for(auto p : *lstItem)
+		{
+			delete p;
+		}
+		delete lstItem;
 	}
-
-
-
-
+}
 
 }
 
@@ -797,7 +905,7 @@ void TableServicies::on_menu_cancel_popup()
 
 TableServicies::Updater::Updater() : m_shall_stop(false), m_has_stopped(false)
 {
-	try
+	/*try
 	{
 		connDB_flag = connDB.connect(muposysdb::datconex);
 	}
@@ -805,7 +913,7 @@ TableServicies::Updater::Updater() : m_shall_stop(false), m_has_stopped(false)
 	{
 		std::cerr << e.what() << "\n";
 		return;
-	}
+	}*/
 }
 
 

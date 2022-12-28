@@ -57,24 +57,40 @@ protected:
 	void on_bt_ok_clicked();
 	void on_bt_cancel_clicked();
 	void on_response(int);
-	void on_search_text_changed();
-	void on_visible_child_changed();
+	bool on_key_press_event(GdkEventKey* key_event) override;
+	//void on_visible_child_changed();
 
-	muposysdb::CatalogItem* searching(const Glib::ustring& s);
+	void searching(const Glib::ustring& s);
 
+	class ModelColumns : public Gtk::TreeModel::ColumnRecord
+	{
+	public:
+		ModelColumns();
+		Gtk::TreeModelColumn<long> id;
+		Gtk::TreeModelColumn<Glib::ustring> number;
+		Gtk::TreeModelColumn<Glib::ustring> name;
+		Gtk::TreeModelColumn<Glib::ustring> brief;
+	};
+	
 private:
 	mps::Connector connDB;
 	bool connDB_flag;
 	Glib::ustring& number;
+	Glib::ustring text;
 
 	Gtk::Button btOK;
 	Gtk::Button btCancel;
-	Gtk::SearchBar bar;
-	Gtk::SearchEntry entry;
+	Gtk::Entry inSearch;
+	Gtk::Label lbSearch;
 	Gtk::ButtonBox boxButtons;
-	Gtk::VBox panel;
-
-	std::vector<muposysdb::CatalogItem*>* lstCatalog;
+	//Gtk::VBox data;
+	Gtk::HBox boxSearch;
+	Gtk::ScrolledWindow scrolled;
+	static const Glib::ustring search_label;
+	
+	ModelColumns colums;
+	Gtk::TreeView tree;
+	Glib::RefPtr<Gtk::ListStore> treemodel;
 };
 
 }
@@ -202,8 +218,8 @@ private:
 		bool m_shall_stop;
 		bool m_has_stopped;
 
-		mps::Connector connDB;
-		bool connDB_flag;
+		//mps::Connector connDB;
+		//bool connDB_flag;
 	};
 
 	ModelColumns columns;
