@@ -50,7 +50,7 @@ namespace mps
 class SearchItem : public Gtk::Dialog
 {
 public:
-	SearchItem(Glib::ustring&);
+	SearchItem(long&);
 	void init();
 
 protected:
@@ -58,7 +58,7 @@ protected:
 	void on_bt_cancel_clicked();
 	void on_response(int);
 	bool on_key_press_event(GdkEventKey* key_event) override;
-	//void on_visible_child_changed();
+	void get_selection();
 
 	void searching(const Glib::ustring& s);
 
@@ -75,7 +75,7 @@ protected:
 private:
 	mps::Connector connDB;
 	bool connDB_flag;
-	Glib::ustring& number;
+	long& number;
 	Glib::ustring text;
 
 	Gtk::Button btOK;
@@ -121,6 +121,12 @@ protected:
 	bool on_key_press_event(GdkEventKey* key_event) override;
 	void cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& new_text);
     virtual void download(long order);
+	/**
+	 * \brief escribe los datos los datos el regstro currepondientes al item
+	 * \param back_number es el numero usado internamente, el cual sera escrito en la base de datos
+	 * \param orign_number es el numero escrito por el usuario
+	 * */
+	void set_data(Gtk::TreeModel::Row&,const Glib::ustring& back_number,const Glib::ustring& orign_number,bool combined);
 
 	Gtk::Label lbName;
 	Gtk::Entry inName;

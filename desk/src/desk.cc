@@ -32,12 +32,14 @@ namespace mps
 {
 	const Glib::ustring SearchItem::search_label = "Buscar...";
 	
-	SearchItem::SearchItem(Glib::ustring& n) : number(n)
+	SearchItem::SearchItem(long& n) : number(n)
 	{
 		init();
 	}
 	void SearchItem::init()
 	{
+		number = -1;
+		
 		try
 		{
 			connDB_flag = connDB.connect(muposysdb::datconex);
@@ -53,12 +55,6 @@ namespace mps
 		set_title(search_label);
 		
 		//
-		//get_vbox()->pack_start(boxSearch,false,true);
-		//boxSearch.pack_start(lbSearch,false,true);
-		//lbSearch.set_text("Buscar : ");
-		//boxSearch.pack_start(inSearch,false,true);
-		//get_vbox()->pack_start(data,false,true);
-		
 		treemodel = Gtk::ListStore::create(colums);
 		tree.set_model(treemodel);
 		tree.append_column("Número", colums.number);
@@ -89,8 +85,9 @@ namespace mps
 	}
 	void SearchItem::on_bt_ok_clicked()
 	{
-		response(Gtk::RESPONSE_OK);
+		get_selection();
 	}
+	
 	void SearchItem::on_response(int res)
 	{
 		if(res == Gtk::RESPONSE_OK)
@@ -138,7 +135,8 @@ namespace mps
 		}
 		else if (event->keyval == GDK_KEY_Return)
 		{
-			//std::cout << "key : Enter\n";
+			std::cout << "key : Enter\n";
+			get_selection();
 		}
 		else if (event->keyval == GDK_KEY_Escape)
 		{
@@ -219,6 +217,24 @@ void SearchItem::searching(const Glib::ustring& s)
 		}
 		delete lstItem;
 	}
+}
+void SearchItem::get_selection()
+{
+	Glib::RefPtr<Gtk::TreeSelection> refSelection = tree.get_selection();
+	Gtk::TreeModel::iterator iter = refSelection->get_selected();
+	if(iter) //If anything is selected
+	{
+		Gtk::TreeModel::Row row = *iter;
+		number = row[colums.id];
+		response(Gtk::RESPONSE_OK);
+	}
+	else if(treemodel->children().size() > 0)
+	{
+		Gtk::TreeModel::Row row = treemodel->children()[0];
+		number = row[colums.id];
+		response(Gtk::RESPONSE_OK);
+	}
+	
 }
 
 }
@@ -654,20 +670,6 @@ void TableServicies::reload()
 	load();
 }
 
-
-bool TableSaling::on_key_press_event(GdkEventKey* event)
-{
-	//std::cout << "on_key_press_event\n";
-	if (event->type == GDK_KEY_PRESS and event->keyval == GDK_KEY_F4)
-	{
-		//std::cout << "on_key_press_event F4 begin\n";
-		Glib::ustring number;
-		mps::SearchItem search(number);
-		int res = search.run();
-		//std::cout << "on_key_press_event F4 end\n";
-	}
-	return false;
-}
 
 
 
@@ -1304,36 +1306,38 @@ void TableSaling::cellrenderer_validated_on_edited_number(const Glib::ustring& p
 	{
 		number = strnumb;
 	}
-
-	std::string where = "number = '" + number + "'";
+	
+	Gtk::TreeModel::iterator iter = tree_model->get_iter(path);
+	Gtk::TreeModel::Row row = *iter;
+	if(iter) set_data(row,number,strnumb,combined);
+	
+}
+void TableSaling::set_data(Gtk::TreeModel::Row& row,const Glib::ustring& back_number,const Glib::ustring& origin_number,bool combined = false)
+{
+	std::string where = "number = '" + back_number + "'";
 	std::vector<muposysdb::CatalogItem*>* lstCatItems = muposysdb::CatalogItem::select(connDB,where);
 	if(lstCatItems->size() == 1)
 	{
 		lstCatItems->front()->downBrief(connDB);
 		lstCatItems->front()->downValue(connDB);
 		lstCatItems->front()->downPresentation(connDB);
-
-		Gtk::TreeModel::iterator iter = tree_model->get_iter(path);
-		if(iter)
+		
+		row[columns.item] = lstCatItems->front()->getID();
+		row[columns.number] = origin_number;
+		if(combined)
 		{
-			Gtk::TreeModel::Row row = *iter;
-			row[columns.item] = lstCatItems->front()->getID();
-			row[columns.number] = strnumb;
-			if(combined)
-			{
-				row[columns.name] = get_brief(strnumb);
-				row[columns.cost_unit] = get_price(strnumb);
-			}
-			else
-			{
-				row[columns.name] = lstCatItems->front()->getBrief();
-				row[columns.cost_unit] = lstCatItems->front()->getValue();
-			}
-
-			row[columns.presentation] = lstCatItems->front()->getPresentation();
-			row[columns.amount] = row[columns.quantity] * row[columns.cost_unit];
+			row[columns.name] = get_brief(origin_number);
+			row[columns.cost_unit] = get_price(origin_number);
 		}
-
+		else
+		{
+			row[columns.name] = lstCatItems->front()->getBrief();
+			row[columns.cost_unit] = lstCatItems->front()->getValue();
+		}
+			
+		row[columns.presentation] = lstCatItems->front()->getPresentation();
+		row[columns.amount] = row[columns.quantity] * row[columns.cost_unit];
+			
 		for(muposysdb::CatalogItem* p : *lstCatItems)
 		{
 			delete p;
@@ -1341,7 +1345,6 @@ void TableSaling::cellrenderer_validated_on_edited_number(const Glib::ustring& p
 		delete lstCatItems;
 	}
 }
-
 
 
 std::vector<Glib::ustring> TableSaling::split(const Glib::ustring& number)
@@ -1498,6 +1501,53 @@ void TableSaling::download(long order)
     }
 
 }
+bool TableSaling::on_key_press_event(GdkEventKey* event)
+{
+	//std::cout << "on_key_press_event\n";
+	if (event->type == GDK_KEY_PRESS and event->keyval == GDK_KEY_F4)
+	{
+		//std::cout << "on_key_press_event F4 begin\n";
+		long number;
+		mps::SearchItem search(number);
+		if(search.run() == Gtk::RESPONSE_OK)
+		{
+			//std::cout << "number : " << number  << "\n";
+			Glib::RefPtr<Gtk::TreeSelection> refSelection = table.get_selection();
+			Gtk::TreeModel::iterator iter = refSelection->get_selected();
+			if(iter) //If anything is selected
+			{
+				mps::Connector connDB;
+				bool connDB_flag;
+				try
+				{
+					connDB_flag = connDB.connect(muposysdb::datconex);
+				}
+				catch(const std::exception& e)
+				{
+					Gtk::MessageDialog dlg("Error detectado durante conexion a BD",true,Gtk::MESSAGE_ERROR);
+					dlg.set_secondary_text(e.what());
+					dlg.run();
+					return false;
+				}
+				
+				muposysdb::CatalogItem item(number);
+				item.downNumber(connDB);
+				Gtk::TreeModel::Row row = *iter;
+				set_data(row,item.getNumber(),item.getNumber());
+				
+				connDB.close();
+			}
+	
+		}
+		else
+		{
+			
+		}
+		
+	}
+	return false;
+}
+
 
 }
 
