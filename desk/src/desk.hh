@@ -50,31 +50,47 @@ namespace mps
 class SearchItem : public Gtk::Dialog
 {
 public:
-	SearchItem(Glib::ustring&);
+	SearchItem(long&);
 	void init();
 
 protected:
 	void on_bt_ok_clicked();
 	void on_bt_cancel_clicked();
 	void on_response(int);
-	void on_search_text_changed();
-	void on_visible_child_changed();
+	bool on_key_press_event(GdkEventKey* key_event) override;
+	void get_selection();
 
-	muposysdb::CatalogItem* searching(const Glib::ustring& s);
+	void searching(const Glib::ustring& s);
 
+	class ModelColumns : public Gtk::TreeModel::ColumnRecord
+	{
+	public:
+		ModelColumns();
+		Gtk::TreeModelColumn<long> id;
+		Gtk::TreeModelColumn<Glib::ustring> number;
+		Gtk::TreeModelColumn<Glib::ustring> name;
+		Gtk::TreeModelColumn<Glib::ustring> brief;
+	};
+	
 private:
 	mps::Connector connDB;
 	bool connDB_flag;
-	Glib::ustring& number;
+	long& number;
+	Glib::ustring text;
 
 	Gtk::Button btOK;
 	Gtk::Button btCancel;
-	Gtk::SearchBar bar;
-	Gtk::SearchEntry entry;
+	Gtk::Entry inSearch;
+	Gtk::Label lbSearch;
 	Gtk::ButtonBox boxButtons;
-	Gtk::VBox panel;
-
-	std::vector<muposysdb::CatalogItem*>* lstCatalog;
+	//Gtk::VBox data;
+	Gtk::HBox boxSearch;
+	Gtk::ScrolledWindow scrolled;
+	static const Glib::ustring search_label;
+	
+	ModelColumns colums;
+	Gtk::TreeView tree;
+	Glib::RefPtr<Gtk::ListStore> treemodel;
 };
 
 }
@@ -104,7 +120,16 @@ protected:
 	void on_save_clicked();
 	bool on_key_press_event(GdkEventKey* key_event) override;
 	void cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& new_text);
-    virtual void download(long order);
+	/**
+	 * \brief escribe los datos los datos el regstro currepondientes al item
+	 * \param back_number es el numero usado internamente, el cual sera escrito en la base de datos
+	 * \param orign_number es el numero escrito por el usuario
+	 * */
+	void set_data(Gtk::TreeModel::Row&,const Glib::ustring& back_number,const Glib::ustring& orign_number,bool combined);
+	
+	void set_data(Gtk::TreeModel::Row&,long);
+	
+	virtual void load_order(long);
 
 	Gtk::Label lbName;
 	Gtk::Entry inName;
@@ -202,8 +227,8 @@ private:
 		bool m_shall_stop;
 		bool m_has_stopped;
 
-		mps::Connector connDB;
-		bool connDB_flag;
+		//mps::Connector connDB;
+		//bool connDB_flag;
 	};
 
 	ModelColumns columns;
@@ -259,6 +284,7 @@ class Sales : public Gtk::Paned
 public:
 	Sales(Mias*);
 	Sales(Mias*,long);
+	//Sales(Mias*,mps::Crud);
 	void init();
 	virtual ~Sales();
 
