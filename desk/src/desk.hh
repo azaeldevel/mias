@@ -120,13 +120,16 @@ protected:
 	void on_save_clicked();
 	bool on_key_press_event(GdkEventKey* key_event) override;
 	void cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& new_text);
-    virtual void download(long order);
 	/**
 	 * \brief escribe los datos los datos el regstro currepondientes al item
 	 * \param back_number es el numero usado internamente, el cual sera escrito en la base de datos
 	 * \param orign_number es el numero escrito por el usuario
 	 * */
 	void set_data(Gtk::TreeModel::Row&,const Glib::ustring& back_number,const Glib::ustring& orign_number,bool combined);
+	
+	void set_data(Gtk::TreeModel::Row&,long);
+	
+	virtual void load_order(long);
 
 	Gtk::Label lbName;
 	Gtk::Entry inName;
@@ -281,6 +284,7 @@ class Sales : public Gtk::Paned
 public:
 	Sales(Mias*);
 	Sales(Mias*,long);
+	//Sales(Mias*,mps::Crud);
 	void init();
 	virtual ~Sales();
 

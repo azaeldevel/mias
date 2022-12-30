@@ -24,15 +24,6 @@
 
 namespace mias
 {
-	enum class crud
-	{
-		none,
-		create,
-		read,
-		update,
-		remove,		
-	};
-
 	enum class ServiceStep
 	{
 		none,

@@ -302,11 +302,11 @@ void Mias::init()
 	btSales.set_icon_name("gtk-add");
 	tbMain.add(btSales);
 	show_all_children();
-
+	
 	//std::cout << " Mias::init step 2\n";
-
+	
 	btSales.signal_clicked().connect(sigc::mem_fun(*this, &Mias::on_click_sales));
-
+	
 	//std::cout << " Mias::init step 3\n";
 }
 Mias::~Mias()
@@ -347,6 +347,8 @@ Sales& Mias::create_activity_sale(long o)
 	sale.push_back(snow);
 	//std::cout << " Mias::on_click_sales step 1\n";
 	nbMain.append_page(*snow);
+	Glib::ustring title = "Order - " + std::to_string(o);
+	nbMain.set_tab_label_text((Gtk::Widget&)*snow,title);
 	snow->set(get_user());
 	snow->show_all();
 
@@ -361,6 +363,7 @@ Sales::Sales(Mias* m) : user(NULL),pending(m)
 }
 Sales::Sales(Mias* m,long o) : user(NULL),pending(m),saling(o)
 {
+	std::cout << "Sales::Sales(app," << o << ")\n";
 	init();
 }
 void Sales::init()
@@ -395,6 +398,7 @@ Saling::Saling() : Gtk::Box(Gtk::ORIENTATION_VERTICAL),user(NULL)
 }
 Saling::Saling(long o) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),user(NULL),table(o)
 {
+	std::cout << "Saling::Saling(" << o << ")\n";
 	init();
 }
 void Saling::init()
@@ -982,7 +986,7 @@ bool TableServicies::on_button_press_event(GdkEventButton* button_event)
 		serviceSelected = rowSelected[columns.service];
 
 		std::cout << "Doble-click detected\n";
-		Sales& snow = mias->create_activity_sale();
+		Sales& snow = mias->create_activity_sale(serviceSelected);
 	}
 
 	return return_value;
@@ -1014,30 +1018,31 @@ TableSaling::TableSaling() : user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame
 }
 TableSaling::TableSaling(long o) : mps::TableSaling(o),user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
 {
-    std::cout << "mias::TableSaling::TableSaling(long)\n";
+    //std::cout << "mias::TableSaling::TableSaling(" << o << ")\n";
 	init();
+	load_order(o);
 }
 void TableSaling::init()
 {
-    std::cout << "mias::TableSaling::init mode : " << (short)mode << "\n";
+    //std::cout << "mias::TableSaling::init mode : " << (short)crud << "\n";
 
-	if(mode == Mode::capture)
+	if(crud == mps::Crud::create)
     {
         btSave.signal_clicked().connect( sigc::mem_fun(*this,&TableSaling::on_save_clicked));
     }
-    else if(mode == Mode::view)
+    else if(crud == mps::Crud::read)
     {
         btSave.set_sensitive(false);
     }
 
-    if(mode == Mode::capture)
+    if(crud == mps::Crud::create)
     {
         Gtk::CellRendererText* cell_number = static_cast<Gtk::CellRendererText*>(table.get_column_cell_renderer(2));
         Gtk::TreeViewColumn* col_number = table.get_column(2);
         cell_number->property_editable() = true;
         cell_number->signal_edited().connect(sigc::mem_fun(*this, &TableSaling::cellrenderer_validated_on_edited_number));
     }
-
+	
 	boxAditional.pack_start(boxName);
 	{
 		boxName.pack_start(lbName);
@@ -1205,7 +1210,7 @@ void TableSaling::save()
 			dlg.run();
 			return;
 		}
-
+		
 		delete cat_item;
 	}
 	//std::cout << "saving :step 8\n";
@@ -1483,23 +1488,33 @@ float TableSaling::get_price(const Glib::ustring& str)
 	return std::max(price1,price2) + 20.0;
 }
 
-void TableSaling::download(long order)
+void TableSaling::load_order(long order)
 {
+	tree_model->clear();
     std::string whereOrder;
     whereOrder = "operation = ";
     whereOrder += std::to_string(order);
     std::vector<muposysdb::Sale*>* lstSales = muposysdb::Sale::select(connDB,whereOrder,0,'A');
     if(lstSales)
     {
-
-
-        for(auto s : *lstSales)
-        {
-            delete s;
-        }
-        delete lstSales;
+		Gtk::TreeModel::Row row;
+		for(muposysdb::Sale* s : *lstSales)
+		{
+			s->downOperation(connDB);
+			s->downItem(connDB);
+			s->downAmount(connDB);
+			row = *tree_model->append();
+			
+			row[columns.quantity] = s->getAmount();
+			set_data(row,s->getItem().getID());
+		}
+		
+		for(auto s : *lstSales)
+		{
+			delete s;
+		}
+		delete lstSales;
     }
-
 }
 bool TableSaling::on_key_press_event(GdkEventKey* event)
 {
@@ -1547,7 +1562,33 @@ bool TableSaling::on_key_press_event(GdkEventKey* event)
 	}
 	return false;
 }
-
+void TableSaling::set_data(Gtk::TreeModel::Row& row,long item)
+{
+	std::string where = "id = '" + std::to_string(item) + "'";
+	std::vector<muposysdb::CatalogItem*>* lstCatItems = muposysdb::CatalogItem::select(connDB,where);
+	if(lstCatItems->size() == 1)
+	{
+		lstCatItems->front()->downBrief(connDB);
+		lstCatItems->front()->downValue(connDB);
+		lstCatItems->front()->downPresentation(connDB);
+		lstCatItems->front()->downNumber(connDB);
+		
+		row[columns.item] = lstCatItems->front()->getID();
+		row[columns.number] = lstCatItems->front()->getNumber();
+		row[columns.name] = lstCatItems->front()->getBrief();
+		row[columns.cost_unit] = lstCatItems->front()->getValue();
+		
+		row[columns.presentation] = lstCatItems->front()->getPresentation();
+		row[columns.amount] = row[columns.quantity] * row[columns.cost_unit];
+			
+		for(muposysdb::CatalogItem* p : *lstCatItems)
+		{
+			delete p;
+		}
+		delete lstCatItems;
+	}
+	
+}
 
 }
 
