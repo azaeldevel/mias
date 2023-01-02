@@ -71,7 +71,7 @@ protected:
 		Gtk::TreeModelColumn<Glib::ustring> name;
 		Gtk::TreeModelColumn<Glib::ustring> brief;
 	};
-	
+
 private:
 	mps::Connector connDB;
 	bool connDB_flag;
@@ -87,7 +87,7 @@ private:
 	Gtk::HBox boxSearch;
 	Gtk::ScrolledWindow scrolled;
 	static const Glib::ustring search_label;
-	
+
 	ModelColumns colums;
 	Gtk::TreeView tree;
 	Glib::RefPtr<Gtk::ListStore> treemodel;
@@ -112,7 +112,7 @@ public:
 	void init();
 	virtual ~TableSaling();
 
-	void clear();
+	virtual void clear();
 	void set(const muposysdb::User& user);
 
 protected:
@@ -126,9 +126,9 @@ protected:
 	 * \param orign_number es el numero escrito por el usuario
 	 * */
 	void set_data(Gtk::TreeModel::Row&,const Glib::ustring& back_number,const Glib::ustring& orign_number,bool combined);
-	
+
 	void set_data(Gtk::TreeModel::Row&,long);
-	
+
 	virtual void load_order(long);
 
 	Gtk::Label lbName;

@@ -25,6 +25,7 @@ SetupIconFile=C:\Users\Azael\Documents\develop\octetos\mias\mias.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+OutputDir=installer
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
