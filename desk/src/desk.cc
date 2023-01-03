@@ -823,7 +823,7 @@ void TableServicies::on_menu_cooked_popup()
 }
 void TableServicies::on_menu_waiting_popup()
 {
-    std::cout << "on_menu_waiting_popup - serviceSelected : " << serviceSelected << " \n";
+    //std::cout << "on_menu_waiting_popup - serviceSelected : " << serviceSelected << " \n";
 	if(serviceSelected < 0) return;
 
 	//std::cerr << "TableServicies::on_menu_cooked_popup\n";
@@ -852,7 +852,7 @@ void TableServicies::on_menu_waiting_popup()
 }
 void TableServicies::on_menu_deliver_popup()
 {
-    std::cout << "on_menu_deliver_popup - serviceSelected : " << serviceSelected << " \n";
+    //std::cout << "on_menu_deliver_popup - serviceSelected : " << serviceSelected << " \n";
 	if(serviceSelected < 0) return;
 
 	//std::cerr << "TableServicies::on_menu_deliver_popup\n";
@@ -881,7 +881,7 @@ void TableServicies::on_menu_deliver_popup()
 }
 void TableServicies::on_menu_cancel_popup()
 {
-    std::cout << "on_menu_cancel_popup - serviceSelected : " << serviceSelected << " \n";
+    //std::cout << "on_menu_cancel_popup - serviceSelected : " << serviceSelected << " \n";
 	if(serviceSelected < 0) return;
 
 	//std::cerr << "TableServicies::on_menu_deliver_popup\n";
@@ -1014,9 +1014,10 @@ bool TableServicies::on_key_press_event(GdkEventKey* event)
 		serviceSelected = rowSelected[columns.service];
 		//std::cout << "serviceSelected : " << serviceSelected << " \n";
 		menu.popup_at_pointer((GdkEvent*)event);
+		return false;
 	}
 	
-	return false;
+	return true;
 }
 
 
