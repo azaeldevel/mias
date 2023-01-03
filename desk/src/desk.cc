@@ -974,7 +974,7 @@ bool TableServicies::on_button_press_event(GdkEventButton* button_event)
 		Gtk::TreeModel::Row rowSelected = *itSelected;
 		//std::cout << "Selected service : " << rowSelected[columns.service] << " \n";
 		serviceSelected = rowSelected[columns.service];
-		std::cout << "serviceSelected : " << serviceSelected << " \n";
+		//std::cout << "serviceSelected : " << serviceSelected << " \n";
 		menu.popup_at_pointer((GdkEvent*)button_event);
 	}
 	else if((button_event->type == GDK_DOUBLE_BUTTON_PRESS))
@@ -985,7 +985,7 @@ bool TableServicies::on_button_press_event(GdkEventButton* button_event)
 		//std::cout << "Selected service : " << rowSelected[columns.service] << " \n";
 		serviceSelected = rowSelected[columns.service];
 
-		std::cout << "Doble-click detected\n";
+		//std::cout << "Doble-click detected\n";
 		Sales& snow = mias->create_activity_sale(serviceSelected);
 	}
 
@@ -1003,7 +1003,21 @@ bool TableServicies::on_leave_notify_event (GdkEventCrossing* crossing_event)
 
 	return false;
 }
-
+bool TableServicies::on_key_press_event(GdkEventKey* event)
+{
+	if (event->keyval == GDK_KEY_Return)
+	{
+		Glib::RefPtr<Gtk::TreeSelection> refTreeSelection = get_selection();
+		Gtk::TreeModel::iterator itSelected = refTreeSelection->get_selected();
+		Gtk::TreeModel::Row rowSelected = *itSelected;
+		//std::cout << "Selected service : " << rowSelected[columns.service] << " \n";
+		serviceSelected = rowSelected[columns.service];
+		//std::cout << "serviceSelected : " << serviceSelected << " \n";
+		menu.popup_at_pointer((GdkEvent*)event);
+	}
+	
+	return false;
+}
 
 
 
@@ -1013,7 +1027,7 @@ bool TableServicies::on_leave_notify_event (GdkEventCrossing* crossing_event)
 
 TableSaling::TableSaling() : user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
 {
-    std::cout << "mias::TableSaling::TableSaling()\n";
+    //std::cout << "mias::TableSaling::TableSaling()\n";
 	init();
 }
 TableSaling::TableSaling(long o) : mps::TableSaling(o),user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
