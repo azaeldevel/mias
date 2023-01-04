@@ -795,7 +795,7 @@ void TableServicies::on_notification_from_worker_thread()
 }
 void TableServicies::on_menu_cooked_popup()
 {
-    std::cout << "on_menu_cooked_popup - serviceSelected : " << serviceSelected << " \n";
+    //std::cout << "on_menu_cooked_popup - serviceSelected : " << serviceSelected << " \n";
 	if(serviceSelected < 0) return;
 
 	bool connDB_flag;

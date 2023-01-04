@@ -51,7 +51,14 @@ namespace mias
 		param = find("item");
 		if(param)
 		{
-			item = std::stol(param);
+			if(strcmp(param,"next") == 0)
+			{
+				item = 0;
+			}
+			else
+			{
+				item = std::stol(param);
+			}
 		}
 		else
 		{
@@ -74,7 +81,15 @@ namespace mias
 			session = param;
 		}
 	}
-
+	GetParams::GetParams(const GetParams& p) : mps::Params(p)
+	{
+		station = p.station;
+		order = p.order;
+		step = p.step;
+		item = p.item;
+		restoring = p.restoring;
+	}
+	
 
 GetParams::operator std::string()const
 {
@@ -147,6 +162,10 @@ void BodyApplication::programs(std::ostream& out)
 		if(params.step == Eating::none and params.order == -1)
 		{
 			select_order(out);
+		}
+		else if(params.step == Eating::none and params.order == 0 and not params.restoring)
+		{
+			//
 		}
 		else if(params.step == Eating::none and params.order > 0 and not params.restoring)
 		{
@@ -556,7 +575,23 @@ int Application::main(std::ostream& out)
 		head.print(out);
 		return EXIT_SUCCESS;
 	}
-
+	
+	if(params.step == Eating::none and params.order == 0 and params.item == 0 and not params.restoring)
+	{//detected next item in main menu
+		GetParams p(params);
+		BodyApplication& b = (BodyApplication&)*body;
+		p.step = Eating::accept;
+		b.select_next(p);
+		if(p.order > 0 and p.item > 0)
+		{
+		std::string strparams = (std::string)p;
+		strparams = "application.cgi?" + strparams;
+		//out << "params : "<< (std::string)strparams << "\n";
+		head.redirect(0,strparams.c_str());
+		}
+	}
+	else
+	{
 	switch(params.step)
 	{
 		case Eating::none:
@@ -628,6 +663,7 @@ int Application::main(std::ostream& out)
 			steping(Eating::cancel);
 			connDB.commit();
 			break;
+	}
 	}
 
 	this->print(out);
