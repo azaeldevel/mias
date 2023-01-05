@@ -166,6 +166,8 @@ public:
 
 	// Dispatcher handler.
 	void on_notification_from_worker_thread();
+	bool on_key_press_event(GdkEventKey* key_event) override;
+	
 
 	// Signal handlers.
 	void on_start_services();

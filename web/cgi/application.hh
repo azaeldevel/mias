@@ -34,6 +34,7 @@ struct GetParams : public mps::Params
 	bool restoring;
 
 	GetParams();
+	GetParams(const GetParams&);
 	operator std::string()const;
 };
 
@@ -56,6 +57,8 @@ public:
 	virtual void programs(std::ostream& out);
 	void select_order(std::ostream& out);
 	void select_item(std::ostream& out);
+	void select_next(GetParams&);
+	decltype(muposysdb::Progress().getStocking().getID()) select_item_next(decltype(muposysdb::Progress().getStocking().getID()) id);
 	void accepted_item(std::ostream& out);
 	void restoring_order(std::ostream& out);
 	void select_item_oven(std::ostream& out);

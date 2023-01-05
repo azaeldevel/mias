@@ -3,6 +3,7 @@
 #include <cstring>
 #include <sstream>
 #include <vector>
+#include <string>
 
 #include "application.hh"
 
@@ -26,7 +27,8 @@ void BodyApplication::select_order(std::ostream& out)
 				out << "\t\t\t\t<label for=\"order\"><b>Orden:</b></label><br>\n";
 				out << "\t\t\t\t<select name=\"order\" id=\"orderList\" onchange=\"accepthref()\">\n";
 				{
-						out << "\t\t\t\t\t<option value=\"next\">next</option>\n";
+						out << "\t\t\t\t\t<option value=\"none\">Seleccione..</option>\n";
+						out << "\t\t\t\t\t<option value=\"next\">Siguiente</option>\n";
 						for(auto p : *lstService)
 						{
 							p->downName(*connDB);
@@ -97,6 +99,67 @@ void BodyApplication::select_item(std::ostream& out)
 			}
 		}
 		out << "\t\t\t</div>\n";
+}
+
+void BodyApplication::select_next(GetParams& p)
+{
+	const muposysdb::Progress service;
+	decltype(service.getStocking().getID()) item = 0;
+	
+	std::string where = "step >= ";
+	where += std::to_string((short)ServiceStep::created);
+	where +=  " and step <  ";
+	where += std::to_string((short)ServiceStep::delivered);
+	std::vector<muposysdb::MiasService*>* lstService = muposysdb::MiasService::select(*connDB,where,0,'D');
+	if(lstService->size() > 0)
+	{
+		for(auto s : *lstService)
+		{
+			s->downStep(*connDB);
+			item = select_item_next(s->getOperation().getID());
+			if(item > 0 )
+			{
+				p.order = s->getOperation().getID();
+				p.item = item;
+			}
+		}
+		for(auto s : *lstService)
+		{
+			delete s;
+		}
+		delete lstService;
+	}
+}
+decltype(muposysdb::Progress().getStocking().getID()) BodyApplication::select_item_next(decltype(muposysdb::Progress().getStocking().getID()) id)
+{
+	const muposysdb::Progress service;
+	decltype(service.getStocking().getID()) ret_id = 0;
+	std::string where = "operation = ";
+	where += std::to_string(id);
+	where += " and step = ";
+	where += std::to_string((short)Eating::created);
+	std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(*connDB,where,0,'A');
+	if(lstProgress->size() > 0)
+	{
+		for(auto p : *lstProgress)
+		{
+			p->downStocking(*connDB);
+			p->getStocking().downItem(*connDB);
+			p->getStocking().getItem().downStation(*connDB);
+			if((Station)p->getStocking().getItem().getStation() == params.station)
+			{
+				ret_id = p->getStocking().getID();
+				break;
+			}
+		}
+		for(auto p : *lstProgress)
+		{
+			delete p;
+		}
+		delete lstProgress;
+	}
+	
+	return ret_id;
 }
 void BodyApplication::accepted_item(std::ostream& out)
 {

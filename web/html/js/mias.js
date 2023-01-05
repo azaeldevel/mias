@@ -2,11 +2,14 @@
 function accepthref() 
 {  
   const urlParams = new URLSearchParams(window.location.search);
+  
+  
   var station = urlParams.get("station");
   var session = urlParams.get("session");
     
   var orderSelected = document.getElementById("orderList").value;
   var ref = "application.cgi?station=" + station + "&order=" + orderSelected + "&step=none&session=" + session;
+  if(orderSelected == "next") ref += "&item=next"
   
   window.location.href = ref;
 }
