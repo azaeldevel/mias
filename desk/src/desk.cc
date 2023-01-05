@@ -135,7 +135,7 @@ namespace mps
 		}
 		else if (event->keyval == GDK_KEY_Return)
 		{
-			std::cout << "key : Enter\n";
+			//std::cout << "key : Enter\n";
 			get_selection();
 		}
 		else if (event->keyval == GDK_KEY_Escape)
@@ -795,7 +795,7 @@ void TableServicies::on_notification_from_worker_thread()
 }
 void TableServicies::on_menu_cooked_popup()
 {
-    std::cout << "on_menu_cooked_popup - serviceSelected : " << serviceSelected << " \n";
+    //std::cout << "on_menu_cooked_popup - serviceSelected : " << serviceSelected << " \n";
 	if(serviceSelected < 0) return;
 
 	bool connDB_flag;
@@ -823,7 +823,7 @@ void TableServicies::on_menu_cooked_popup()
 }
 void TableServicies::on_menu_waiting_popup()
 {
-    std::cout << "on_menu_waiting_popup - serviceSelected : " << serviceSelected << " \n";
+    //std::cout << "on_menu_waiting_popup - serviceSelected : " << serviceSelected << " \n";
 	if(serviceSelected < 0) return;
 
 	//std::cerr << "TableServicies::on_menu_cooked_popup\n";
@@ -852,7 +852,7 @@ void TableServicies::on_menu_waiting_popup()
 }
 void TableServicies::on_menu_deliver_popup()
 {
-    std::cout << "on_menu_deliver_popup - serviceSelected : " << serviceSelected << " \n";
+    //std::cout << "on_menu_deliver_popup - serviceSelected : " << serviceSelected << " \n";
 	if(serviceSelected < 0) return;
 
 	//std::cerr << "TableServicies::on_menu_deliver_popup\n";
@@ -881,7 +881,7 @@ void TableServicies::on_menu_deliver_popup()
 }
 void TableServicies::on_menu_cancel_popup()
 {
-    std::cout << "on_menu_cancel_popup - serviceSelected : " << serviceSelected << " \n";
+    //std::cout << "on_menu_cancel_popup - serviceSelected : " << serviceSelected << " \n";
 	if(serviceSelected < 0) return;
 
 	//std::cerr << "TableServicies::on_menu_deliver_popup\n";
@@ -1013,7 +1013,7 @@ bool TableServicies::on_leave_notify_event (GdkEventCrossing* crossing_event)
 
 TableSaling::TableSaling() : user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
 {
-    std::cout << "mias::TableSaling::TableSaling()\n";
+    //std::cout << "mias::TableSaling::TableSaling()\n";
 	init();
 }
 TableSaling::TableSaling(long o) : mps::TableSaling(o),user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
