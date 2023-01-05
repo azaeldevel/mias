@@ -591,7 +591,9 @@ int Application::main(std::ostream& out)
 		}
 		else
 		{
-		std::string strparams = "application.cgi?session=" + params.session;
+		std::string strparams = "application.cgi?step=none&station=";
+		strparams += to_string(params.station);
+		strparams += "&session=" + params.session ;
 		//out << "params : "<< (std::string)strparams << "\n";
 		head.redirect(0,strparams.c_str());
 		}
