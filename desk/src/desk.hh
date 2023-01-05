@@ -167,7 +167,7 @@ public:
 	// Dispatcher handler.
 	void on_notification_from_worker_thread();
 	bool on_key_press_event(GdkEventKey* key_event) override;
-	
+
 
 	// Signal handlers.
 	void on_start_services();
@@ -317,6 +317,8 @@ public:
     Sales& create_activity_sale(long);
 
 protected:
+    void enables();
+    virtual void check_session();
 
 private:
 	std::vector<Sales*> sale;
