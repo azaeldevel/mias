@@ -35,3 +35,5 @@ Output
 installer/adwaita-icon-theme-3.24.0
 installer/Windows-10-master
 installer/*.exe
+web/icons/*.ico
+web/icons/*.png
