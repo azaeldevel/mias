@@ -31,7 +31,7 @@
 namespace mps
 {
 	const Glib::ustring SearchItem::search_label = "Buscar...";
-	
+
 	SearchItem::SearchItem(long& n) : number(n)
 	{
 		init();
@@ -39,7 +39,7 @@ namespace mps
 	void SearchItem::init()
 	{
 		number = -1;
-		
+
 		try
 		{
 			connDB_flag = connDB.connect(muposysdb::datconex);
@@ -53,7 +53,7 @@ namespace mps
 		}
 
 		set_title(search_label);
-		
+
 		//
 		treemodel = Gtk::ListStore::create(colums);
 		tree.set_model(treemodel);
@@ -69,7 +69,7 @@ namespace mps
 		signal_response().connect(sigc::mem_fun(*this, &SearchItem::on_response));
 		btOK.set_image_from_icon_name("gtk-ok");
 		btCancel.set_image_from_icon_name("gtk-cancel");
-		
+
 		get_vbox()->pack_start(boxButtons,false,true);
 		boxButtons.pack_start(btOK,false,true);
 		boxButtons.pack_start(btCancel,false,true);
@@ -87,7 +87,7 @@ namespace mps
 	{
 		get_selection();
 	}
-	
+
 	void SearchItem::on_response(int res)
 	{
 		if(res == Gtk::RESPONSE_OK)
@@ -149,7 +149,7 @@ namespace mps
 		{
 			//std::cout << "key : Enter\n";
 			Glib::ustring::iterator it = text.end();
-			if(text.size() > 0) 
+			if(text.size() > 0)
 			{
 				--it;
 				text.erase(it);
@@ -160,13 +160,13 @@ namespace mps
 			{
 				treemodel->clear();
 			}
-				
+
 		}
 		else
 		{
 			//std::cout << "key : " << event->keyval << "\n";
 		}
-		
+
 		return false;
 	}
 
@@ -190,7 +190,7 @@ void SearchItem::searching(const Glib::ustring& s)
 	where += text + "%'";
 	where += " or size LIKE '%";
 	where += text + "%'";
-	//std::cout << "where : " << where << "\n";	
+	//std::cout << "where : " << where << "\n";
 	set_title(search_label + " " + text);
 	std::vector<muposysdb::CatalogItem*>* lstItem = muposysdb::CatalogItem::select(connDB,where);
 	if(lstItem)
@@ -203,14 +203,14 @@ void SearchItem::searching(const Glib::ustring& s)
 			lstItem->at(i)->downNumber(connDB);
 			lstItem->at(i)->downName(connDB);
 			lstItem->at(i)->downBrief(connDB);
-			
+
 			row = *(treemodel->append());
 			row[colums.id] = lstItem->at(i)->getID();
 			row[colums.number] = lstItem->at(i)->getNumber();
 			row[colums.name] = lstItem->at(i)->getName();
 			row[colums.brief] = lstItem->at(i)->getBrief();
 		}
-		
+
 		for(auto p : *lstItem)
 		{
 			delete p;
@@ -234,7 +234,7 @@ void SearchItem::get_selection()
 		number = row[colums.id];
 		response(Gtk::RESPONSE_OK);
 	}
-	
+
 }
 
 }
@@ -299,14 +299,14 @@ void Mias::init()
 	add_events(Gdk::KEY_PRESS_MASK);
 	set_title("Mia's Pizza & Pasta");
 	set_default_size(800,640);
-	btSales.set_icon_name("gtk-add");
+	btSales.set_icon_name("document-new");
 	tbMain.add(btSales);
 	show_all_children();
-	
+
 	//std::cout << " Mias::init step 2\n";
-	
+
 	btSales.signal_clicked().connect(sigc::mem_fun(*this, &Mias::on_click_sales));
-	
+
 	//std::cout << " Mias::init step 3\n";
 }
 Mias::~Mias()
@@ -1039,8 +1039,6 @@ TableSaling::TableSaling(long o) : mps::TableSaling(o),user(NULL),rdllevar("Llev
 }
 void TableSaling::init()
 {
-    //std::cout << "mias::TableSaling::init mode : " << (short)crud << "\n";
-
 	if(crud == mps::Crud::create)
     {
         btSave.signal_clicked().connect( sigc::mem_fun(*this,&TableSaling::on_save_clicked));
@@ -1057,7 +1055,7 @@ void TableSaling::init()
         cell_number->property_editable() = true;
         cell_number->signal_edited().connect(sigc::mem_fun(*this, &TableSaling::cellrenderer_validated_on_edited_number));
     }
-	
+
 	boxAditional.pack_start(boxName);
 	{
 		boxName.pack_start(lbName);
@@ -1225,7 +1223,7 @@ void TableSaling::save()
 			dlg.run();
 			return;
 		}
-		
+
 		delete cat_item;
 	}
 	//std::cout << "saving :step 8\n";
@@ -1271,7 +1269,7 @@ void TableSaling::save()
 
 	//std::cout << "saving :step 11\n";
 	connDB.commit();
-	clear();
+	this->clear();
 
 	//std::cout << "saving :step 12\n";
 
@@ -1326,11 +1324,11 @@ void TableSaling::cellrenderer_validated_on_edited_number(const Glib::ustring& p
 	{
 		number = strnumb;
 	}
-	
+
 	Gtk::TreeModel::iterator iter = tree_model->get_iter(path);
 	Gtk::TreeModel::Row row = *iter;
 	if(iter) set_data(row,number,strnumb,combined);
-	
+
 }
 void TableSaling::set_data(Gtk::TreeModel::Row& row,const Glib::ustring& back_number,const Glib::ustring& origin_number,bool combined = false)
 {
@@ -1341,7 +1339,7 @@ void TableSaling::set_data(Gtk::TreeModel::Row& row,const Glib::ustring& back_nu
 		lstCatItems->front()->downBrief(connDB);
 		lstCatItems->front()->downValue(connDB);
 		lstCatItems->front()->downPresentation(connDB);
-		
+
 		row[columns.item] = lstCatItems->front()->getID();
 		row[columns.number] = origin_number;
 		if(combined)
@@ -1354,10 +1352,10 @@ void TableSaling::set_data(Gtk::TreeModel::Row& row,const Glib::ustring& back_nu
 			row[columns.name] = lstCatItems->front()->getBrief();
 			row[columns.cost_unit] = lstCatItems->front()->getValue();
 		}
-			
+
 		row[columns.presentation] = lstCatItems->front()->getPresentation();
 		row[columns.amount] = row[columns.quantity] * row[columns.cost_unit];
-			
+
 		for(muposysdb::CatalogItem* p : *lstCatItems)
 		{
 			delete p;
@@ -1519,11 +1517,11 @@ void TableSaling::load_order(long order)
 			s->downItem(connDB);
 			s->downAmount(connDB);
 			row = *tree_model->append();
-			
+
 			row[columns.quantity] = s->getAmount();
 			set_data(row,s->getItem().getID());
 		}
-		
+
 		for(auto s : *lstSales)
 		{
 			delete s;
@@ -1559,21 +1557,21 @@ bool TableSaling::on_key_press_event(GdkEventKey* event)
 					dlg.run();
 					return false;
 				}
-				
+
 				muposysdb::CatalogItem item(number);
 				item.downNumber(connDB);
 				Gtk::TreeModel::Row row = *iter;
 				set_data(row,item.getNumber(),item.getNumber());
-				
+
 				connDB.close();
 			}
-	
+
 		}
 		else
 		{
-			
+
 		}
-		
+
 	}
 	return false;
 }
@@ -1587,22 +1585,22 @@ void TableSaling::set_data(Gtk::TreeModel::Row& row,long item)
 		lstCatItems->front()->downValue(connDB);
 		lstCatItems->front()->downPresentation(connDB);
 		lstCatItems->front()->downNumber(connDB);
-		
+
 		row[columns.item] = lstCatItems->front()->getID();
 		row[columns.number] = lstCatItems->front()->getNumber();
 		row[columns.name] = lstCatItems->front()->getBrief();
 		row[columns.cost_unit] = lstCatItems->front()->getValue();
-		
+
 		row[columns.presentation] = lstCatItems->front()->getPresentation();
 		row[columns.amount] = row[columns.quantity] * row[columns.cost_unit];
-			
+
 		for(muposysdb::CatalogItem* p : *lstCatItems)
 		{
 			delete p;
 		}
 		delete lstCatItems;
 	}
-	
+
 }
 
 }

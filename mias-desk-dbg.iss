@@ -1,6 +1,6 @@
 
 #define MyAppName "Mia's Desktop"
-#define MyAppVersion "0.1.2-beta"
+#define MyAppVersion "0.1.3-beta"
 #define MyAppPublisher "Octetos, Inc."
 #define MyAppURL "https://github.com/azaeldevel"
 #define MyAppExeName "mias-desk.exe"
@@ -25,6 +25,7 @@ SetupIconFile=C:\Users\Azael\Documents\develop\octetos\mias\mias.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+OutputDir=installer
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -42,7 +43,34 @@ Source: "C:\Users\Azael\Documents\develop\octetos\muposys\core\bin\Debug\muposys
 Source: "C:\Users\Azael\Documents\develop\octetos\muposys\desk\bin\Debug\muposys-desk.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\mias\core\bin\Debug\mias-core.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Azael\Documents\develop\octetos\mias\desk\bin\Debug\mias-desk.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Azael\Documents\develop\octetos\mias\desk\bin\Debug\mias-desk.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Azael\Documents\develop\octetos\mias\desk\bin\Debug\mias-desk.exe"; DestDir: "{app}"; Flags: ignoreversion  
+
+Source: "C:\Users\Azael\Documents\develop\octetos\mias\installer\Windows-10-master\gtk-3.20\*"; DestDir: "{app}\share\themes\Windows10\gtk-3.20"; Flags: ignoreversion recursesubdirs 
+Source: "C:\msys64\mingw64\share\icons\Adwaita\*"; DestDir: "{app}\share\icons\Adwaita"; Flags: ignoreversion recursesubdirs 
+Source: "C:\Users\Azael\Documents\develop\octetos\mias\installer\settings.ini"; DestDir: "{app}\etc\gtk-3.0"; Flags: ignoreversion  
+
+//Source: "C:\msys64\mingw64\bin\libsigc-2.0-0.dll"; DestDir: "{app}"; Flags: ignoreversion    
+//Source: "C:\msys64\mingw64\bin\libgdk-3-0.dll"; DestDir: "{app}"; Flags: ignoreversion             
+//Source: "C:\msys64\mingw64\bin\libcairo-2.dll"; DestDir: "{app}"; Flags: ignoreversion
+//Source: "C:\msys64\mingw64\bin\libcairo-gobject-2.dll"; DestDir: "{app}"; Flags: ignoreversion
+//Source: "C:\msys64\mingw64\bin\libgtk-3-0.dll"; DestDir: "{app}"; Flags: ignoreversion
+
+//Source: "C:\msys64\mingw64\bin\libgcc_s_seh-1.dll"; DestDir: "{app}"; Flags: ignoreversion   
+//Source: "C:\msys64\mingw64\bin\libstdc++-6.dll"; DestDir: "{app}"; Flags: ignoreversion    
+//Source: "C:\msys64\mingw64\bin\libwinpthread-1.dll"; DestDir: "{app}"; Flags: ignoreversion
+//Source: "C:\msys64\mingw64\bin\libintl-8.dll"; DestDir: "{app}"; Flags: ignoreversion       
+//Source: "C:\msys64\mingw64\bin\libwinpthread-1.dll"; DestDir: "{app}"; Flags: ignoreversion       
+//Source: "C:\msys64\mingw64\bin\libmariadb.dll"; DestDir: "{app}"; Flags: ignoreversion  
+
+//Source: "C:\msys64\mingw64\bin\libgtkmm-3.0-1.dll"; DestDir: "{app}"; Flags: ignoreversion   
+//Source: "C:\msys64\mingw64\bin\libgdkmm-3.0-1.dll"; DestDir: "{app}"; Flags: ignoreversion  
+//Source: "C:\msys64\mingw64\bin\libatkmm-1.6-1.dll"; DestDir: "{app}"; Flags: ignoreversion   
+//Source: "C:\msys64\mingw64\bin\libglibmm-2.4-1.dll"; DestDir: "{app}"; Flags: ignoreversion    
+//Source: "C:\msys64\mingw64\bin\libcairomm-1.0-1.dll"; DestDir: "{app}"; Flags: ignoreversion     
+//Source: "C:\msys64\mingw64\bin\libgiomm-2.4-1.dll"; DestDir: "{app}"; Flags: ignoreversion
+//Source: "C:\msys64\mingw64\bin\libconfig++-11.dll"; DestDir: "{app}"; Flags: ignoreversion  
+//Source: "C:\msys64\mingw64\bin\libpangomm-1.4-1.dll"; DestDir: "{app}"; Flags: ignoreversion   
+//Source: "C:\msys64\mingw64\bin\libpangowin32-1.0-0.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Registry]
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
@@ -56,5 +84,6 @@ Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
+Filename: "C:\msys64\mingw64\bin\glib-compile-schemas.exe"; Description: "Generando configuración de Gtk."; Parameters: "share/glib-2.0/schemas"
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
