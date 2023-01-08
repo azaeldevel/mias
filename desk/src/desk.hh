@@ -109,6 +109,7 @@ class TableSaling : public mps::TableSaling
 public:
 	TableSaling();
 	TableSaling(long order);
+	TableSaling(long order,mps::Crud);
 	void init();
 	virtual ~TableSaling();
 
@@ -254,6 +255,7 @@ class Saling : public Gtk::Box
 public:
 	Saling();
 	Saling(long o);
+	Saling(long o,mps::Crud);
 	void init();
 	virtual ~Saling();
 
@@ -286,6 +288,7 @@ class Sales : public Gtk::Paned
 public:
 	Sales(Mias*);
 	Sales(Mias*,long);
+	Sales(Mias*,long,mps::Crud);
 	//Sales(Mias*,mps::Crud);
 	void init();
 	virtual ~Sales();

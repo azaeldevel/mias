@@ -363,7 +363,12 @@ Sales::Sales(Mias* m) : user(NULL),pending(m)
 }
 Sales::Sales(Mias* m,long o) : user(NULL),pending(m),saling(o)
 {
-	std::cout << "Sales::Sales(app," << o << ")\n";
+	//std::cout << "Sales::Sales(app," << o << ")\n";
+	init();
+}
+Sales::Sales(Mias* m,long o,mps::Crud c) : user(NULL),pending(m),saling(o,c)
+{
+	//std::cout << "Sales::Sales(app," << o << ")\n";
 	init();
 }
 void Sales::init()
@@ -398,7 +403,12 @@ Saling::Saling() : Gtk::Box(Gtk::ORIENTATION_VERTICAL),user(NULL)
 }
 Saling::Saling(long o) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),user(NULL),table(o)
 {
-	std::cout << "Saling::Saling(" << o << ")\n";
+	//std::cout << "Saling::Saling(" << o << ")\n";
+	init();
+}
+Saling::Saling(long o,mps::Crud) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),user(NULL),table(o)
+{
+	//std::cout << "Saling::Saling(" << o << ")\n";
 	init();
 }
 void Saling::init()
@@ -911,7 +921,8 @@ void TableServicies::on_menu_cancel_popup()
 
 TableServicies::Updater::Updater() : m_shall_stop(false), m_has_stopped(false)
 {
-	/*try
+	/*
+	try
 	{
 		connDB_flag = connDB.connect(muposysdb::datconex);
 	}
@@ -919,7 +930,8 @@ TableServicies::Updater::Updater() : m_shall_stop(false), m_has_stopped(false)
 	{
 		std::cerr << e.what() << "\n";
 		return;
-	}*/
+	}
+	*/
 }
 
 
@@ -1032,6 +1044,12 @@ TableSaling::TableSaling() : user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame
 	init();
 }
 TableSaling::TableSaling(long o) : mps::TableSaling(o),user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
+{
+    //std::cout << "mias::TableSaling::TableSaling(" << o << ")\n";
+	init();
+	load_order(o);
+}
+TableSaling::TableSaling(long o,mps::Crud c) : mps::TableSaling(o),user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
 {
     //std::cout << "mias::TableSaling::TableSaling(" << o << ")\n";
 	init();
