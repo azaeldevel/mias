@@ -1,6 +1,6 @@
 
 #define MyAppName "Mia's Web"
-#define MyAppVersion "0.1.0-beta"
+#define MyAppVersion "0.2.0-beta"
 #define MyAppPublisher "Octetos, Inc."
 #define MyAppURL "https://github.com/azaeldevel"
 #define MyAppExeName "mias-web.exe"
@@ -21,7 +21,7 @@ ChangesAssociations=yes
 DisableProgramGroupPage=yes
 PrivilegesRequiredOverridesAllowed=commandline
 OutputBaseFilename=mias-web-setup
-SetupIconFile=C:\Users\Azael\Documents\develop\octetos\mias\mias.ico
+SetupIconFile=C:\Users\Azael\Documents\develop\octetos\mias\web\icons\eat-pizza.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern

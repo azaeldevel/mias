@@ -1,5 +1,5 @@
 
-AC_INIT(mias-desk, 0.4.0-alpha, azael.devel@gmail.com)
+AC_INIT(mias-desk, 0.4.0-beta, azael.devel@gmail.com)
 
 AC_CONFIG_HEADERS([config.h])
 

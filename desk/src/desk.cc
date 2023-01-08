@@ -135,7 +135,7 @@ namespace mps
 		}
 		else if (event->keyval == GDK_KEY_Return)
 		{
-			std::cout << "key : Enter\n";
+			//std::cout << "key : Enter\n";
 			get_selection();
 		}
 		else if (event->keyval == GDK_KEY_Escape)
@@ -300,6 +300,7 @@ void Mias::init()
 	set_title("Mia's Pizza & Pasta");
 	set_default_size(800,640);
 	btSales.set_icon_name("document-new");
+	btSales.set_sensitive(false);
 	tbMain.add(btSales);
 	show_all_children();
 
@@ -354,7 +355,17 @@ Sales& Mias::create_activity_sale(long o)
 
 	return *snow;
 }
+void Mias::enables()
+{
+    if(not credential.valid) return;
 
+    btSales.set_sensitive(true);
+}
+void Mias::check_session()
+{
+    mps::Restaurant::check_session();
+    enables();
+}
 
 
 Sales::Sales(Mias* m) : user(NULL),pending(m)
@@ -1028,7 +1039,7 @@ bool TableServicies::on_key_press_event(GdkEventKey* event)
 		menu.popup_at_pointer((GdkEvent*)event);
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -1129,10 +1140,10 @@ void TableSaling::save()
 	operation = new muposysdb::Operation;
 	if(not operation->insert(connDB))
 	{
-			Gtk::MessageDialog dlg("Error detectado en acceso a BD",true,Gtk::MESSAGE_ERROR);
-			dlg.set_secondary_text("Durante la escritura de Stoking Production.");
-			dlg.run();
-			return;
+        Gtk::MessageDialog dlg("Error detectado en acceso a BD",true,Gtk::MESSAGE_ERROR);
+        dlg.set_secondary_text("Durante la escritura de Stoking Production.");
+        dlg.run();
+        return;
 	}
 	//std::cout << "saving :step 4\n";
 

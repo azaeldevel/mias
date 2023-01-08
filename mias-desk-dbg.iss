@@ -1,6 +1,6 @@
 
 #define MyAppName "Mia's Desktop"
-#define MyAppVersion "0.1.3-beta"
+#define MyAppVersion "0.4.1-beta"
 #define MyAppPublisher "Octetos, Inc."
 #define MyAppURL "https://github.com/azaeldevel"
 #define MyAppExeName "mias-desk.exe"
@@ -21,7 +21,7 @@ ChangesAssociations=yes
 DisableProgramGroupPage=yes
 PrivilegesRequiredOverridesAllowed=commandline
 OutputBaseFilename=mias-desk-setup
-SetupIconFile=C:\Users\Azael\Documents\develop\octetos\mias\mias.ico
+SetupIconFile=C:\Users\Azael\Documents\develop\octetos\mias\web\icons\eat-pizza.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
