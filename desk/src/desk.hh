@@ -127,7 +127,6 @@ protected:
 	 * \param orign_number es el numero escrito por el usuario
 	 * */
 	void set_data(Gtk::TreeModel::Row&,const Glib::ustring& back_number,const Glib::ustring& orign_number,bool combined);
-
 	void set_data(Gtk::TreeModel::Row&,long);
 
 	virtual void load_order(long);
@@ -146,7 +145,6 @@ private:
 	std::vector<muposysdb::CatalogItem> get_items(const Glib::ustring&);
 	Glib::ustring get_brief(const Glib::ustring&);
 	float get_price(const Glib::ustring&);
-
 };
 
 class TableServicies : public Gtk::TreeView
@@ -321,7 +319,7 @@ public:
 
 protected:
     void enables();
-    virtual void check_session();
+	virtual void notific_session();
 
 private:
 	std::vector<Sales*> sale;

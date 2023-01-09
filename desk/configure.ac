@@ -28,7 +28,7 @@ case $enableval in
 			AC_DEFINE_UNQUOTED([DATABASE_FN], ["$DATABASE_FN"] ,[Full path for database file])
 			AC_DEFINE_UNQUOTED([DATABASE], ["$DATABASE_DIR/$DATABASE_FN"] ,[Full path for database file])
 		;;
-	  	debian) 
+	  	debian)
 			AC_DEFINE([LINUX_DEBIAN], [], [Enable configuration for Debian])
 		;;
 	  	*)

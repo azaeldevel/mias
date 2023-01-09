@@ -361,10 +361,9 @@ void Mias::enables()
 
     btSales.set_sensitive(true);
 }
-void Mias::check_session()
+void Mias::notific_session()
 {
-    mps::Restaurant::check_session();
-    enables();
+	enables();
 }
 
 
@@ -1526,17 +1525,63 @@ float TableSaling::get_price(const Glib::ustring& str)
 		}
 		delete lstCatItems;
 	}
-
-	return std::max(price1,price2) + 20.0;
+	
+	return std::max(price1,price2);
 }
 
 void TableSaling::load_order(long order)
 {
 	tree_model->clear();
+	
+	
+    std::string whereService;
+    whereService = "operation = ";
+    whereService += std::to_string(order);
+    std::vector<muposysdb::MiasService*>* lstService = muposysdb::MiasService::select(connDB,whereService,0,'A');
+	if(lstService->size() == 0)
+	{
+		throw Exception(Exception::INTERNAL_ERROR,__FILE__,__LINE__);
+	}
+	else if(lstService->size() > 1)
+	{
+		throw Exception(Exception::INTERNAL_ERROR,__FILE__,__LINE__);
+	}
+	if(lstService)
+	{
+		for(auto s : *lstService)
+		{
+			s->downLocation(connDB);
+			
+			if(s->getLocation() == (short)Location::deliver)
+			{
+				rdllevar.set_active(true);
+			}
+			else if(s->getLocation() == (short)Location::here)
+			{
+				rdaqui.set_active(true);
+			}
+		}
+		
+		
+		for(auto s : *lstService)
+		{
+			delete s;
+		}
+		delete lstService;
+	}
+	
     std::string whereOrder;
     whereOrder = "operation = ";
     whereOrder += std::to_string(order);
-    std::vector<muposysdb::Sale*>* lstSales = muposysdb::Sale::select(connDB,whereOrder,0,'A');
+    std::vector<muposysdb::Sale*>* lstSales = muposysdb::Sale::select(connDB,whereOrder,0,'A');	
+	if(lstSales->size() == 0)
+	{
+		throw Exception(Exception::INTERNAL_ERROR,__FILE__,__LINE__);
+	}
+	else if(lstSales->size() > 1)
+	{
+		throw Exception(Exception::INTERNAL_ERROR,__FILE__,__LINE__);
+	}
     if(lstSales)
     {
 		Gtk::TreeModel::Row row;
