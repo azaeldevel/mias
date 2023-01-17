@@ -128,6 +128,8 @@ protected:
 	 * */
 	void set_data(Gtk::TreeModel::Row&,const Glib::ustring& back_number,const Glib::ustring& orign_number,bool combined);
 	void set_data(Gtk::TreeModel::Row&,long);
+	float get_combine_price(long order);
+	short get_sales_amount(long order,long stocking);
 
 	virtual void load_order(long);
 
