@@ -1,6 +1,6 @@
 
 #define MyAppName "Mia's Desktop"
-#define MyAppVersion "0.4.1-beta"
+#define MyAppVersion "0.5.0-beta1"
 #define MyAppPublisher "Octetos, Inc."
 #define MyAppURL "https://github.com/azaeldevel"
 #define MyAppExeName "mias-desk.exe"

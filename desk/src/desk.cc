@@ -1359,7 +1359,7 @@ void TableSaling::cellrenderer_validated_on_edited_number(const Glib::ustring& p
 	{
 		number = strnumb;
 	}
-	
+
 	Gtk::TreeModel::iterator iter = tree_model->get_iter(path);
 	Gtk::TreeModel::Row row = *iter;
 	if(iter) set_data(row,number,strnumb,combined);
@@ -1537,7 +1537,7 @@ float TableSaling::get_price(const Glib::ustring& str)
 		}
 		delete lstCatItems;
 	}
-	
+
 	return std::max(price1,price2);
 }
 float TableSaling::get_price(long item)
@@ -1557,32 +1557,32 @@ float TableSaling::get_price(long item)
 		}
 		delete lstCatItems;
 	}
-	
+
 	return value;
 }
 
 void TableSaling::load_order(long order)
 {
-	//std::cout << "TableSaling::load_order Step 1\n";
+	std::cout << "TableSaling::load_order Step 1\n";
 	tree_model->clear();
-	
+
     std::string whereService;
     whereService = "operation = ";
     whereService += std::to_string(order);
-	//std::cout << "TableSaling::load_order Step 2\n";
+	std::cout << "TableSaling::load_order Step 2\n";
     std::vector<muposysdb::MiasService*>* lstService = muposysdb::MiasService::select(connDB,whereService,0,'A');
-	//std::cout << "TableSaling::load_order Step 3\n";
+	std::cout << "TableSaling::load_order Step 3\n";
 	if(lstService->size() > 1)
 	{
-		throw Exception(Exception::INTERNAL_ERROR,__FILE__,__LINE__);
+		throw mps::ExceptionQuery("Fallo en la consul del servicio",__FILE__,__LINE__);
 	}
-	//std::cout << "TableSaling::load_order Step 4\n";
+	std::cout << "TableSaling::load_order Step 4\n";
 	if(lstService)
 	{
 		for(auto s : *lstService)
 		{
 			s->downLocation(connDB);
-			
+
 			if(s->getLocation() == (short)Location::deliver)
 			{
 				rdllevar.set_active(true);
@@ -1591,9 +1591,10 @@ void TableSaling::load_order(long order)
 			{
 				rdaqui.set_active(true);
 			}
+			std::cout << "TableSaling::load_order::location : " << s->getLocation() << "\n";
 		}
-		
-		
+
+
 		for(auto s : *lstService)
 		{
 			delete s;
@@ -1601,11 +1602,11 @@ void TableSaling::load_order(long order)
 		delete lstService;
 	}
 	//std::cout << "TableSaling::load_order Step 5\n";
-	
+
     std::string whereOrder;
     whereOrder = "operation = ";
     whereOrder += std::to_string(order);
-    std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(connDB,whereOrder,0,'A');	
+    std::vector<muposysdb::Progress*>* lstProgress = muposysdb::Progress::select(connDB,whereOrder,0,'A');
 	//std::cout << "TableSaling::load_order Step 6\n";
     if(lstProgress)
     {
@@ -1619,7 +1620,7 @@ void TableSaling::load_order(long order)
 			p->getStocking().getItem().downValue(connDB);
 			p->getStocking().getItem().downPresentation(connDB);
 			p->getStocking().getItem().downNumber(connDB);
-			row = *tree_model->append();	
+			row = *tree_model->append();
 			row[columns.item] = p->getStocking().getItem().getID();
 			row[columns.number] = p->getStocking().getItem().getNumber();
 			row[columns.name] = p->getStocking().getItem().getBrief();
@@ -1651,7 +1652,7 @@ float TableSaling::get_combine_price(long stocking)
 	std::string whereOrder;
     whereOrder = "stocking = ";
     whereOrder += std::to_string(stocking);
-    std::vector<muposysdb::StockingCombined*>* lstStockingC = muposysdb::StockingCombined::select(connDB,whereOrder);	
+    std::vector<muposysdb::StockingCombined*>* lstStockingC = muposysdb::StockingCombined::select(connDB,whereOrder);
 	std::cout << "lstStockingC->size() : " << lstStockingC->size() <<  "\n";
 	float value = 0.0;
 	if(lstStockingC)
@@ -1667,13 +1668,13 @@ float TableSaling::get_combine_price(long stocking)
 			float pz2 = get_price(s->getPizza2().getID());
 			value = std::max(pz1,pz2);
 		}
-		
+
 		for(muposysdb::StockingCombined* s : *lstStockingC)
 		{
 			delete s;
 		}
 	}
-	
+
 	return value;
 }
 bool TableSaling::on_key_press_event(GdkEventKey* event)
