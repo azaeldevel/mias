@@ -2,8 +2,8 @@
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
 		<Project filename="../core/octetos-core.cbp" />
-		<Project filename="../db-maria/octeos-db-maria.cbp" />
 		<Project filename="../db-abstract/octetos-db-abstract.cbp" />
+		<Project filename="../db-maria/octeos-db-maria.cbp" />
 		<Project filename="../muposys/core/muposys-core.cbp">
 			<Depends filename="../core/octetos-core.cbp" />
 		</Project>
@@ -14,7 +14,7 @@
 		</Project>
 		<Project filename="../muposys/web/muposys-web.cbp" />
 		<Project filename="core/mias-core.cbp" />
-		<Project filename="desk/desk.cbp" />
 		<Project filename="web/mias-web.cbp" />
+		<Project filename="desk/desk.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
