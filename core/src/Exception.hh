@@ -22,7 +22,7 @@
  **/
 
 #ifdef __linux__
-    #include <muposys/core/Exception.hh>
+    #include <muposys/core/src/Exception.hh>
 #elif defined MSYS2
     #include <muposys/core/src/Exception.hh>
 #elif defined(_WIN32) || defined(_WIN64)

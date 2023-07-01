@@ -5,7 +5,7 @@
 
 
 #ifdef __linux__
-	#include "config.h"
+	//#include "config.h"
 #elif defined MSYS2
     #include "config-cb.h"
 #else
@@ -71,6 +71,11 @@ int main (int argc, char *argv[])
 	catch (const std::exception& ex)
 	{
 		std::cerr << ex.what() << std::endl;
+		return EXIT_FAILURE;
+	}
+	catch (...)
+	{
+		std::cerr << "Error en ejecucion de aplicacion." << std::endl;
 		return EXIT_FAILURE;
 	}
 

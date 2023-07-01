@@ -1174,7 +1174,7 @@ void TableSaling::save()
 		//std::cout << "saving :step 5.5\n";
 		if((ItemType)cat_item->getType() == ItemType::service)
 		{
-			for(unsigned int i = 0; i < quantity; i++ )
+			for(unsigned int i = 0; i < quantity; i++)
 			{
 				//std::cout << "saving :step 5.5.1\n";
 				stocking = new muposysdb::Stocking;

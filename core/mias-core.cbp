@@ -7,16 +7,15 @@
 		<Option compiler="msys2_x86_64_gcc" />
 		<Build>
 			<Target title="libmias-core-dbg">
-				<Option output="bin/Debug/mias-core.dll" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="0" />
-				<Option object_output="obj/Debug/" />
+				<Option output="bin/Debug/mias-core.so" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="0" />
+				<Option object_output="bin/Debug/obj/" />
 				<Option type="3" />
-				<Option compiler="msys2_x86_64_gcc" />
+				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-DMSYS2" />
+					<Add option="-fPIC" />
 					<Add directory="../../../octetos" />
 				</Compiler>
 				<Linker>
-					<Add library="octetos-core" />
 					<Add library="muposys-core" />
 					<Add directory="../../core/bin/Debug" />
 					<Add directory="../../muposys/core/bin/Debug" />

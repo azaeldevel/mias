@@ -26,9 +26,9 @@
 
 
 #ifdef __linux__
-    #include <muposys/desk/desk.hh>
-    #include <mias/core/core.hh>
-    #include <mias/core/Exception.hh>
+    #include <muposys/desk/src/desk.hh>
+    #include <mias/core/src/core.hh>
+    #include <mias/core/src/Exception.hh>
 #elif defined MSYS2
     #include <muposys/desk/src/desk.hh>
     #include <mias/core/src/core.hh>
@@ -141,22 +141,22 @@ protected:
 private:
 	const muposysdb::User* user;
 
-	
+
 	/**
 	 * \brief Retorna los item que componen el string pasado como paramtro(e.j pizza combinada)
 	 */
 	std::vector<Glib::ustring> split(const Glib::ustring&);
-	
+
 	/**
 	 * \brief Retorna el un objecto de base de datos curresondiente a la string indicada
 	 */
 	muposysdb::CatalogItem get_item(const Glib::ustring&);
-	
+
 	/**
 	 * \brief Retorna el los objecto de base de datos curresondiente a la string indicada
 	 */
 	std::vector<muposysdb::CatalogItem> get_items(const Glib::ustring&);
-	
+
 	/**
 	 * \brief Retorna una descripcion valida para el item indicado por parametro, incluso si dicho item es compuesto
 	 */

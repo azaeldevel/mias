@@ -1,20 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
-		<Project filename="../core/octetos-core.cbp" />
-		<Project filename="../db-abstract/octetos-db-abstract.cbp" />
-		<Project filename="../db-maria/octeos-db-maria.cbp" />
-		<Project filename="../muposys/core/muposys-core.cbp">
-			<Depends filename="../core/octetos-core.cbp" />
-		</Project>
-		<Project filename="../muposys/desk/muposys-desk.cbp">
-			<Depends filename="../db-maria/octeos-db-maria.cbp" />
-			<Depends filename="../muposys/core/muposys-core.cbp" />
-			<Depends filename="../core/octetos-core.cbp" />
-		</Project>
-		<Project filename="../muposys/web/muposys-web.cbp" />
+		<Project filename="../muposys/core/muposys-core.cbp" />
+		<Project filename="../muposys/desk/muposys-desk.cbp" />
 		<Project filename="core/mias-core.cbp" />
-		<Project filename="web/mias-web.cbp" />
-		<Project filename="desk/desk.cbp" />
+		<Project filename="desk/mias-desk.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
