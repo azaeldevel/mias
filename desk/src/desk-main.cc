@@ -30,7 +30,8 @@ int main (int argc, char *argv[])
 	Gtk::Main kit(argc, argv);
 
 	//Load the Glade file and instiate its widgets:
-	/*Glib::RefPtr<Gtk::Builder> builder;
+	/*
+	Glib::RefPtr<Gtk::Builder> builder;
 	try
 	{
 		builder = Gtk::Builder::create();
@@ -56,7 +57,8 @@ int main (int argc, char *argv[])
 	{
 		std::cerr << ex.what() << std::endl;
 		return EXIT_FAILURE;
-	}*/
+	}
+	*/
 
 	try
 	{
