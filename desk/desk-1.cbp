@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="mias-desk-1" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/desk-1" prefix_auto="1" extension_auto="1" />
+				<Option object_output="bin/Debug/obj/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="muposys-core-1" />
+					<Add library="muposys-desk-1" />
+					<Add library="mias-core-1" />
+					<Add library="cave-mmsql-0" />
+					<Add directory="../../cave/bin/Debug" />
+					<Add directory="../../muposys/core/bin/Debug" />
+					<Add directory="../../muposys/desk/bin/Debug" />
+					<Add directory="../core/bin/Debug" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/desk-1" prefix_auto="1" extension_auto="1" />
+				<Option object_output="bin/Release/obj/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall -pedantic -std=c++20 `pkg-config gtkmm-3.0 --cflags` `pkg-config libmariadb libmariadb --cflags`" />
+			<Add directory="../../../octetos" />
+		</Compiler>
+		<Linker>
+			<Add option="`pkg-config gtkmm-3.0 --libs` `pkg-config libmariadb libmariadb --libs`" />
+		</Linker>
+		<Unit filename="1/desk-main.cc" />
+		<Unit filename="1/desk.cc" />
+		<Unit filename="1/desk.hh" />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

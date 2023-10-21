@@ -21,6 +21,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * */
 
+//#include <muposys/core/1/core.hh>
 
 namespace mias::v1
 {
@@ -87,6 +88,15 @@ const char* to_string(ServiceStep s);
 const char* to_text(ServiceStep s);
 //void to_step(const char* str, steping::Pizza& step);
 
+
+    struct CatalogItem
+    {
+
+    };
+    struct MiasService
+    {
+
+    };
 }
 
 #endif
