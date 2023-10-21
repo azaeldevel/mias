@@ -28,7 +28,7 @@
 				</Linker>
 			</Target>
 			<Target title="libmias-core-dbg">
-				<Option output="bin/Debug/mias-core-v1" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/mias-core-1" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
 				<Option object_output="bin/Debug/obj/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -39,7 +39,7 @@
 				</Compiler>
 			</Target>
 			<Target title="libmias-core-r">
-				<Option output="bin/Release/mias-core-v1" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/mias-core-1" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
 				<Option object_output="bin/Release/obj/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
