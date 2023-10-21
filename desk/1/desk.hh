@@ -39,6 +39,74 @@ namespace oct::mias::v1
 
 
 
+    class TableSaling : public mps::TableSaling
+    {
+    public:
+        TableSaling();
+        TableSaling(long order);
+        //TableSaling(long order,mps::Crud);
+        void init();
+        virtual ~TableSaling();
+
+        virtual void clear();
+        void set(const mps::User& user);
+
+    protected:
+        virtual void save();
+        void on_save_clicked();
+        bool on_key_press_event(GdkEventKey* key_event) override;
+        void cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& new_text);
+        /**
+         * \brief escribe los datos los datos el regstro currepondientes al item
+         * \param back_number es el numero usado internamente, el cual sera escrito en la base de datos
+         * \param orign_number es el numero escrito por el usuario
+         * */
+        void set_data(Gtk::TreeModel::Row&,const Glib::ustring& back_number,const Glib::ustring& orign_number,bool combined);
+        void set_data(Gtk::TreeModel::Row&,long);
+        float get_combine_price(long order);
+
+        virtual void load_order(long);
+
+        Gtk::Label lbName;
+        Gtk::Entry inName;
+        Gtk::HBox boxName,boxFrame;
+        Gtk::RadioButton rdllevar, rdaqui;
+        Gtk::Frame frame;
+
+    private:
+        const mps::User* user;
+
+
+        /**
+         * \brief Retorna los item que componen el string pasado como paramtro(e.j pizza combinada)
+         */
+        std::vector<Glib::ustring> split(const Glib::ustring&);
+
+        /**
+         * \brief Retorna el un objecto de base de datos curresondiente a la string indicada
+         */
+        mps::CatalogItem get_item(const Glib::ustring&);
+
+        /**
+         * \brief Retorna el los objecto de base de datos curresondiente a la string indicada
+         */
+        std::vector<mps::CatalogItem> get_items(const Glib::ustring&);
+
+        /**
+         * \brief Retorna una descripcion valida para el item indicado por parametro, incluso si dicho item es compuesto
+         */
+        Glib::ustring get_brief(const Glib::ustring&);
+        /**
+         * \brief Optine el precio del item indicado en el paramatro, cuando dicho tem es compuesto
+         */
+        float get_price(const Glib::ustring&);
+        /**
+         * \brief Optine el precio del item indicado en el paramatro, cuando dicho tem es compuesto
+         */
+        float get_price(long);
+    };
+
+
 
 
 
