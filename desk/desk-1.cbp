@@ -9,7 +9,7 @@
 			<Target title="Debug">
 				<Option output="bin/Debug/desk-1" prefix_auto="1" extension_auto="1" />
 				<Option object_output="bin/Debug/obj/" />
-				<Option type="1" />
+				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
@@ -28,7 +28,7 @@
 			<Target title="Release">
 				<Option output="bin/Release/desk-1" prefix_auto="1" extension_auto="1" />
 				<Option object_output="bin/Release/obj/" />
-				<Option type="1" />
+				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />

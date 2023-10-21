@@ -115,19 +115,19 @@ namespace oct::mias::v1
 
 
 
-    Sales::Sales(Mias* m) : user(NULL)//,pending(m)
+    Sales::Sales(Mias* m) : user(NULL),pending(m)
     {
         init();
     }
-    Sales::Sales(Mias* m,long o) : user(NULL)//,pending(m),saling(o)
+    Sales::Sales(Mias* m,long o) : user(NULL),pending(m),saling(o)
     {
         //std::cout << "Sales::Sales(app," << o << ")\n";
         init();
     }
     void Sales::init()
     {
-        //add1(pending);
-        //add2(saling);
+        add1(pending);
+        add2(saling);
     }
     Sales::~Sales()
     {
@@ -135,8 +135,62 @@ namespace oct::mias::v1
     void Sales::set(const mps::User& u)
     {
         user = &u;
-        //saling.set(u);
+        saling.set(u);
     }
+
+
+
+
+
+
+
+
+    Saling::Saling() : Gtk::Box(Gtk::ORIENTATION_VERTICAL),user(NULL)
+    {
+        init();
+    }
+    Saling::Saling(long o) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),user(NULL)//,table(o)
+    {
+        //std::cout << "Saling::Saling(" << o << ")\n";
+        init();
+    }
+    void Saling::init()
+    {
+        //pack_start(table,false,false);
+    }
+    Saling::~Saling()
+    {
+    }
+    void Saling::set(const mps::User& u)
+    {
+        user = &u;
+        //table.set(u);
+    }
+
+
+
+
+
+    PendingServices::PendingServices(Mias* m) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),mias(m)//,servicies(m)
+    {
+        init();
+    }
+    void PendingServices::init()
+    {
+        pack_start(lbTitle,false,false);
+        lbTitle.set_text("Lista de Servicios : ");
+
+        //pack_start(servicies);
+
+    }
+    PendingServices::~PendingServices()
+    {
+    }
+
+
+
+
+
 
 
 }

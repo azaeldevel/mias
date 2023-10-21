@@ -38,6 +38,39 @@ namespace oct::mias::v1
 
 
 
+    class Saling : public Gtk::Box
+    {
+
+    public:
+        Saling();
+        Saling(long o);
+        //Saling(long o,mps::Crud);
+        void init();
+        virtual ~Saling();
+
+        void set(const mps::User& user);
+    protected:
+
+    private:
+        //TableSaling table;
+        const mps::User* user;
+    };
+
+    class PendingServices : public Gtk::Box
+    {
+
+    public:
+        PendingServices(Mias*);
+        void init();
+        virtual ~PendingServices();
+
+    private:
+        Gtk::Label lbTitle;
+
+        //TableServicies servicies;
+        Mias* mias;
+    };
+
 
     class Sales : public Gtk::Paned
     {
@@ -56,8 +89,8 @@ namespace oct::mias::v1
     private:
         Gtk::Label label1;
         Gtk::Label label2;
-        //Saling saling;
-        //PendingServices pending;
+        Saling saling;
+        PendingServices pending;
         const mps::User* user;
     };
 
