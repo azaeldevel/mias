@@ -1,6 +1,6 @@
 
-#ifndef OCTETOS_MIAS_DESK_V1_HH
-#define OCTETOS_MIAS_DESK_V1_HH
+#ifndef MIAS_CORE_DESK_HH
+#define MIAS_CORE_DESK_HH
 
 /**
  *  This file is part of mias.
@@ -23,66 +23,33 @@
 
 #include <gtkmm.h>
 #include <glibmm/i18n.h>
-
 #include <thread>
 #include <mutex>
-
 
 #include <muposys/desk/1/desk.hh>
 
 
+
 namespace oct::mias::v1
 {
-    namespace mps = oct::mps::v1;
-
     class Mias;
 
+    namespace mps = oct::mps::v1;
 
 
-    class Saling : public Gtk::Box
-    {
 
-    public:
-        Saling();
-        //Saling(long o);
-        //Saling(long o,mps::Crud);
-        void init();
-        virtual ~Saling();
-
-        //void set(const muposysdb::User& user);
-    protected:
-
-    private:
-        //TableSaling table;
-        //const muposysdb::User* user;
-    };
-
-    class PendingServices : public Gtk::Box
-    {
-
-    public:
-        PendingServices(Mias*);
-        void init();
-        virtual ~PendingServices();
-
-    private:
-        Gtk::Label lbTitle;
-
-        //TableServicies servicies;
-        Mias* mias;
-    };
 
     class Sales : public Gtk::Paned
     {
     public:
         Sales(Mias*);
-        //Sales(Mias*,long);
+        Sales(Mias*,long);
         //Sales(Mias*,long,mps::Crud);
         //Sales(Mias*,mps::Crud);
         void init();
         virtual ~Sales();
 
-        //void set(const muposysdb::User& user);
+        void set(const mps::User& user);
 
     protected:
 
@@ -90,9 +57,10 @@ namespace oct::mias::v1
         Gtk::Label label1;
         Gtk::Label label2;
         //Saling saling;
-        PendingServices pending;
-        //const muposysdb::User* user;
+        //PendingServices pending;
+        const mps::User* user;
     };
+
 
     class Mias : public mps::Restaurant
     {
@@ -108,7 +76,8 @@ namespace oct::mias::v1
         Sales& create_activity_sale(long);
 
     protected:
-
+        //void enables();
+        //virtual void notific_session();
 
     private:
         std::vector<Sales*> sale;
