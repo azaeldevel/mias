@@ -23,7 +23,7 @@
 
 //#include <muposys/core/1/core.hh>
 
-namespace mias::v1
+namespace oct::mias::v1
 {
 	enum class ServiceStep
 	{
