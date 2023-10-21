@@ -45,6 +45,8 @@
 		<Linker>
 			<Add option="`pkg-config gtkmm-3.0 --libs` `pkg-config libmariadb libmariadb --libs`" />
 		</Linker>
+		<Unit filename="1/desk-TableSaling.cc" />
+		<Unit filename="1/desk-TableServicies.cc" />
 		<Unit filename="1/desk-main.cc" />
 		<Unit filename="1/desk.cc" />
 		<Unit filename="1/desk.hh" />
