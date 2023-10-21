@@ -34,18 +34,50 @@ namespace oct::mias::v1
 
 
 
+    Saling::Saling() : Gtk::Box(Gtk::ORIENTATION_VERTICAL)
+    {
+        init();
+    }
+    void Saling::init()
+    {
+        //pack_start(table,false,false);
+    }
+    Saling::~Saling()
+    {
+    }
 
 
 
 
 
-    Sales::Sales(Mias* m)
+
+
+    PendingServices::PendingServices(Mias* m) //: Gtk::Box(Gtk::ORIENTATION_VERTICAL),mias(m),servicies(m)
+    {
+        init();
+    }
+    void PendingServices::init()
+    {
+        pack_start(lbTitle,false,false);
+        lbTitle.set_text("Lista de Servicios : ");
+
+        //pack_start(servicies);
+
+    }
+    PendingServices::~PendingServices()
+    {
+    }
+
+
+
+
+    Sales::Sales(Mias* m) : pending(m)
     {
         init();
     }
     void Sales::init()
     {
-        //add1(pending);
+        add1(pending);
         //add2(saling);
     }
     Sales::~Sales()

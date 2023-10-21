@@ -38,12 +38,51 @@ namespace oct::mias::v1
     class Mias;
 
 
-    class Sales //: public Gtk::Paned
+
+    class Saling : public Gtk::Box
+    {
+
+    public:
+        Saling();
+        //Saling(long o);
+        //Saling(long o,mps::Crud);
+        void init();
+        virtual ~Saling();
+
+        //void set(const muposysdb::User& user);
+    protected:
+
+    private:
+        //TableSaling table;
+        //const muposysdb::User* user;
+    };
+
+    class PendingServices : public Gtk::Box
+    {
+
+    public:
+        PendingServices(Mias*);
+        void init();
+        virtual ~PendingServices();
+
+    private:
+        Gtk::Label lbTitle;
+
+        //TableServicies servicies;
+        Mias* mias;
+    };
+
+    class Sales : public Gtk::Paned
     {
     public:
         Sales(Mias*);
+        //Sales(Mias*,long);
+        //Sales(Mias*,long,mps::Crud);
+        //Sales(Mias*,mps::Crud);
         void init();
         virtual ~Sales();
+
+        //void set(const muposysdb::User& user);
 
     protected:
 
@@ -51,7 +90,8 @@ namespace oct::mias::v1
         Gtk::Label label1;
         Gtk::Label label2;
         //Saling saling;
-        //PendingServices pending;
+        PendingServices pending;
+        //const muposysdb::User* user;
     };
 
     class Mias : public mps::Restaurant
