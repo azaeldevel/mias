@@ -29,7 +29,9 @@
 #include <mias/core/1/core.hh>
 #include <muposys/desk/1/desk.hh>
 
-
+#ifdef OCTETOS_MIAS_DESK_V1_TDD
+    #include <iostream>
+#endif
 
 namespace oct::mias::v1
 {
@@ -257,6 +259,8 @@ namespace oct::mias::v1
         void on_click_sales();
         Sales& create_activity_sale();
         Sales& create_activity_sale(long);
+
+        void on_logged();
 
     protected:
         //void enables();
