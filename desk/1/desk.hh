@@ -46,7 +46,7 @@ namespace oct::mias::v1
     public:
         TableSaling();
         TableSaling(long order);
-        //TableSaling(long order,mps::Crud);
+        TableSaling(long order,mps::Crud);
         void init();
         virtual ~TableSaling();
 
@@ -67,7 +67,7 @@ namespace oct::mias::v1
         void set_data(Gtk::TreeModel::Row&,long);
         float get_combine_price(long order);
 
-        //virtual void load_order(long);
+        virtual void load_order(long);
 
         Gtk::Label lbName;
         Gtk::Entry inName;
@@ -77,7 +77,6 @@ namespace oct::mias::v1
 
     private:
         const mps::User* user;
-
 
 
     };
@@ -204,7 +203,7 @@ namespace oct::mias::v1
     protected:
 
     private:
-        //TableSaling table;
+        TableSaling table;
         const mps::User* user;
     };
 
@@ -219,7 +218,7 @@ namespace oct::mias::v1
     private:
         Gtk::Label lbTitle;
 
-        //TableServicies servicies;
+        TableServicies servicies;
         Mias* mias;
     };
 

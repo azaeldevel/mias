@@ -111,7 +111,7 @@ namespace oct::mias::v1
 #ifdef OCTETOS_MIAS_DESK_V1_TDD
         std::cout << "Logged 2\n";
 #endif
-
+        btSales.set_sensitive(true);
     }
 
 
@@ -157,14 +157,14 @@ namespace oct::mias::v1
     {
         init();
     }
-    Saling::Saling(long o) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),user(NULL)//,table(o)
+    Saling::Saling(long o) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),user(NULL),table(o)
     {
         //std::cout << "Saling::Saling(" << o << ")\n";
         init();
     }
     void Saling::init()
     {
-        //pack_start(table,false,false);
+        pack_start(table,false,false);
     }
     Saling::~Saling()
     {
@@ -172,14 +172,14 @@ namespace oct::mias::v1
     void Saling::set(const mps::User& u)
     {
         user = &u;
-        //table.set(u);
+        table.set(u);
     }
 
 
 
 
 
-    PendingServices::PendingServices(Mias* m) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),mias(m)//,servicies(m)
+    PendingServices::PendingServices(Mias* m) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),mias(m),servicies(m)
     {
         init();
     }
@@ -188,7 +188,7 @@ namespace oct::mias::v1
         pack_start(lbTitle,false,false);
         lbTitle.set_text("Lista de Servicios : ");
 
-        //pack_start(servicies);
+        pack_start(servicies);
 
     }
     PendingServices::~PendingServices()

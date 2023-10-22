@@ -8,7 +8,6 @@ namespace oct::mias::v1
 
 
 
-
     TableSaling::TableSaling() : user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
     {
         //std::cout << "mias::TableSaling::TableSaling()\n";
@@ -19,11 +18,17 @@ namespace oct::mias::v1
         //std::cout << "mias::TableSaling::TableSaling(" << o << ")\n";
         init();
         //std::cout << "mias::TableSaling::loading..(" << o << ")\n";
-        //load_order(o);
+        load_order(o);
+    }
+    TableSaling::TableSaling(long o,mps::Crud c) : mps::TableSaling(o),user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
+    {
+        //std::cout << "mias::TableSaling::TableSaling(" << o << ")\n";
+        init();
+        load_order(o);
     }
     void TableSaling::init()
     {
-        /*if(crud == mps::Crud::create)
+        if(crud == mps::Crud::create)
         {
             btSave.signal_clicked().connect( sigc::mem_fun(*this,&TableSaling::on_save_clicked));
         }
@@ -38,9 +43,9 @@ namespace oct::mias::v1
             Gtk::TreeViewColumn* col_number = table.get_column(2);
             cell_number->property_editable() = true;
             cell_number->signal_edited().connect(sigc::mem_fun(*this, &TableSaling::cellrenderer_validated_on_edited_number));
-        }*/
+        }
 
-        /*boxAditional.pack_start(boxName);
+        boxAditional.pack_start(boxName);
         {
             boxName.pack_start(lbName);
             boxName.pack_start(inName);
@@ -54,7 +59,7 @@ namespace oct::mias::v1
             boxFrame.pack_start(rdaqui);
             rdllevar.join_group(rdaqui);
             rdllevar.set_active(true);
-        }*/
+        }
     }
     TableSaling::~TableSaling()
     {
@@ -69,7 +74,10 @@ namespace oct::mias::v1
     }
     void TableSaling::clear()
     {
-
+        tree_model->clear();
+        newrow();
+        lbTotalAmount.set_text("");
+        inName.set_text("");
     }
     void TableSaling::set(const mps::User& u)
     {
@@ -77,27 +85,21 @@ namespace oct::mias::v1
     }
     void TableSaling::cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& strnumb)
     {
-
-
     }
     void TableSaling::set_data(Gtk::TreeModel::Row& row,const Glib::ustring& back_number,const Glib::ustring& origin_number,bool combined = false)
     {
-
     }
 
 
 
+    void TableSaling::load_order(long order)
+    {
+    }
 
     bool TableSaling::on_key_press_event(GdkEventKey* event)
     {
-        //std::cout << "on_key_press_event\n";
-        if (event->type == GDK_KEY_PRESS and event->keyval == GDK_KEY_F4)
-        {
-
-        }
-
-        return false;
     }
+
 
 
 }
