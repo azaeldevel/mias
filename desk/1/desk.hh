@@ -65,7 +65,6 @@ namespace oct::mias::v1
          * */
         void set_data(Gtk::TreeModel::Row&,const Glib::ustring& back_number,const Glib::ustring& orign_number,bool combined);
         void set_data(Gtk::TreeModel::Row&,long);
-        float get_combine_price(long order);
 
         virtual void load_order(long);
 
