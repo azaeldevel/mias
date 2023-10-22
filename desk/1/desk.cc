@@ -123,11 +123,11 @@ namespace oct::mias::v1
 
 
 
-    Sales::Sales(Mias* m) : user(NULL),pending(m)
+    Sales::Sales(Mias* m) : pending(m),user(NULL)
     {
         init();
     }
-    Sales::Sales(Mias* m,long o) : user(NULL),pending(m),saling(o)
+    Sales::Sales(Mias* m,long o) : saling(o),pending(m),user(NULL)
     {
         //std::cout << "Sales::Sales(app," << o << ")\n";
         init();
@@ -157,7 +157,7 @@ namespace oct::mias::v1
     {
         init();
     }
-    Saling::Saling(long o) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),user(NULL),table(o)
+    Saling::Saling(long o) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),table(o),user(NULL)
     {
         //std::cout << "Saling::Saling(" << o << ")\n";
         init();
@@ -179,7 +179,7 @@ namespace oct::mias::v1
 
 
 
-    PendingServices::PendingServices(Mias* m) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),mias(m),servicies(m)
+    PendingServices::PendingServices(Mias* m) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),servicies(m),mias(m)
     {
         init();
     }

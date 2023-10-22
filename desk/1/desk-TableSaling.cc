@@ -72,13 +72,6 @@ namespace oct::mias::v1
     void TableSaling::save()
     {
     }
-    /*void TableSaling::clear()
-    {
-        tree_model->clear();
-        newrow();
-        lbTotalAmount.set_text("");
-        inName.set_text("");
-    }*/
     void TableSaling::set(const mps::User& u)
     {
         user = &u;
