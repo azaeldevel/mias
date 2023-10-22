@@ -79,9 +79,7 @@ namespace oct::mias::v1
     void TableSaling::cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& strnumb)
     {
     }
-    void TableSaling::set_data(Gtk::TreeModel::Row& row,const Glib::ustring& back_number,const Glib::ustring& origin_number,bool combined = false)
-    {
-    }
+
 
 
 

@@ -303,7 +303,7 @@ namespace oct::mias::v1
             serviceSelected = rowSelected[columns.service];
 
             //std::cout << "Doble-click detected\n";
-            Sales& snow = mias->create_activity_sale(serviceSelected);
+            mias->create_activity_sale(serviceSelected);
         }
 
         return return_value;
