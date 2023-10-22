@@ -8,19 +8,19 @@ namespace oct::mias::v1
 
 
 
-    TableSaling::TableSaling() : user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
+    TableSaling::TableSaling() : rdllevar("Llevar"),rdaqui("Aquí"),frame("Final"),user(NULL)
     {
         //std::cout << "mias::TableSaling::TableSaling()\n";
         init();
     }
-    TableSaling::TableSaling(long o) : mps::TableSaling(o),user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
+    TableSaling::TableSaling(long o) : mps::TableSaling(o),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final"),user(NULL)
     {
         //std::cout << "mias::TableSaling::TableSaling(" << o << ")\n";
         init();
         //std::cout << "mias::TableSaling::loading..(" << o << ")\n";
         load_order(o);
     }
-    TableSaling::TableSaling(long o,mps::Crud c) : mps::TableSaling(o),user(NULL),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
+    TableSaling::TableSaling(long o,mps::Crud c) : mps::TableSaling(o),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final"),user(NULL)
     {
         //std::cout << "mias::TableSaling::TableSaling(" << o << ")\n";
         init();
@@ -40,7 +40,7 @@ namespace oct::mias::v1
         if(crud == mps::Crud::create)
         {
             Gtk::CellRendererText* cell_number = static_cast<Gtk::CellRendererText*>(table.get_column_cell_renderer(2));
-            Gtk::TreeViewColumn* col_number = table.get_column(2);
+            //Gtk::TreeViewColumn* col_number = table.get_column(2);
             cell_number->property_editable() = true;
             cell_number->signal_edited().connect(sigc::mem_fun(*this, &TableSaling::cellrenderer_validated_on_edited_number));
         }
@@ -72,13 +72,13 @@ namespace oct::mias::v1
     void TableSaling::save()
     {
     }
-    void TableSaling::clear()
+    /*void TableSaling::clear()
     {
         tree_model->clear();
         newrow();
         lbTotalAmount.set_text("");
         inName.set_text("");
-    }
+    }*/
     void TableSaling::set(const mps::User& u)
     {
         user = &u;
@@ -98,6 +98,8 @@ namespace oct::mias::v1
 
     bool TableSaling::on_key_press_event(GdkEventKey* event)
     {
+
+        return false;
     }
 
 

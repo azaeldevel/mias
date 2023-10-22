@@ -50,7 +50,7 @@ namespace oct::mias::v1
         void init();
         virtual ~TableSaling();
 
-        virtual void clear();
+        //virtual void clear();
         void set(const mps::User& user);
 
     protected:
