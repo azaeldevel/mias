@@ -38,7 +38,14 @@
 					<Add option="-DOCTETOS_MIAS_DESK_V1_TDD" />
 				</Compiler>
 				<Linker>
-					<Add option="-s" />
+					<Add library="muposys-core-1" />
+					<Add library="muposys-desk-1" />
+					<Add library="mias-core-1" />
+					<Add library="cave-mmsql-0" />
+					<Add directory="../../cave/bin/Release" />
+					<Add directory="../../muposys/core/bin/Release" />
+					<Add directory="../../muposys/desk/bin/Release" />
+					<Add directory="../core/bin/Release" />
 				</Linker>
 			</Target>
 		</Build>
