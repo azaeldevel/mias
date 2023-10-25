@@ -67,6 +67,8 @@ namespace oct::mias::v1
     }
     TableSaling::~TableSaling()
     {
+        if(columns) delete columns;
+
     }
 
     void TableSaling::on_save_clicked()
