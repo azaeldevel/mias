@@ -102,6 +102,7 @@ namespace oct::mias::v1
         void on_save_clicked();
         bool on_key_press_event(GdkEventKey* key_event) override;
         void cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& new_text);
+        void row_changed(const Gtk::TreeModel::Path& path, const Gtk::TreeModel::iterator& iter);
 
         /**
          * \brief escribe los datos los datos el regstro currepondientes al item

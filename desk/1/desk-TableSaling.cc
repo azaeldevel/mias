@@ -43,6 +43,7 @@ namespace oct::mias::v1
             //Gtk::TreeViewColumn* col_number = table.get_column(2);
             cell_number->property_editable() = true;
             cell_number->signal_edited().connect(sigc::mem_fun(*this, &TableSaling::cellrenderer_validated_on_edited_number));
+            tree_model->signal_row_changed().connect(sigc::mem_fun(*this, &TableSaling::row_changed));
         }
 
         boxAditional.pack_start(boxName);
@@ -162,13 +163,16 @@ namespace oct::mias::v1
 
                     if(lstItemflag and lstItem.size() == 1)
                     {
-                        std::cout << "writing in model..\n";
+                        //std::cout << "writing in model..\n";
                         Gtk::TreeModel::Row row = *iter;
                         set_data(row,lstItem[0]);
                     }
                     else
                     {
-                        std::cout << "Hay " << lstItem.size() << " resultados ..\n";
+                        Gtk::MessageDialog dlg("Deve seleccionar un item de la lista antes de continuar",true,Gtk::MESSAGE_ERROR);
+                        dlg.set_secondary_text("No hay seleccion.");
+                        dlg.run();
+                        return true;
                     }
 
                     connDB.close();
@@ -183,6 +187,20 @@ namespace oct::mias::v1
         }
 
         return true;
+    }
+
+    void TableSaling::row_changed(const Gtk::TreeModel::Path& path, const Gtk::TreeModel::iterator& iter)
+    {
+        //Gtk::TreeModel::Row row = *iter;
+
+        //std::cout << "Size : " << tree_model->children().size() << "\n";
+        const Gtk::TreeModel::iterator& last = --(tree_model->children().end());
+
+        if(last == iter and crud == mps::Crud::create) newrow();
+
+        lbTotalAmount.set_text(std::to_string(total()));
+
+        saved = false;
     }
 
 
