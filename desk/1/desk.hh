@@ -39,53 +39,6 @@ namespace oct::mias::v1
 
     //namespace mps = oct::mps::v1;
 
-    class SearchItem : public Gtk::Dialog
-    {
-    public:
-        SearchItem(mps::ID&);
-        void init();
-
-    protected:
-        void on_bt_ok_clicked();
-        void on_bt_cancel_clicked();
-        void on_response(int);
-        bool on_key_press_event(GdkEventKey* key_event) override;
-        void get_selection();
-
-        void searching(const Glib::ustring& s);
-
-        class ModelColumns : public Gtk::TreeModel::ColumnRecord
-        {
-        public:
-            ModelColumns();
-            Gtk::TreeModelColumn<mps::ID> id;
-            Gtk::TreeModelColumn<Glib::ustring> number;
-            Gtk::TreeModelColumn<Glib::ustring> name;
-            Gtk::TreeModelColumn<Glib::ustring> brief;
-        };
-
-    private:
-        mps::cave::mmsql::Connection connDB;
-        bool connDB_flag;
-        mps::ID& number;
-        Glib::ustring text;
-
-        Gtk::Button btOK;
-        Gtk::Button btCancel;
-        Gtk::Entry inSearch;
-        Gtk::Label lbSearch;
-        Gtk::ButtonBox boxButtons;
-        //Gtk::VBox data;
-        Gtk::HBox boxSearch;
-        Gtk::ScrolledWindow scrolled;
-        static const Glib::ustring search_label;
-
-        ModelColumns colums;
-        Gtk::TreeView tree;
-        Glib::RefPtr<Gtk::ListStore> treemodel;
-    };
-
-
     class TableSaling : public mps::TableSaling
     {
     public:
@@ -100,16 +53,9 @@ namespace oct::mias::v1
     protected:
         virtual void save();
         void on_save_clicked();
-        bool on_key_press_event(GdkEventKey* key_event) override;
         void cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& new_text);
         void row_changed(const Gtk::TreeModel::Path& path, const Gtk::TreeModel::iterator& iter);
 
-        /**
-         * \brief escribe los datos los datos el regstro currepondientes al item
-         * \param back_number es el numero usado internamente, el cual sera escrito en la base de datos
-         * \param orign_number es el numero escrito por el usuario
-         * */
-        void set_data(Gtk::TreeModel::Row&,const mps::CatalogItem& item);
 
         virtual void load_order(long);
 

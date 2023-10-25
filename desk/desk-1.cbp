@@ -18,10 +18,10 @@
 					<Add option="-DOCTETOS_MUPOSYS_DESK_V1_TDD" />
 				</Compiler>
 				<Linker>
+					<Add library="cave-mmsql-0" />
 					<Add library="muposys-core-1" />
 					<Add library="muposys-desk-1" />
 					<Add library="mias-core-1" />
-					<Add library="cave-mmsql-0" />
 					<Add directory="../../cave/bin/Debug" />
 					<Add directory="../../muposys/core/bin/Debug" />
 					<Add directory="../../muposys/desk/bin/Debug" />
