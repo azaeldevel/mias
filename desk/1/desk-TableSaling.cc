@@ -28,8 +28,11 @@ namespace oct::mias::v1
     }
     void TableSaling::init()
     {
+        mps::TableSaling::init_table_model<ModelColumns>();
+        init_table();
         if(crud == mps::Crud::create)
         {
+            newrow();
             btSave.signal_clicked().connect( sigc::mem_fun(*this,&TableSaling::on_save_clicked));
         }
         else if(crud == mps::Crud::read)
@@ -81,6 +84,14 @@ namespace oct::mias::v1
     {
     }
 
+    /*
+    void TableSaling::create_model()
+    {
+        columns = new ModelColumns;
+        tree_model = Gtk::ListStore::create((ModelColumns&)*columns);
+    }
+    */
+
 
 
 
@@ -90,7 +101,7 @@ namespace oct::mias::v1
 
     bool TableSaling::on_key_press_event(GdkEventKey* event)
     {
-        std::cout << "on_key_press_event\n";
+        //std::cout << "on_key_press_event\n";
         if (event->type == GDK_KEY_PRESS and event->keyval == GDK_KEY_F4)
         {
             //std::cout << "on_key_press_event F4 begin\n";
@@ -98,7 +109,7 @@ namespace oct::mias::v1
             SearchItem search(number);
             if(search.run() == Gtk::RESPONSE_OK)
             {
-                std::cout << "number : " << number  << "\n";
+                //std::cout << "number : " << number  << "\n";
                 Glib::RefPtr<Gtk::TreeSelection> refSelection = table.get_selection();
                 Gtk::TreeModel::iterator iter = refSelection->get_selected();
                 if(iter) //If anything is selected
@@ -202,7 +213,20 @@ namespace oct::mias::v1
 
         saved = false;
     }
+    void TableSaling::set_data(Gtk::TreeModel::Row& row,const mps::CatalogItem& item)
+    {
+        row[columns->item] = item.id;
+        row[columns->number] = item.number;
+        row[columns->name] = "name";
+        row[columns->cost_unit] = item.value;
+        row[columns->presentation] = item.presentation;
+        row[columns->amount] = row[columns->quantity] * row[columns->cost_unit];
+    }
 
 
+    TableSaling::ModelColumns::ModelColumns()
+    {
+        //add(itemDB);
+    }
 
 }

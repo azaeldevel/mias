@@ -21,10 +21,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * */
 
-//#include <muposys/core/1/core.hh>
+#include <muposys/core/1/core.hh>
 
 namespace oct::mias::v1
 {
+
+    namespace mps = oct::mps::v1;
+
 	enum class ServiceStep
 	{
 		none,
@@ -89,8 +92,37 @@ const char* to_text(ServiceStep s);
 //void to_step(const char* str, steping::Pizza& step);
 
 
-    struct CatalogItem
+    struct CatalogItem : public mps::CatalogItem
     {
+        char station;
+        std::string name;
+        std::string size;
+
+
+        CatalogItem() = default;
+        CatalogItem(const char** s): mps::CatalogItem(s)
+        {
+            station = std::atoi(s[7]);
+            name = s[8];
+            size = s[9];
+        }
+        CatalogItem(const mps::cave::Row<char,mps::cave::mmsql::Data>& s) : mps::CatalogItem(s)
+        {
+            station = std::atoi(s[7]);
+            name = s[8];
+            size = s[9];
+        }
+
+
+        static std::string fields()
+        {
+            return "id,catalog,number,brief,active,value,presentation,type,station,name,size";
+        }
+
+        static std::string table()
+        {
+            return "CatalogItem";
+        }
 
     };
     struct MiasService

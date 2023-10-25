@@ -174,15 +174,6 @@ namespace oct::mias::v1
         user = &u;
         table.set(u);
     }
-    void TableSaling::set_data(Gtk::TreeModel::Row& row,const mps::CatalogItem& item)
-    {
-        row[columns.item] = item.id;
-        row[columns.number] = item.number;
-        row[columns.name] = "name";
-        row[columns.cost_unit] = item.value;
-        row[columns.presentation] = item.presentation;
-        row[columns.amount] = row[columns.quantity] * row[columns.cost_unit];
-    }
 
 
 

@@ -37,7 +37,7 @@ namespace oct::mias::v1
 {
     class Mias;
 
-    namespace mps = oct::mps::v1;
+    //namespace mps = oct::mps::v1;
 
     class SearchItem : public Gtk::Dialog
     {
@@ -119,10 +119,21 @@ namespace oct::mias::v1
         Gtk::RadioButton rdllevar, rdaqui;
         Gtk::Frame frame;
 
+        class ModelColumns : public mps::TableSaling::ModelColumns
+        {
+        public:
+            ModelColumns();
+
+            Gtk::TreeModelColumn<CatalogItem> itemDB;
+        };
+
+
+
     private:
         const mps::User* user;
 
 
+        //virtual void create_model();
     };
 
 
