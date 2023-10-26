@@ -112,6 +112,9 @@ const char* to_text(ServiceStep s);
             name = s[8];
             size = s[9];
         }
+        CatalogItem(const CatalogItem& s) : mps::CatalogItem(s),station(s.station),name(s.name),size(s.size)
+        {
+        }
 
 
         static std::string fields()
