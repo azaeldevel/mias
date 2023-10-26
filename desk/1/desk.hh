@@ -56,7 +56,7 @@ namespace oct::mias::v1
         void cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& new_text);
         void row_changed(const Gtk::TreeModel::Path& path, const Gtk::TreeModel::iterator& iter);
         bool on_key_press_event(GdkEventKey* key_event) override;
-
+        void set_data(Gtk::TreeModel::Row&,const CatalogItem& item);
         virtual void load_order(long);
 
         Gtk::Label lbName;

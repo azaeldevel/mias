@@ -225,4 +225,10 @@ namespace oct::mias::v1
         return true;
     }
 
+
+    void TableSaling::set_data(Gtk::TreeModel::Row& row,const CatalogItem& item)
+    {
+        mps::TableSaling::set_data(row,item);
+        row[columns->name] = item.name;
+    }
 }
