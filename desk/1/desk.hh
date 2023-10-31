@@ -69,6 +69,8 @@ namespace oct::mias::v1
         {
         public:
             ModelColumns();
+
+            Gtk::TreeModelColumn<Glib::ustring> name;
         };
 
 

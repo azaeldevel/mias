@@ -30,6 +30,7 @@ namespace oct::mias::v1
     {
         mps::TableSaling::init_table_model<ModelColumns>();
         init_table();
+        table.append_column("Artículo", ((ModelColumns&)*columns).name);
         if(crud == mps::Crud::create)
         {
             newrow();
@@ -119,6 +120,7 @@ namespace oct::mias::v1
 
     TableSaling::ModelColumns::ModelColumns()
     {
+        add(name);
     }
 
 
@@ -228,7 +230,8 @@ namespace oct::mias::v1
 
     void TableSaling::set_data(Gtk::TreeModel::Row& row,const CatalogItem& item)
     {
+        if(row[columns->itemDB]) row[columns->itemDB] = new CatalogItem(item);
         mps::TableSaling::set_data(row,item);
-        row[columns->name] = item.name;
+        row[((ModelColumns&)*columns).name] = item.name;
     }
 }
