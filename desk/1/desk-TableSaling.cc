@@ -43,8 +43,7 @@ namespace oct::mias::v1
 
         if(crud == mps::Crud::create)
         {
-            Gtk::CellRendererText* cell_number = static_cast<Gtk::CellRendererText*>(table.get_column_cell_renderer(2));
-            //Gtk::TreeViewColumn* col_number = table.get_column(2);
+            Gtk::CellRendererText* cell_number = static_cast<Gtk::CellRendererText*>(table.get_column_cell_renderer(0));
             cell_number->property_editable() = true;
             cell_number->signal_edited().connect(sigc::mem_fun(*this, &TableSaling::cellrenderer_validated_on_edited_number));
             tree_model->signal_row_changed().connect(sigc::mem_fun(*this, &TableSaling::row_changed));
@@ -83,9 +82,6 @@ namespace oct::mias::v1
     {
         user = &u;
     }
-    void TableSaling::cellrenderer_validated_on_edited_number(const Glib::ustring& path_string, const Glib::ustring& strnumb)
-    {
-    }
 
     /*
     void TableSaling::create_model()
@@ -103,7 +99,7 @@ namespace oct::mias::v1
     }
 
 
-    void TableSaling::row_changed(const Gtk::TreeModel::Path& path, const Gtk::TreeModel::iterator& iter)
+    /*void TableSaling::row_changed(const Gtk::TreeModel::Path& path, const Gtk::TreeModel::iterator& iter)
     {
         //Gtk::TreeModel::Row row = *iter;
 
@@ -115,7 +111,7 @@ namespace oct::mias::v1
         lbTotalAmount.set_text(std::to_string(total()));
 
         saved = false;
-    }
+    }*/
 
 
     TableSaling::ModelColumns::ModelColumns()
