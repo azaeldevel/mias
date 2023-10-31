@@ -102,15 +102,15 @@ const char* to_text(ServiceStep s);
         CatalogItem() = default;
         CatalogItem(const char** s): mps::CatalogItem(s)
         {
-            station = std::atoi(s[7]);
-            name = s[8];
-            size = s[9];
+            station = std::atoi(s[8]);
+            name = s[9];
+            size = s[10];
         }
         CatalogItem(const mps::cave::Row<char,mps::cave::mmsql::Data>& s) : mps::CatalogItem(s)
         {
-            station = std::atoi(s[7]);
-            name = s[8];
-            size = s[9];
+            station = std::atoi(s[8]);
+            name = s[9];
+            size = s[10];
         }
         CatalogItem(const CatalogItem& s) : mps::CatalogItem(s),station(s.station),name(s.name),size(s.size)
         {
