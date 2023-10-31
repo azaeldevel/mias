@@ -6,9 +6,6 @@
 		<Project filename="../../muposys/core/core-v1.cbp" />
 		<Project filename="../../muposys/desk/desk-v1.cbp" />
 		<Project filename="../core/core-v1.cbp" />
-		<Project filename="desk-1.cbp">
-			<Depends filename="../../muposys/core/core-v1.cbp" />
-			<Depends filename="../../muposys/desk/desk-v1.cbp" />
-		</Project>
+		<Project filename="desk-1.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
