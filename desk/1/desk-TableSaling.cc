@@ -219,18 +219,6 @@ namespace oct::mias::v1
             }
 
         }
-        else if ((event->type == GDK_KEY_PRESS and event->keyval == GDK_KEY_KP_Enter) or (event->type == GDK_KEY_PRESS and event->keyval == GDK_KEY_Return))
-        {
-            //std::cout << ">>>pppppppppppppppppp<<<\n";
-            Glib::RefPtr<Gtk::TreeSelection> refSelection = table.get_selection();
-            Gtk::TreeModel::iterator iter = refSelection->get_selected();
-            if(iter) //If anything is selected
-            {
-                Gtk::TreeModel::Row row = *iter;
-                std::cout << row[columns->number] << "<<<\n";
-            }
-
-        }
 
         return true;
     }
@@ -244,27 +232,6 @@ namespace oct::mias::v1
 
 
 
-    std::vector<Glib::ustring> TableSaling::split(const Glib::ustring& number)
-    {
-        //std::cout << "TableSaling::split : number " << number << "\n";
-        Glib::ustring::size_type found = std::string(number).find("/");
-        //std::cout << "TableSaling::split : found " << found << "\n";
-        if(found != Glib::ustring::npos)
-        {
-            //std::cout << "TableSaling::split : combinada " << number << "\n";
-            std::vector<Glib::ustring> numbers(2);
-            numbers[0] = number.substr(0,found);
-            numbers[1] = number.substr(found + 1, number.length() - 1);
-            return numbers;
-        }
-        else
-        {
-            //std::cout << "TableSaling::split : no combinada " << number << "\n";
-            std::vector<Glib::ustring> numbers(1);
-            numbers[0] = number;
-            return numbers;
-        }
-    }
 
 
 }
