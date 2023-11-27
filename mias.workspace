@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
+		<Project filename="../cave/cave-v0.cbp" />
 		<Project filename="../muposys/core/muposys-core.cbp" />
 		<Project filename="../muposys/desk/muposys-desk.cbp" />
 		<Project filename="core/mias-core.cbp" />
-		<Project filename="desk/mias-desk.cbp" />
+		<Project filename="desk/desk-1.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

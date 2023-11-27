@@ -78,7 +78,33 @@ namespace oct::mias::v1
         const mps::User* user;
 
 
-        //virtual void create_model();
+        /**
+         * \brief Retorna los item que componen el string pasado como paramtro(e.j pizza combinada)
+         */
+        std::vector<Glib::ustring> split(const Glib::ustring&);
+
+        /**
+         * \brief Retorna el un objecto de base de datos curresondiente a la string indicada
+         */
+        mps::CatalogItem& get_item(const Glib::ustring&);
+
+        /**
+         * \brief Retorna el los objecto de base de datos curresondiente a la string indicada
+         */
+        std::vector<mps::CatalogItem> get_items(const Glib::ustring&);
+
+        /**
+         * \brief Retorna una descripcion valida para el item indicado por parametro, incluso si dicho item es compuesto
+         */
+        Glib::ustring get_brief(const Glib::ustring&);
+        /**
+         * \brief Optine el precio del item indicado en el paramatro, cuando dicho tem es compuesto
+         */
+        float get_price(const Glib::ustring&);
+        /**
+         * \brief Optine el precio del item indicado en el paramatro, cuando dicho tem es compuesto
+         */
+        float get_price(long);
     };
 
 

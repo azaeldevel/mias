@@ -43,10 +43,10 @@ namespace oct::mias::v1
 
         if(crud == mps::Crud::create)
         {
-            Gtk::CellRendererText* cell_number = static_cast<Gtk::CellRendererText*>(table.get_column_cell_renderer(0));
-            cell_number->property_editable() = true;
-            cell_number->signal_edited().connect(sigc::mem_fun(*this, &TableSaling::cellrenderer_validated_on_edited_number));
-            tree_model->signal_row_changed().connect(sigc::mem_fun(*this, &TableSaling::row_changed));
+            //Gtk::CellRendererText* cell_number = static_cast<Gtk::CellRendererText*>(table.get_column_cell_renderer(0));
+            //cell_number->property_editable() = true;
+            //cell_number->signal_edited().connect(sigc::mem_fun(*this, &TableSaling::cellrenderer_validated_on_edited_number));
+            //tree_model->signal_row_changed().connect(sigc::mem_fun(*this, &TableSaling::row_changed));
         }
 
         boxAditional.pack_start(boxName);
@@ -219,6 +219,18 @@ namespace oct::mias::v1
             }
 
         }
+        else if ((event->type == GDK_KEY_PRESS and event->keyval == GDK_KEY_KP_Enter) or (event->type == GDK_KEY_PRESS and event->keyval == GDK_KEY_Return))
+        {
+            //std::cout << ">>>pppppppppppppppppp<<<\n";
+            Glib::RefPtr<Gtk::TreeSelection> refSelection = table.get_selection();
+            Gtk::TreeModel::iterator iter = refSelection->get_selected();
+            if(iter) //If anything is selected
+            {
+                Gtk::TreeModel::Row row = *iter;
+                std::cout << row[columns->number] << "<<<\n";
+            }
+
+        }
 
         return true;
     }
@@ -228,4 +240,31 @@ namespace oct::mias::v1
         mps::TableSaling::set_data(row,item);
         row[((ModelColumns&)*columns).name] = item.name;
     }
+
+
+
+
+    std::vector<Glib::ustring> TableSaling::split(const Glib::ustring& number)
+    {
+        //std::cout << "TableSaling::split : number " << number << "\n";
+        Glib::ustring::size_type found = std::string(number).find("/");
+        //std::cout << "TableSaling::split : found " << found << "\n";
+        if(found != Glib::ustring::npos)
+        {
+            //std::cout << "TableSaling::split : combinada " << number << "\n";
+            std::vector<Glib::ustring> numbers(2);
+            numbers[0] = number.substr(0,found);
+            numbers[1] = number.substr(found + 1, number.length() - 1);
+            return numbers;
+        }
+        else
+        {
+            //std::cout << "TableSaling::split : no combinada " << number << "\n";
+            std::vector<Glib::ustring> numbers(1);
+            numbers[0] = number;
+            return numbers;
+        }
+    }
+
+
 }

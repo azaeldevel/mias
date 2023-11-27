@@ -109,7 +109,7 @@ namespace oct::mias::v1
     void Mias::on_logged()
     {
 #ifdef OCTETOS_MIAS_DESK_V1_TDD
-        std::cout << "Logged 2\n";
+        //std::cout << "Logged 2\n";
 #endif
         btSales.set_sensitive(true);
     }
