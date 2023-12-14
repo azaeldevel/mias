@@ -65,7 +65,7 @@ namespace oct::mias::v1
 
     void Mias::on_click_sales()
     {
-        Sales* snow = new Sales(this);
+        Sales* snow = new Sales(this,mps::Crud::create);
         sale.push_back(snow);
         //std::cout << " Mias::on_click_sales step 1\n";
         nbMain.append_page(*snow);
@@ -76,7 +76,7 @@ namespace oct::mias::v1
         //sale.show_all_children();
         //std::cout << " Mias::on_click_sales step 3\n";
     }
-    Sales& Mias::create_activity_sale()
+    /*Sales& Mias::create_activity_sale()
     {
         Sales* snow = new Sales(this);
         sale.push_back(snow);
@@ -105,7 +105,7 @@ namespace oct::mias::v1
         //std::cout << " Mias::on_click_sales step 7\n";
 
         return *snow;
-    }
+    }*/
     void Mias::on_logged()
     {
 #ifdef OCTETOS_MIAS_DESK_V1_TDD
@@ -127,7 +127,7 @@ namespace oct::mias::v1
     {
         init();
     }
-    Sales::Sales(Mias* m,long o) : saling(o),pending(m),user(NULL)
+    Sales::Sales(Mias* m,mps::Crud c) : saling(c),pending(m),user(NULL)
     {
         //std::cout << "Sales::Sales(app," << o << ")\n";
         init();
@@ -157,7 +157,7 @@ namespace oct::mias::v1
     {
         init();
     }
-    Saling::Saling(long o) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),table(o),user(NULL)
+    Saling::Saling(mps::Crud c) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),table(c),user(NULL)
     {
         //std::cout << "Saling::Saling(" << o << ")\n";
         init();

@@ -13,18 +13,10 @@ namespace oct::mias::v1
         //std::cout << "mias::TableSaling::TableSaling()\n";
         init();
     }
-    TableSaling::TableSaling(long o) : mps::TableSaling(o),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final"),user(NULL)
+    TableSaling::TableSaling(mps::Crud c) : mps::TableSaling(c),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final"),user(NULL)
     {
         //std::cout << "mias::TableSaling::TableSaling(" << o << ")\n";
         init();
-        //std::cout << "mias::TableSaling::loading..(" << o << ")\n";
-        load_order(o);
-    }
-    TableSaling::TableSaling(long o,mps::Crud c) : mps::TableSaling(o),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final"),user(NULL)
-    {
-        //std::cout << "mias::TableSaling::TableSaling(" << o << ")\n";
-        init();
-        load_order(o);
     }
     void TableSaling::init()
     {
@@ -122,6 +114,7 @@ namespace oct::mias::v1
 
     bool TableSaling::on_key_press_event(GdkEventKey* event)
     {
+        bool connDB_flag;
         //std::cout << "on_key_press_event mias\n";
         if (event->type == GDK_KEY_PRESS and event->keyval == GDK_KEY_F4)
         {

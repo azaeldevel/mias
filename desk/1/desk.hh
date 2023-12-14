@@ -43,8 +43,7 @@ namespace oct::mias::v1
     {
     public:
         TableSaling();
-        TableSaling(long order);
-        TableSaling(long order,mps::Crud);
+        TableSaling(mps::Crud);
         void init();
         virtual ~TableSaling();
 
@@ -92,51 +91,14 @@ namespace oct::mias::v1
         void init();
         virtual ~TableServicies();
 
-        void load();
-        void reload();
-        bool is_reloadable();
-        void notify();
-
-        void on_show()override;
-
-        // Dispatcher handler.
-        void on_notification_from_worker_thread();
-        bool on_key_press_event(GdkEventKey* key_event) override;
 
 
-        // Signal handlers.
-        void on_start_services();
-        void on_stop_services();
-        void on_quit_services();
 
-        void update_start_stop_buttons();
-
-        void step_data(Gtk::CellRenderer* renderer, const Gtk::TreeModel::iterator& iter);
-
-        bool on_button_press_event(GdkEventButton* button_event) override;
-        bool on_enter_notify_event (GdkEventCrossing* crossing_event)override;
-        bool on_leave_notify_event (GdkEventCrossing* crossing_event)override;
-        void on_menu_cooked_popup();
-        void on_menu_waiting_popup();
-        void on_menu_deliver_popup();
-        void on_menu_cancel_popup();
 
     protected:
 
     private:
-        class Menu : public Gtk::Menu
-        {
-        public:
-            Menu();
-            Menu(TableServicies& parent);
-            bool on_enter_notify_event (GdkEventCrossing* crossing_event)override;
-            //void on_show()override;
-            //void on_hide() override;
-            void set(TableServicies& parent);
 
-        private:
-            TableServicies* parent;
-        };
         class ModelColumns : public Gtk::TreeModel::ColumnRecord
         {
         public:
@@ -148,38 +110,12 @@ namespace oct::mias::v1
             Gtk::TreeModelColumn<Glib::ustring> step_str;
             Gtk::TreeModelColumn<ServiceStep> step_number;
         };
-        class Updater
-        {
-        public:
-            Updater();
-            // Thread function.
-            void do_work(TableServicies* caller);
 
-            //void get_data(double* fraction_done, Glib::ustring* message) const;
-            void stop_work();
-            bool has_stopped() const;
-        private:
-            mutable std::mutex mutex;
-            // Data used by both GUI thread and worker thread.
-            bool m_shall_stop;
-            bool m_has_stopped;
-
-            //mps::Connector connDB;
-            //bool connDB_flag;
-        };
 
         ModelColumns columns;
         Gtk::ScrolledWindow scrolled;
         Glib::RefPtr<Gtk::ListStore> tree_model;
-        bool is_runnig;
-        bool is_stop;
-        Glib::Dispatcher dispatcher;
-        Updater updater;
-        std::thread* updaterThread;
-        Menu menu;
-        long serviceSelected;
         Mias* mias;
-        long order_view;
     };
 
 
@@ -192,8 +128,7 @@ namespace oct::mias::v1
 
     public:
         Saling();
-        Saling(long o);
-        //Saling(long o,mps::Crud);
+        Saling(mps::Crud);
         void init();
         virtual ~Saling();
 
@@ -225,7 +160,7 @@ namespace oct::mias::v1
     {
     public:
         Sales(Mias*);
-        Sales(Mias*,long);
+        Sales(Mias*,mps::Crud);
         //Sales(Mias*,long,mps::Crud);
         //Sales(Mias*,mps::Crud);
         void init();
@@ -254,8 +189,8 @@ namespace oct::mias::v1
         virtual ~Mias();
 
         void on_click_sales();
-        Sales& create_activity_sale();
-        Sales& create_activity_sale(long);
+        //Sales& create_activity_sale();
+        //Sales& create_activity_sale(long);
 
         void on_logged();
 
