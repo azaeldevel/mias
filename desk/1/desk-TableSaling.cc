@@ -15,30 +15,25 @@ namespace oct::mias::v1
     }
     TableSaling::TableSaling(mps::Crud c) : mps::TableSaling(c),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final"),user(NULL)
     {
-        //std::cout << "mias::TableSaling::TableSaling(" << o << ")\n";
+        //std::cout << "mias::TableSaling::TableSaling()\n";
         init();
     }
     void TableSaling::init()
     {
-        mps::TableSaling::init_table_model<ModelColumns>();
-        init_table();
-        table.append_column("Nombre", ((ModelColumns&)*columns).name);
+        mps::TableSaling::create_table_model<ModelColumns>();
+        /*table.append_column("Nombre", ((ModelColumns&)*columns).name);
         if(crud == mps::Crud::create)
         {
             newrow();
             btSave.signal_clicked().connect( sigc::mem_fun(*this,&TableSaling::on_save_clicked));
-        }
-        else if(crud == mps::Crud::read)
-        {
-            btSave.set_sensitive(false);
-        }
-
-        if(crud == mps::Crud::create)
-        {
             //Gtk::CellRendererText* cell_number = static_cast<Gtk::CellRendererText*>(table.get_column_cell_renderer(0));
             //cell_number->property_editable() = true;
             //cell_number->signal_edited().connect(sigc::mem_fun(*this, &TableSaling::cellrenderer_validated_on_edited_number));
             //tree_model->signal_row_changed().connect(sigc::mem_fun(*this, &TableSaling::row_changed));
+        }
+        else if(crud == mps::Crud::read)
+        {
+            btSave.set_sensitive(false);
         }
 
         boxAditional.pack_start(boxName);
@@ -55,7 +50,7 @@ namespace oct::mias::v1
             boxFrame.pack_start(rdaqui);
             rdllevar.join_group(rdaqui);
             rdllevar.set_active(true);
-        }
+        }*/
     }
     TableSaling::~TableSaling()
     {
@@ -75,35 +70,7 @@ namespace oct::mias::v1
         user = &u;
     }
 
-    /*
-    void TableSaling::create_model()
-    {
-        columns = new ModelColumns;
-        tree_model = Gtk::ListStore::create((ModelColumns&)*columns);
-    }
-    */
 
-
-
-
-    void TableSaling::load_order(long order)
-    {
-    }
-
-
-    /*void TableSaling::row_changed(const Gtk::TreeModel::Path& path, const Gtk::TreeModel::iterator& iter)
-    {
-        //Gtk::TreeModel::Row row = *iter;
-
-        //std::cout << "Size : " << tree_model->children().size() << "\n";
-        const Gtk::TreeModel::iterator& last = --(tree_model->children().end());
-
-        if(last == iter and crud == mps::Crud::create) newrow();
-
-        lbTotalAmount.set_text(std::to_string(total()));
-
-        saved = false;
-    }*/
 
 
     TableSaling::ModelColumns::ModelColumns()
@@ -153,6 +120,12 @@ namespace oct::mias::v1
                         Gtk::MessageDialog dlg("Error detectado durante conexion a BD",true,Gtk::MESSAGE_ERROR);
                         dlg.set_secondary_text("Error desconocido en la creacion de la conexion a la base de datos");
                         dlg.run();
+                        return true;
+                    }
+
+                    if(not connDB_flag)
+                    {
+                        std::cerr << "Fallo la conexion abase de datos en \"bool TableSaling::on_key_press_event(GdkEventKey* event)\"";
                         return true;
                     }
 
@@ -221,10 +194,5 @@ namespace oct::mias::v1
         mps::TableSaling::set_data(row,item);
         row[((ModelColumns&)*columns).name] = item.name;
     }
-
-
-
-
-
 
 }
