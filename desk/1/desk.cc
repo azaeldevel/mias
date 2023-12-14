@@ -102,56 +102,5 @@ namespace oct::mias::v1
     }
 
 
-
-
-
-
-
-
-    Saling::Saling() : Gtk::Box(Gtk::ORIENTATION_VERTICAL)
-    {
-        init();
-    }
-    Saling::Saling(mps::Crud c) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),table(c)
-    {
-        //std::cout << "Saling::Saling(" << o << ")\n";
-        init();
-    }
-    void Saling::init()
-    {
-        pack_start(table,false,false);
-    }
-    Saling::~Saling()
-    {
-    }
-
-
-
-
-
-    PendingServices::PendingServices(Mias* m) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),servicies(m)
-    {
-        init();
-    }
-    void PendingServices::init()
-    {
-        pack_start(lbTitle,false,false);
-        lbTitle.set_text("Lista de Servicios : ");
-
-        pack_start(servicies);
-
-    }
-    PendingServices::~PendingServices()
-    {
-    }
-
-
-
-
-
-
-
-
-
 }
 

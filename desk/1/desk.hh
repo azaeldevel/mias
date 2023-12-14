@@ -37,13 +37,6 @@ namespace oct::mias::v1
 {
     class Mias;
 
-    //namespace mps = oct::mps::v1;
-
-
-
-
-
-
     class TableServicies : public Gtk::TreeView
     {
     public:
@@ -52,9 +45,6 @@ namespace oct::mias::v1
         TableServicies(Mias*);
         void init();
         virtual ~TableServicies();
-
-
-
 
 
     protected:
@@ -79,25 +69,6 @@ namespace oct::mias::v1
         Glib::RefPtr<Gtk::ListStore> tree_model;
         Mias* mias;
     };
-
-    class PendingServices : public Gtk::Box
-    {
-
-    public:
-        PendingServices(Mias*);
-        void init();
-        virtual ~PendingServices();
-
-    private:
-        Gtk::Label lbTitle;
-
-        TableServicies servicies;
-    };
-
-
-
-
-
 
     class TableSaling : public mps::TableSaling
     {
@@ -134,20 +105,6 @@ namespace oct::mias::v1
 
     };
 
-    class Saling : public Gtk::Box
-    {
-
-    public:
-        Saling();
-        Saling(mps::Crud);
-        void init();
-        virtual ~Saling();
-
-    protected:
-
-    private:
-        TableSaling table;
-    };
 
 
     class Sales : public Gtk::Paned
@@ -162,8 +119,8 @@ namespace oct::mias::v1
     protected:
 
     private:
-        Saling saling;
-        PendingServices pending;
+        TableSaling saling;
+        TableServicies pending;
     };
 
 
