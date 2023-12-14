@@ -57,55 +57,15 @@ namespace oct::mias::v1
     }
     Mias::~Mias()
     {
-        for(Sales* s : sale)
-        {
-            delete s;
-        }
     }
 
     void Mias::on_click_sales()
     {
         Sales* snow = new Sales(this,mps::Crud::create);
-        sale.push_back(snow);
-        //std::cout << " Mias::on_click_sales step 1\n";
         nbMain.append_page(*snow);
-        snow->set(get_user());
-        //std::cout << " Mias::on_click_sales step 2\n";
         btSales.set_sensitive(false);
         nbMain.show_all_children();
-        //sale.show_all_children();
-        //std::cout << " Mias::on_click_sales step 3\n";
     }
-    /*Sales& Mias::create_activity_sale()
-    {
-        Sales* snow = new Sales(this);
-        sale.push_back(snow);
-        //std::cout << " Mias::on_click_sales step 1\n";
-        nbMain.append_page(*snow);
-        snow->set(get_user());
-        snow->show_all();
-
-        return *snow;
-    }
-    Sales& Mias::create_activity_sale(long o)
-    {
-        //std::cout << " Mias::on_click_sales step 1\n";
-        Sales* snow = new Sales(this,o);
-        //std::cout << " Mias::on_click_sales step 2\n";
-        sale.push_back(snow);
-        nbMain.append_page(*snow);
-        //std::cout << " Mias::on_click_sales step 3\n";
-        Glib::ustring title = "Order - " + std::to_string(o);
-        //std::cout << " Mias::on_click_sales step 4\n";
-        nbMain.set_tab_label_text((Gtk::Widget&)*snow,title);
-        //std::cout << " Mias::on_click_sales step 5\n";
-        snow->set(get_user());
-        //std::cout << " Mias::on_click_sales step 6\n";
-        snow->show_all();
-        //std::cout << " Mias::on_click_sales step 7\n";
-
-        return *snow;
-    }*/
     void Mias::on_logged()
     {
 #ifdef OCTETOS_MIAS_DESK_V1_TDD
@@ -123,11 +83,11 @@ namespace oct::mias::v1
 
 
 
-    Sales::Sales(Mias* m) : pending(m),user(NULL)
+    Sales::Sales(Mias* m) : pending(m)
     {
         init();
     }
-    Sales::Sales(Mias* m,mps::Crud c) : saling(c),pending(m),user(NULL)
+    Sales::Sales(Mias* m,mps::Crud c) : saling(c),pending(m)
     {
         //std::cout << "Sales::Sales(app," << o << ")\n";
         init();
@@ -140,11 +100,6 @@ namespace oct::mias::v1
     Sales::~Sales()
     {
     }
-    void Sales::set(const mps::User& u)
-    {
-        user = &u;
-        saling.set(u);
-    }
 
 
 
@@ -153,11 +108,11 @@ namespace oct::mias::v1
 
 
 
-    Saling::Saling() : Gtk::Box(Gtk::ORIENTATION_VERTICAL),user(NULL)
+    Saling::Saling() : Gtk::Box(Gtk::ORIENTATION_VERTICAL)
     {
         init();
     }
-    Saling::Saling(mps::Crud c) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),table(c),user(NULL)
+    Saling::Saling(mps::Crud c) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),table(c)
     {
         //std::cout << "Saling::Saling(" << o << ")\n";
         init();
@@ -169,17 +124,12 @@ namespace oct::mias::v1
     Saling::~Saling()
     {
     }
-    void Saling::set(const mps::User& u)
-    {
-        user = &u;
-        table.set(u);
-    }
 
 
 
 
 
-    PendingServices::PendingServices(Mias* m) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),servicies(m),mias(m)
+    PendingServices::PendingServices(Mias* m) : Gtk::Box(Gtk::ORIENTATION_VERTICAL),servicies(m)
     {
         init();
     }

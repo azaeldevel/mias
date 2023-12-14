@@ -39,43 +39,6 @@ namespace oct::mias::v1
 
     //namespace mps = oct::mps::v1;
 
-    class TableSaling : public mps::TableSaling
-    {
-    public:
-        TableSaling();
-        TableSaling(mps::Crud);
-        void init();
-        virtual ~TableSaling();
-
-        void set(const mps::User& user);
-
-    protected:
-        virtual void save();
-        void on_save_clicked();
-        //void row_changed(const Gtk::TreeModel::Path& path, const Gtk::TreeModel::iterator& iter);
-        bool on_key_press_event(GdkEventKey* key_event) override;
-        void set_data(Gtk::TreeModel::Row&,const CatalogItem& item);
-
-        Gtk::Label lbName;
-        Gtk::Entry inName;
-        Gtk::HBox boxName,boxFrame;
-        Gtk::RadioButton rdllevar, rdaqui;
-        Gtk::Frame frame;
-
-        class ModelColumns : public mps::TableSaling::ModelColumns
-        {
-        public:
-            ModelColumns();
-
-            Gtk::TreeModelColumn<Glib::ustring> name;
-        };
-
-
-
-    private:
-        const mps::User* user;
-
-    };
 
 
 
@@ -117,28 +80,6 @@ namespace oct::mias::v1
         Mias* mias;
     };
 
-
-
-
-
-
-    class Saling : public Gtk::Box
-    {
-
-    public:
-        Saling();
-        Saling(mps::Crud);
-        void init();
-        virtual ~Saling();
-
-        void set(const mps::User& user);
-    protected:
-
-    private:
-        TableSaling table;
-        const mps::User* user;
-    };
-
     class PendingServices : public Gtk::Box
     {
 
@@ -151,7 +92,61 @@ namespace oct::mias::v1
         Gtk::Label lbTitle;
 
         TableServicies servicies;
-        Mias* mias;
+    };
+
+
+
+
+
+
+    class TableSaling : public mps::TableSaling
+    {
+    public:
+        TableSaling();
+        TableSaling(mps::Crud);
+        void init();
+        virtual ~TableSaling();
+
+    protected:
+        virtual void save();
+        void on_save_clicked();
+        //void row_changed(const Gtk::TreeModel::Path& path, const Gtk::TreeModel::iterator& iter);
+        bool on_key_press_event(GdkEventKey* key_event) override;
+        void set_data(Gtk::TreeModel::Row&,const CatalogItem& item);
+
+        Gtk::Label lbName;
+        Gtk::Entry inName;
+        Gtk::HBox boxName,boxFrame;
+        Gtk::RadioButton rdllevar, rdaqui;
+        Gtk::Frame frame;
+
+        class ModelColumns : public mps::TableSaling::ModelColumns
+        {
+        public:
+            ModelColumns();
+
+            Gtk::TreeModelColumn<Glib::ustring> name;
+        };
+
+
+
+    private:
+
+    };
+
+    class Saling : public Gtk::Box
+    {
+
+    public:
+        Saling();
+        Saling(mps::Crud);
+        void init();
+        virtual ~Saling();
+
+    protected:
+
+    private:
+        TableSaling table;
     };
 
 
@@ -160,21 +155,15 @@ namespace oct::mias::v1
     public:
         Sales(Mias*);
         Sales(Mias*,mps::Crud);
-        //Sales(Mias*,long,mps::Crud);
-        //Sales(Mias*,mps::Crud);
+
         void init();
         virtual ~Sales();
-
-        void set(const mps::User& user);
 
     protected:
 
     private:
-        Gtk::Label label1;
-        Gtk::Label label2;
         Saling saling;
         PendingServices pending;
-        const mps::User* user;
     };
 
 
@@ -188,17 +177,12 @@ namespace oct::mias::v1
         virtual ~Mias();
 
         void on_click_sales();
-        //Sales& create_activity_sale();
-        //Sales& create_activity_sale(long);
 
         void on_logged();
 
     protected:
-        //void enables();
-        //virtual void notific_session();
 
     private:
-        std::vector<Sales*> sale;
         Gtk::ToolButton btSales;
     };
 

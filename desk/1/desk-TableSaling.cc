@@ -8,28 +8,25 @@ namespace oct::mias::v1
 
 
 
-    TableSaling::TableSaling() : rdllevar("Llevar"),rdaqui("Aquí"),frame("Final"),user(NULL)
+    TableSaling::TableSaling() : rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
     {
         //std::cout << "mias::TableSaling::TableSaling()\n";
         init();
     }
-    TableSaling::TableSaling(mps::Crud c) : mps::TableSaling(c),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final"),user(NULL)
+    TableSaling::TableSaling(mps::Crud c) : mps::TableSaling(c),rdllevar("Llevar"),rdaqui("Aquí"),frame("Final")
     {
         //std::cout << "mias::TableSaling::TableSaling()\n";
         init();
     }
     void TableSaling::init()
     {
-        mps::TableSaling::create_table_model<ModelColumns>();
-        /*table.append_column("Nombre", ((ModelColumns&)*columns).name);
+        mps::TableSaling::create_table<ModelColumns>();
+
+        //table.append_column("Nombre", ((ModelColumns&)*columns).name);
+        newrow();
         if(crud == mps::Crud::create)
         {
-            newrow();
-            btSave.signal_clicked().connect( sigc::mem_fun(*this,&TableSaling::on_save_clicked));
-            //Gtk::CellRendererText* cell_number = static_cast<Gtk::CellRendererText*>(table.get_column_cell_renderer(0));
-            //cell_number->property_editable() = true;
-            //cell_number->signal_edited().connect(sigc::mem_fun(*this, &TableSaling::cellrenderer_validated_on_edited_number));
-            //tree_model->signal_row_changed().connect(sigc::mem_fun(*this, &TableSaling::row_changed));
+
         }
         else if(crud == mps::Crud::read)
         {
@@ -50,7 +47,7 @@ namespace oct::mias::v1
             boxFrame.pack_start(rdaqui);
             rdllevar.join_group(rdaqui);
             rdllevar.set_active(true);
-        }*/
+        }
     }
     TableSaling::~TableSaling()
     {
@@ -64,10 +61,6 @@ namespace oct::mias::v1
     }
     void TableSaling::save()
     {
-    }
-    void TableSaling::set(const mps::User& u)
-    {
-        user = &u;
     }
 
 
