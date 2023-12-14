@@ -82,7 +82,7 @@ namespace oct::mias::v1
         virtual void save();
         void on_save_clicked();
         //void row_changed(const Gtk::TreeModel::Path& path, const Gtk::TreeModel::iterator& iter);
-        bool on_key_press_event(GdkEventKey* key_event) override;
+        //bool on_key_press_event(GdkEventKey* key_event) override;
         void set_data(Gtk::TreeModel::Row&,const CatalogItem& item);
 
         Gtk::Label lbName;

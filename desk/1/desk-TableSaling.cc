@@ -23,10 +23,9 @@ namespace oct::mias::v1
         mps::TableSaling::create_table<ModelColumns>();
 
         //table.append_column("Nombre", ((ModelColumns&)*columns).name);
-        newrow();
         if(crud == mps::Crud::create)
         {
-
+            newrow();
         }
         else if(crud == mps::Crud::read)
         {
@@ -52,7 +51,6 @@ namespace oct::mias::v1
     TableSaling::~TableSaling()
     {
         if(columns) delete columns;
-
     }
 
     void TableSaling::on_save_clicked()
@@ -72,7 +70,7 @@ namespace oct::mias::v1
     }
 
 
-    bool TableSaling::on_key_press_event(GdkEventKey* event)
+    /*bool TableSaling::on_key_press_event(GdkEventKey* event)
     {
         bool connDB_flag;
         //std::cout << "on_key_press_event mias\n";
@@ -180,7 +178,7 @@ namespace oct::mias::v1
         }
 
         return true;
-    }
+    }*/
 
     void TableSaling::set_data(Gtk::TreeModel::Row& row,const CatalogItem& item)
     {
