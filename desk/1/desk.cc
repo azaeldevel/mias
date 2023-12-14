@@ -33,7 +33,7 @@ namespace oct::mias::v1
     {
         init();
     }
-    Mias::Mias(bool d) : mps::Restaurant(d)
+    Mias::Mias(bool d) : mps::Main(d)
     {
         init();
     }

@@ -124,7 +124,7 @@ namespace oct::mias::v1
     };
 
 
-    class Mias : public mps::Restaurant
+    class Mias : public mps::Main
     {
     public:
         Mias();
