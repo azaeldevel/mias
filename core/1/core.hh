@@ -106,7 +106,7 @@ const char* to_text(ServiceStep s);
             name = s[9];
             size = s[10];
         }
-        CatalogItem(const mps::cave::Row<char,mps::cave::mmsql::Data>& s) : mps::CatalogItem(s)
+        CatalogItem(const mps::cave0::Row<char,mps::cave0::mmsql::Data>& s) : mps::CatalogItem(s)
         {
             station = std::atoi(s[8]);
             name = s[9];
