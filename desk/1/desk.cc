@@ -51,7 +51,8 @@ namespace oct::mias::v1
         //std::cout << " Mias::init step 2\n";
 
         btSales.signal_clicked().connect(sigc::mem_fun(*this, &Mias::on_click_sales));
-        on_logged_listener(sigc::mem_fun(*this,&Mias::on_logged));
+        //on_logged_listener(sigc::mem_fun(*this,&Mias::on_logged));
+        login.signal_logged().connect(sigc::mem_fun(*this, &Mias::on_logged));
 
         //std::cout << " Mias::init step 3\n";
     }
@@ -69,7 +70,7 @@ namespace oct::mias::v1
     void Mias::on_logged()
     {
 #ifdef OCTETOS_MIAS_DESK_V1_TDD
-        //std::cout << "Logged 2\n";
+        std::cout << "Logged on Mia's\n";
 #endif
         btSales.set_sensitive(true);
     }
